@@ -1,0 +1,197 @@
+\documentclass[a4paper,UKenglish]{lipics-v2016}
+
+\usepackage{mathrsfs}
+\usepackage{datetime}
+\usepackage{nameref}
+\usepackage{bm}
+\usepackage{proof}
+\usepackage[section]{placeins}
+\usepackage{float}
+
+\newcommand{\clos}[2] {
+  \langle #1; #2 \rangle
+}
+
+\newcommand{\app}[2] {
+  (#1\, #2)
+}
+
+\newcommand{\aframe}[2] {
+  \lbrack #1, #2 \rbrack_\alpha
+}
+
+\newcommand{\nuframe}[3] {
+  #1 \lbrack #2 \rbrack_\nu\Rightarrow #3
+}
+
+\newcommand{\dframe}[5] {
+  (#1, #2) \lbrack #3 \rbrack_\delta\Rightarrow (#4, #5)
+}
+
+\newcommand{\pframe}[5] {
+  (#1, #2) \lbrack #3 \rbrack_\textrm{pull}\Rightarrow (#4, #5)
+}
+
+\newcommand{\rframe}[7] {
+  (#1, #2, #3) \lbrack #4 \rbrack_\gamma\Rightarrow (#5, #6, #7)
+}
+
+\newcommand{\cframe}[7] {
+  (#1, #2, #3) \lbrack #4 \rbrack_c\Rightarrow (#5, #6, #7)
+}
+
+\newcommand{\pr}[2] {
+ (#1\, #2)
+}
+
+\newcommand{\bd}[2] {
+ #1/ #2
+}
+
+\newcommand*{\transname}[1]{\textsc{#1}}
+
+
+\bibliographystyle{plainurl}
+
+\title{Efficiency of a good but not linear nominal unification algorithm}
+
+\keywords{$\alpha$-conversion; Binding operations; Efficiency; Unification}
+
+\author[1]{Weixi Ma}
+\author[2]{Jeremy G. Siek}
+\author[3]{David Thrane Christiansen}
+\author[4]{Daniel P. Friedman}
+\affil[1]{Indiana University,
+  \texttt{mvc@iu.edu}}
+\affil[2]{Indiana University,
+  \texttt{jsiek@indiana.edu}}
+\affil[3]{Galois, Inc.,
+  \texttt{dtc@galois.com}}
+\affil[4]{Indiana University,
+  \texttt{dfried@indiana.edu}}
+
+
+\Copyright{Weixi Ma, Jeremy Siek, David Thrane Christiansen and Daniel P. Friedman}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  We present a nominal unification algorithm
+  that runs in $O(n \times G(n))$ time,
+  where $G$ is the functional inverse of Ackermann's function.
+  Nominal unification generates a set of variable assignments,
+  if there exists one,
+  that makes terms involving binding operations $\alpha$-equivalent.
+  We preserve names while using special representations of de Bruijn numbers.
+  Operations on name handling, i.e.,
+  deciding the $\alpha$-equivalence of two names and
+  inferring a name that $\alpha$-equals to a given one,
+  are in constant time.
+  To reduce an arbitrary unification problem to such name handlings,
+  we preprocess the unification terms
+  with the idea of Martelli-Montanari.
+\end{abstract}
+
+\section{Introduction and background}
+The rules that identify terms, such as $\alpha$, $\beta$ and $\eta$
+in the $\lambda$-calculus~\cite{church_calculi_1941},
+are critical to building programming languages and formal systems.
+As users of logic programming languages and theorem provers,
+we desire such rules to be out-of-the-box in the tool-kit.
+Two theories have aimed to provide this convenience:
+Miller's higher-order pattern unification~\cite{miller_logic_1989} and
+nominal unification~\cite{urban_nominal_2004} introduced by Urban, Pitts, and Gabbay.
+Higher-order pattern unification, which handles a fragment of $\beta\eta$-rules,
+is the foundation of Isabelle~\cite{paulson_natural_1986}, $\lambda$Prolog~\cite{nadathur_overview_1988}, and Twelf~\cite{pfenning_system_1999-1}.
+Nominal unification, which focuses on the $\alpha$-rule,
+has inspired extensions of logic programming languages, like $\alpha$Prolog~\cite{cheney_prolog:_2004} and $\alpha$Kanren~\cite{byrd_kanren:_2007},
+as well as theorem provers, like nominal Isabelle~\cite{urban_nominal_2005} and $\alpha$LeanTAP~\cite{near_leantap:_2008}.
+Although these two theories have been shown to be equally powerful~\cite{cheney_relating_2005},
+implementing higher-order pattern unification is more complicated
+because it has to deal with application and capture-avoiding substitution.
+On the other hand, an implementation of nominal unification,
+which essentially unifies first-order terms,
+is more straightforward and easier to formalize.
+Beyond unification, techniques from the nominal approach,
+such as swappings and freshness environments,
+have impacted the areas as diverse as
+rewriting~\cite{fernandez_nominal_2004, fernandez_nominal_2005, fernandez_nominal_2007, aoto_nominal_2016},
+equational theories~\cite{ayala-rincon_nominal_2016},
+and reasoning about bindings in abstract syntax~\cite{pitts_metalanguage_2000, gabbay_new_2002}.
+
+When efficiency is the concern, however, nominal unification is not so practical as higher-order pattern unification.
+Qian~\cite{qian_unification_1996} has shown that higher-order pattern unification is decidable in linear time.
+But it has been an open problem
+whether there exists a nominal unification algorithm
+that can do better than $O(n^2)$.
+Algorithmic advances by Paterson-Wegman~\cite{paterson_linear_1978} and Martelli-Montanari~\cite{martelli_efficient_1982} for unification
+have inspired many improvements to the efficiency of nominal unification.
+Also, the ideas like applying swappings lazily and composing swappings eagerly and sharing subterms have been explored.
+Calves and Fernandez~\cite{calves_polynomial_2008, calves_complexity_2010, calves_first-order_2010}
+describe quadratic
+algorithms that extend Paterson-Wegman and Martelli-Montanari's
+algorithms with name handling. On the other hand, Levy and
+Villaret~\cite{levy_efficient_2010} describe a new quadratic algorithm
+that reduces unification problems to a sequence of freshness and
+equality constraints in linear time and then solves the constraints in quadratic time.
+
+The inefficiency of these nominal unification algorithms
+comes from the swapping actions, that is,
+to decide the $\alpha$-equivalence of two names,
+we need to linearly traverse a list
+whose length grows with respect to the number of binders.
+One might try to replace these lists with a more efficient lookup
+structure, such as a hash table,
+but then composing two swappings would take linear time,
+and that operation is also rather frequent.
+Here we present an algorithm that does not use swappings,
+with the following contributions.
+
+\begin{itemize}
+\item \textbf{Special representations of de Bruijn numbers}
+  We use \textit{static closures} to represent de Bruijn numbers.
+  Static closures preserve both friendly interfaces for human comprehension
+  and efficient structures for machine manipulation.
+  
+\item \textbf{Better run-time efficiency}
+  The algorithm presented here runs in $O(n \times G(n))$.
+  Since we have constant time name management,
+  the overall time complexity is the same as first-order unification.
+  Previous improvements to nominal unification indicate
+  that it is difficult to improve beyond quadratic~\cite
+  {calves_polynomial_2008, calves_complexity_2010, calves_first-order_2010, levy_efficient_2010}.
+
+\item \textbf{Simpler implementation}
+  Unlike traditional nominal unification,
+  we do not use swappings and freshness environments.
+  Using less infrastructure allows an even easier implementation
+  than existing nominal unification algorithms.
+
+  % mvc: The proofs are not finished yet.
+  % but we probably don't need them because of the MM paper.
+% \item \textbf{Formalization and implementation}
+%   We have formalized our algorithm in Agda,
+%   and have implementations in Racket and Haskell available at XXX.
+%   (not finished yet)
+ \end{itemize} 
+
+  We organize this paper as follows.
+  In section~\ref{static_closures}, we show a representation of
+  de Bruijn numbers that is suitable for unification.
+  In section~\ref{amachine}, we describe an abstract machine that decides
+  $\alpha$-equivalence using this representation.
+  In section~\ref{unify}, we present the abstract machines for name handling
+  and reducing an arbitrary unification problem to name handling problems.
+  In section~\ref{efficiency}, we discuss the time complexity of this algorithm.
+  We are formalizing the proofs in Agda,
+  the proved theorems are available at https://github.com/mvcccccc/unify.
+
+\bibliography{main}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
