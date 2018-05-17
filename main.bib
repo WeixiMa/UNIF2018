@@ -3,11 +3,11 @@
 	title = {Nominal unification},
 	volume = {323},
 	issn = {03043975},
-	url = {http://linkinghub.elsevier.com/retrieve/pii/S0304397504004013},
-	doi = {10.1016/j.tcs.2004.06.016},
+	
+	
 	language = {en},
 	number = {1-3},
-	urldate = {2017-10-11},
+	
 	journal = {Theoretical Computer Science},
 	author = {Urban, Christian and Pitts, Andrew M. and Gabbay, Murdoch J.},
 	month = sep,
@@ -20,11 +20,11 @@
 	title = {A polynomial nominal unification algorithm},
 	volume = {403},
 	issn = {0304-3975},
-	url = {http://www.sciencedirect.com/science/article/pii/S0304397508003927},
-	doi = {10.1016/j.tcs.2008.05.012},
+	
+	
 	abstract = {Nominal syntax includes an abstraction operator and a primitive notion of name swapping, that can be used to represent in a simple and natural way systems that include binders. Nominal unification (i.e., solving $\alpha$-equality constraints between nominal terms) has applications in rewriting and logic programming, amongst others. It is decidable: Urban, Pitts and Gabbay gave a nominal unification algorithm that finds the most general solution to a nominal matching or unification problem, if one exists. A naive implementation of this algorithm is exponential in time; here we describe an algorithm based on a graph representation of nominal terms with lazy propagation of swappings, and show that it is polynomial.},
 	number = {2},
-	urldate = {2017-10-11},
+	
 	journal = {Theoretical Computer Science},
 	author = {Calv{\`e}s, Christophe and Fern{\'a}ndez, Maribel},
 	month = aug,
@@ -39,11 +39,11 @@
 	title = {Nominal {Equational} {Logic}},
 	volume = {172},
 	issn = {1571-0661},
-	url = {http://www.sciencedirect.com/science/article/pii/S1571066107000813},
-	doi = {10.1016/j.entcs.2007.02.009},
+	
+	
 	abstract = {This paper studies the notion of {\textquotedblleft}freshness{\textquotedblright} that often occurs in the meta-theory of computer science languages involving various kinds of names. Nominal Equational Logic is an extension of ordinary equational logic with assertions about the freshness of names. It is shown to be both sound and complete for the support interpretation of freshness and equality provided by the Gabbay-Pitts nominal sets model of names, binding and $\alpha$-conversion.},
 	number = {Supplement C},
-	urldate = {2017-10-11},
+	
 	journal = {Electronic Notes in Theoretical Computer Science},
 	author = {Clouston, Ranald A. and Pitts, Andrew M.},
 	month = apr,
@@ -57,11 +57,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Resolving {Inductive} {Definitions} with {Binders} in {Higher}-{Order} {Typed} {Functional} {Programming}},
 	isbn = {978-3-642-00589-3 978-3-642-00590-9},
-	url = {https://link.springer.com/chapter/10.1007/978-3-642-00590-9_4},
-	doi = {10.1007/978-3-642-00590-9_4},
+	
+	
 	abstract = {This paper studies inductive definitions involving binders, in which aliasing between free and bound names is permitted. Such aliasing occurs in informal specifications of operational semantics, but is excluded by the common representation of binding as meta-level $\lambda$-abstraction. Drawing upon ideas from functional logic programming, we represent such definitions with aliasing as recursively defined functions in a higher-order typed functional programming language that extends core ML with types for name-binding, a type of {\textquotedblleft}semi-decidable propositions{\textquotedblright} and existential quantification for types with decidable equality. We show that the representation is sound and complete with respect to the language{\textquoteright}s operational semantics, which combines the use of evaluation contexts with constraint programming. We also give a new and simple proof that the associated constraint problem is NP-complete.},
 	language = {en},
-	urldate = {2017-10-11},
+	
 	booktitle = {Programming {Languages} and {Systems}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Lakin, Matthew R. and Pitts, Andrew M.},
@@ -94,11 +94,11 @@
 	title = {Unification of {Higher}-order {Patterns} in {Linear} {Time} and {Space}},
 	volume = {6},
 	issn = {0955-792X},
-	url = {https://academic.oup.com/logcom/article/6/3/315/1089250/Unification-of-Higher-order-Patterns-in-Linear},
-	doi = {10.1093/logcom/6.3.315},
+	
+	
 	abstract = {Higher-order patterns are simply typed $\lambda$-terms in long $\beta$-normal form where the arguments of a free variable are always $\eta$-equal to distinct bound variables. It has been proved that unification of higher-order patterns modulo $\alpha$, $\beta$ and $\eta$ reductions in the simply typed $\lambda$-calculus is decidable and unifiable higher-order patterns have a most general unifier. In this paper a unification algorithm for higher-order patterns is presented, whose time and space complexities are proved to be linear in the size of input.},
 	number = {3},
-	urldate = {2017-10-14},
+	
 	journal = {J Logic Computation},
 	author = {Qian, Z.},
 	month = jun,
@@ -110,7 +110,7 @@
 @inproceedings{mcbride_i_2004,
 	title = {I am not a number: {I} am a free variable},
 	shorttitle = {I am not a number},
-	abstract = {In this paper, we show how to manipulate syntax with binding using a mixed representation of names for free variables (with respect to the task in hand) and de Bruijn indices [dB72] for bound variables. By doing so, we retain the advantages of both representations: naming supports easy, arithmetic-free manipulation of terms; de Bruijn indices eliminate the need for $\alpha$-conversion. Further, we have ensure that not only the user but also the implementation need never deal with de Bruijn indices, except within key basic operations. Moreover, we give a representation for names which readily supports a power structure naturally reflecting the structure of the implementation. Name choice is safe and straightforward. Our technology combines easily with an approach to syntax manipulation inspired by Huet{\textquoteright}s {\textquoteleft}zippers{\textquoteright}[Hue97]. Without the technology in this paper, we could not have implemented Epigram [McB04]. Our example{\textemdash}constructing inductive elimination operators for datatype families{\textemdash}is but one of many where it proves invaluable. Prologue In conversation, we like to have names for the people we{\textquoteright}re talking about. If we had to say things like {\textquoteleft}the person three to the left of me {\textquoteright} rather than {\textquoteleft}Fred{\textquoteright}, things would get complicated whenever anyone went to the lavatory. You don{\textquoteright}t need to have formalized the strengthening property for Pure Type Systems [MP99] to appreciate this basic phenomenon of social interaction. It is in the company of strangers that more primitive pointing-based modes of reference acquire a useful r{\^o}le as a way of indicating unambiguously an individual with no socially agreed name. Even so, once a stranger enters the context of the conversation, he or she typically acquires a name. What this name is and who chooses it depends on the power relationships between those involved, as we learned in the playground at school. Moreover, if we are having a conversation about hypothetical individuals{\textemdash}say, Alice, Bob and Unscrupulous Charlie{\textemdash}we have a tendency to name them locally to the discussion. We do not worry about whether Unscrupulous Charlie might actually turn out to be called Shameless David whenever he turns up. That is, we exploit naming locally to assist the construction of explanations which apply to individuals regardless of what they are called. 1 1},
+	abstract = {In this paper, we show how to manipulate syntax with binding using a mixed representation of names for free variables (with respect to the task in hand) and de Bruijn indices [dB72] for bound variables. By  we retain the advantages of both representations: naming supports easy, arithmetic-free manipulation of terms; de Bruijn indices eliminate the need for $\alpha$-conversion. Further, we have ensure that not only the user but also the implementation need never deal with de Bruijn indices, except within key basic operations. Moreover, we give a representation for names which readily supports a power structure naturally reflecting the structure of the implementation. Name choice is safe and straightforward. Our technology combines easily with an approach to syntax manipulation inspired by Huet{\textquoteright}s {\textquoteleft}zippers{\textquoteright}[Hue97]. Without the technology in this paper, we could not have implemented Epigram [McB04]. Our example{\textemdash}constructing inductive elimination operators for datatype families{\textemdash}is but one of many where it proves invaluable. Prologue In conversation, we like to have names for the people we{\textquoteright}re talking about. If we had to say things like {\textquoteleft}the person three to the left of me {\textquoteright} rather than {\textquoteleft}Fred{\textquoteright}, things would get complicated whenever anyone went to the lavatory. You don{\textquoteright}t need to have formalized the strengthening property for Pure Type Systems [MP99] to appreciate this basic phenomenon of social interaction. It is in the company of strangers that more primitive pointing-based modes of reference acquire a useful r{\^o}le as a way of indicating unambiguously an individual with no socially agreed name. Even so, once a stranger enters the context of the conversation, he or she typically acquires a name. What this name is and who chooses it depends on the power relationships between those involved, as we learned in the playground at school. Moreover, if we are having a conversation about hypothetical individuals{\textemdash}say, Alice, Bob and Unscrupulous Charlie{\textemdash}we have a tendency to name them locally to the discussion. We do not worry about whether Unscrupulous Charlie might actually turn out to be called Shameless David whenever he turns up. That is, we exploit naming locally to assist the construction of explanations which apply to individuals regardless of what they are called. 1 1},
 	booktitle = {In {Haskell} workshop},
 	author = {Mcbride, Conor and Mckinna, James},
 	year = {2004},
@@ -122,9 +122,9 @@
 	series = {{TPHOLs} '02},
 	title = {Higher {Order} {Unification} 30 {Years} {Later}},
 	isbn = {978-3-540-44039-0},
-	url = {http://dl.acm.org/citation.cfm?id=646529.695200},
+	
 	abstract = {The talk will present a survey of higher order unification, covering an outline of its historical development, a summary of its applications to three fields: automated theorem proving, and more generally engineering of proof assistants, programming environments and software engineering, and finally computational linguistics. It concludes by a presentation of open problems, and a few prospective remarks on promising future directions. This presentation assumes as background the survey by Gilles Dowek in the Handbook of automated theorem proving [28].},
-	urldate = {2017-10-29},
+	
 	booktitle = {Proceedings of the 15th {International} {Conference} on {Theorem} {Proving} in {Higher} {Order} {Logics}},
 	publisher = {Springer-Verlag},
 	author = {Huet, G{\'e}rard P.},
@@ -136,10 +136,10 @@
 	title = {An efficient unification algorithm},
 	volume = {4},
 	issn = {0164-0925},
-	url = {http://doi.acm.org/10.1145/357162.357169},
-	doi = {10.1145/357162.357169},
+	
+	
 	number = {2},
-	urldate = {2017-10-29},
+	
 	journal = {ACM Trans. Program. Lang. Syst.},
 	author = {Martelli, Alberto and Montanari, Ugo},
 	month = apr,
@@ -152,11 +152,11 @@
 	title = {Linear unification},
 	volume = {16},
 	issn = {0022-0000},
-	url = {http://www.sciencedirect.com/science/article/pii/0022000078900430},
-	doi = {10.1016/0022-0000(78)90043-0},
+	
+	
 	abstract = {A unification algorithm is described which tests a set of expressions for unifiability and which requires time and space which are only linear in the size of the input.},
 	number = {2},
-	urldate = {2017-10-29},
+	
 	journal = {Journal of Computer and System Sciences},
 	author = {Paterson, M. S. and Wegman, M. N.},
 	month = apr,
@@ -170,10 +170,10 @@
 	series = {{POPL} '08},
 	title = {Engineering formal metatheory},
 	isbn = {978-1-59593-689-9},
-	url = {http://doi.acm.org/10.1145/1328438.1328443},
-	doi = {10.1145/1328438.1328443},
+	
+	
 	abstract = {Machine-checked proofs of properties of programming languages have become acritical need, both for increased confidence in large and complex designsand as a foundation for technologies such as proof-carrying code. However, constructing these proofs remains a black art, involving many choices in the formulation of definitions and theorems that make a huge cumulative difference in the difficulty of carrying out large formal developments. There presentation and manipulation of terms with variable binding is a key issue. We propose a novel style for formalizing metatheory, combining locally nameless representation of terms and cofinite quantification of free variable names in inductivedefinitions of relations on terms (typing, reduction, ...). The key technical insight is that our use of cofinite quantification obviates the need for reasoning about equivariance (the fact that free names can be renamed in derivations); in particular, the structural induction principles of relations defined using cofinite quantification are strong enough for metatheoretic reasoning, and need not be explicitly strengthened. Strong inversion principles follow (automatically, in Coq) from the induction principles. Although many of the underlying ingredients of our technique have been used before, their combination here yields a significant improvement over other methodologies using first-order representations, leading to developments that are faithful to informal practice, yet require noexternal tool support and little infrastructure within the proof assistant. We have carried out several large developments in this style using the Coq proof assistant and have made them publicly available. Our developments include type soundness for System F sub; and core ML (with references, exceptions, datatypes, recursion, and patterns) and subject reduction for the Calculus of Constructions. Not only do these developments demonstrate the comprehensiveness of our approach; they have also been optimized for clarity and robustness, making them good templates for future extension.},
-	urldate = {2017-11-08},
+	
 	booktitle = {Proceedings of the 35th {Annual} {ACM} {SIGPLAN}-{SIGACT} {Symposium} on {Principles} of {Programming} {Languages}},
 	publisher = {ACM},
 	author = {Aydemir, Brian and Chargu{\'e}raud, Arthur and Pierce, Benjamin C. and Pollack, Randy and Weirich, Stephanie},
@@ -188,11 +188,11 @@
 	title = {On {Logic} {Programming} {Representations} of {Lambda} {Terms}: de {Bruijn} {Indices}, {Compression}, {Type} {Inference}, {Combinatorial} {Generation}, {Normalization}},
 	isbn = {978-3-319-19685-5 978-3-319-19686-2},
 	shorttitle = {On {Logic} {Programming} {Representations} of {Lambda} {Terms}},
-	url = {https://link.springer.com/chapter/10.1007/978-3-319-19686-2_9},
-	doi = {10.1007/978-3-319-19686-2_9},
+	
+	
 	abstract = {We introduce a compressed de Bruijn representation of lambda terms and define its bijections to standard representations. Compact combinatorial generation algorithms are given for several families of lambda terms, including open, closed, simply typed and linear terms as well as type inference and normal order reduction algorithms. We specify our algorithms as a literate Prolog program. In the process, we rely in creative ways on unification of logic variables, cyclic terms, backtracking and definite clause grammars.},
 	language = {en},
-	urldate = {2017-11-08},
+	
 	booktitle = {Practical {Aspects} of {Declarative} {Languages}},
 	publisher = {Springer, Cham},
 	author = {Tarau, Paul},
@@ -207,10 +207,10 @@
 	series = {{POPL} '08},
 	title = {Lightweight semiformal time complexity analysis for purely functional data structures},
 	isbn = {978-1-59593-689-9},
-	url = {http://doi.acm.org/10.1145/1328438.1328457},
-	doi = {10.1145/1328438.1328457},
+	
+	
 	abstract = {Okasaki and others have demonstrated how purely functional data structures that are efficient even in the presence of persistence can be constructed. To achieve good time bounds essential use is often made of laziness. The associated complexity analysis is frequently subtle, requiring careful attention to detail, and hence formalising it is valuable. This paper describes a simple library which can be used to make the analysis of a class of purely functional data structures and algorithms almost fully formal. The basic idea is to use the type system to annotate every function with the time required to compute its result. An annotated monad is used to combine time complexity annotations. The library has been used to analyse some existing data structures, for instance the deque operations of Hinze and Paterson's finger trees.},
-	urldate = {2017-11-10},
+	
 	booktitle = {Proceedings of the 35th {Annual} {ACM} {SIGPLAN}-{SIGACT} {Symposium} on {Principles} of {Programming} {Languages}},
 	publisher = {ACM},
 	author = {Danielsson, Nils Anders},
@@ -224,11 +224,11 @@
 	title = {Automating {Sized}-type {Inference} for {Complexity} {Analysis}},
 	volume = {1},
 	issn = {2475-1421},
-	url = {http://doi.acm.org/10.1145/3110287},
-	doi = {10.1145/3110287},
+	
+	
 	abstract = {This paper introduces a new methodology for the complexity analysis of higher-order functional programs, which is based on three ingredients: a powerful type system for size analysis and a sound type inference procedure for it, a ticking monadic transformation and constraint solving. Noticeably, the presented methodology can be fully automated, and is able to analyse a series of examples which cannot be handled by most competitor methodologies. This is possible due to various key ingredients, and in particular an abstract index language and index polymorphism at higher ranks. A prototype implementation is available.},
 	number = {ICFP},
-	urldate = {2017-11-10},
+	
 	journal = {Proc. ACM Program. Lang.},
 	author = {Avanzini, Martin and Dal Lago, Ugo},
 	month = aug,
@@ -240,9 +240,9 @@
 
 @article{danner_denotational_2015,
 	title = {Denotational cost semantics for functional languages with inductive types},
-	url = {http://arxiv.org/abs/1506.01949},
+	
 	abstract = {A central method for analyzing the asymptotic complexity of a functional program is to extract and then solve a recurrence that expresses evaluation cost in terms of input size. The relevant notion of input size is often specific to a datatype, with measures including the length of a list, the maximum element in a list, and the height of a tree. In this work, we give a formal account of the extraction of cost and size recurrences from higher-order functional programs over inductive datatypes. Our approach allows a wide range of programmer-specified notions of size, and ensures that the extracted recurrences correctly predict evaluation cost. To extract a recurrence from a program, we first make costs explicit by applying a monadic translation from the source language to a complexity language, and then abstract datatype values as sizes. Size abstraction can be done semantically, working in models of the complexity language, or syntactically, by adding rules to a preorder judgement. We give several different models of the complexity language, which support different notions of size. Additionally, we prove by a logical relations argument that recurrences extracted by this process are upper bounds for evaluation cost; the proof is entirely syntactic and therefore applies to all of the models we consider.},
-	urldate = {2017-11-13},
+	
 	journal = {arXiv:1506.01949 [cs]},
 	author = {Danner, Norman and Licata, Daniel R. and Ramyaa, Ramyaa},
 	month = jun,
@@ -256,11 +256,11 @@
 	title = {Implementing {Nominal} {Unification}},
 	volume = {176},
 	issn = {1571-0661},
-	url = {https://doi.org/10.1016/j.entcs.2006.09.027},
-	doi = {10.1016/j.entcs.2006.09.027},
+	
+	
 	abstract = {Nominal matching and unification underly the dynamics of nominal rewriting. Urban, Pitts and Gabbay gave a nominal unification algorithm which finds the most general solution to a nominal matching or unification problem, if one exists. Later the algorithm was extended by Fernandez and Gabbay to deal with name generation and locality. In this paper we describe first a direct implementation of the nominal unification algorithm, including the extensions, in Maude. This implementation is not efficient (it is exponential in time), but we will show that we can obtain a feasible implementation by using termgraphs.},
 	number = {1},
-	urldate = {2017-11-16},
+	
 	journal = {Electron. Notes Theor. Comput. Sci.},
 	author = {Calv{\`e}s, Christophe and Fern{\'a}ndez, Maribel},
 	month = may,
@@ -273,11 +273,11 @@
 	title = {Nominal {Techniques}},
 	volume = {3},
 	issn = {2372-3491},
-	url = {http://doi.acm.org/10.1145/2893582.2893594},
-	doi = {10.1145/2893582.2893594},
+	
+	
 	abstract = {Programming languages abound with features making use of names in various ways. There is a mathematical foundation for the semantics of such features which uses groups of permutations of names and the notion of the support of an object with respect to the action of such a group. The relevance of this kind of mathematics for the semantics of names is perhaps not immediately obvious. That it is relevant and useful has emerged over the last 15 years or so in a body of work that has acquired its own name: nominal techniques. At the same time, the application of these techniques has broadened from semantics to computation theory in general. This article introduces the subject and is based upon a tutorial at LICS-ICALP 2015 [Pitts 2015a].},
 	number = {1},
-	urldate = {2017-11-16},
+	
 	journal = {ACM SIGLOG News},
 	author = {Pitts, Andrew},
 	month = feb,
@@ -290,10 +290,10 @@
 	series = {{ITP}'10},
 	title = {A new foundation for nominal {Isabelle}},
 	isbn = {978-3-642-14051-8},
-	url = {http://dx.doi.org/10.1007/978-3-642-14052-5_5},
-	doi = {10.1007/978-3-642-14052-5_5},
+	
+	
 	abstract = {Pitts et al introduced a beautiful theory about names and binding based on the notions of permutation and support. The engineering challenge is to smoothly adapt this theory to a theorem prover environment, in our case Isabelle/HOL. We present a formalisation of this work that differs from our earlier approach in two important respects: First, instead of representing permutations as lists of pairs of atoms, we now use a more abstract representation based on functions. Second, whereas the earlier work modeled different sorts of atoms using different types, we now introduce a unified atom type that includes all sorts of atoms. Interestingly, we allow swappings, that is permutations build from two atoms, to be ill-sorted. As a result of these design changes, we can iron out inconveniences for the user, considerably simplify proofs and also drastically reduce the amount of custom ML-code. Furthermore we can extend the capabilities of Nominal Isabelle to deal with variables that carry additional information. We end up with a pleasing and formalised theory of permutations and support, on which we can build an improved and more powerful version of Nominal Isabelle.},
-	urldate = {2017-11-16},
+	
 	booktitle = {Proceedings of the {First} {International} {Conference} on {Interactive} {Theorem} {Proving}},
 	publisher = {Springer-Verlag},
 	author = {Huffman, Brian and Urban, Christian},
@@ -305,10 +305,10 @@
 	title = {Alpha {Equivalence} {Equalities}},
 	volume = {433},
 	issn = {0304-3975},
-	url = {http://dx.doi.org/10.1016/j.tcs.2012.01.030},
-	doi = {10.1016/j.tcs.2012.01.030},
-	abstract = {Programming languages and logics, which are pervasive in Computer Science, have syntax which involves variable binding constructors. As such, reasoning about such languages in general, and formal reasoning in particular (such as within a theorem prover), requires frameworks within which the syntax may be properly represented. One key requirement is a correct representation of @a-equivalence. The current literature provides a number of different definitions of the notion of @a-equivalence. The formal definitions may be nameless as in the approach of de Bruijn, or have explicit names, as in the approaches that use either a renaming/substitution axiom, or instead use a notion of variable swapping. The first contribution of this paper is to draw together five definitions of @a-equivalence relations and to prove formally and in detail, but using mathematics, that the relations are all equal. There are two key reasons for doing this: Firstly, the literature has many examples of proofs of results involving @a-equivalence which contain technical errors. Such examples concern both the application of @a-equivalence, and the meta-theory of @a-equivalence itself. Secondly, the literature does not currently contain detailed presentations of such results. The point of giving the detail is partly to avoid falling into common error-traps, but mainly to provide clear mathematical machinery that will be useful to those working in the area. This includes systems of inductive rules and proofs by induction, and clear accounts of the key lemmas that support the main proofs. The second contribution is to provide two definitions of @a-equivalence relations over (program) contexts, namely expressions with a single meta-variable (or ''hole''). One of the definitions is already in the literature, and the other is new. We prove some basic properties of @a-equivalence on contexts, and show that the two definitions give rise to the same relation.},
-	urldate = {2017-11-16},
+	
+	
+	abstract = {Programming languages and logics, which are pervasive in Computer Science, have syntax which involves variable binding constructors. As such, reasoning about such languages in general, and formal reasoning in particular (such as within a theorem prover), requires frameworks within which the syntax may be properly represented. One key requirement is a correct representation of @a-equivalence. The current literature provides a number of different definitions of the notion of @a-equivalence. The formal definitions may be nameless as in the approach of de Bruijn, or have explicit names, as in the approaches that use either a renaming/substitution axiom, or instead use a notion of variable swapping. The first contribution of this paper is to draw together five definitions of @a-equivalence relations and to prove formally and in detail, but using mathematics, that the relations are all equal. There are two key reasons for  the literature has many examples of proofs of results involving @a-equivalence which contain technical errors. Such examples concern both the application of @a-equivalence, and the meta-theory of @a-equivalence itself. Secondly, the literature does not currently contain detailed presentations of such results. The point of giving the detail is partly to avoid falling into common error-traps, but mainly to provide clear mathematical machinery that will be useful to those working in the area. This includes systems of inductive rules and proofs by induction, and clear accounts of the key lemmas that support the main proofs. The second contribution is to provide two definitions of @a-equivalence relations over (program) contexts, namely expressions with a single meta-variable (or ''hole''). One of the definitions is already in the literature, and the other is new. We prove some basic properties of @a-equivalence on contexts, and show that the two definitions give rise to the same relation.},
+	
 	journal = {Theor. Comput. Sci.},
 	author = {Crole, Roy L.},
 	month = may,
@@ -320,7 +320,7 @@
 @article{hudson_certified_2015,
 	title = {Certified {Cost} {Bounds} in {Agda}: {A} {Step} {Towards} {Automated} {Complexity} {Analysis}},
 	shorttitle = {Certified {Cost} {Bounds} in {Agda}},
-	url = {http://wesscholar.wesleyan.edu/etd_hon_theses/1484},
+	
 	journal = {Honors Theses - All},
 	author = {Hudson, Bowornmet},
 	month = apr,
@@ -331,11 +331,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {({Nominal}) {Unification} by {Recursive} {Descent} with {Triangular} {Substitutions}},
 	isbn = {978-3-642-14051-8 978-3-642-14052-5},
-	url = {https://link.springer.com/chapter/10.1007/978-3-642-14052-5_6},
-	doi = {10.1007/978-3-642-14052-5_6},
+	
+	
 	abstract = {Using HOL4, we mechanise termination and correctness for two unification algorithms, written in a recursive descent style. One computes unifiers for first order terms, the other for nominal terms (terms including $\alpha$-equivalent binding structure). Both algorithms work with triangular substitutions in accumulator-passing style: taking a substitution as input, and returning an extension of that substitution on success.},
 	language = {en},
-	urldate = {2017-11-28},
+	
 	booktitle = {Interactive {Theorem} {Proving}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Kumar, Ramana and Norrish, Michael},
@@ -356,10 +356,10 @@
 	title = {Nominal {Unification} {Revisited}},
 	volume = {42},
 	issn = {2075-2180},
-	url = {http://arxiv.org/abs/1012.4890},
-	doi = {10.4204/EPTCS.42.1},
+	
+	
 	abstract = {Nominal unification calculates substitutions that make terms involving binders equal modulo alpha-equivalence. Although nominal unification can be seen as equivalent to Miller's higher-order pattern unification, it has properties, such as the use of first-order terms with names (as opposed to alpha-equivalence classes) and that no new names need to be generated during unification, which set it clearly apart from higher-order pattern unification. The purpose of this paper is to simplify a clunky proof from the original paper on nominal unification and to give an overview over some results about nominal unification.},
-	urldate = {2017-11-29},
+	
 	journal = {Electronic Proceedings in Theoretical Computer Science},
 	author = {Urban, Christian},
 	month = dec,
@@ -375,11 +375,11 @@
 	title = {$\alpha${Prolog}: {A} logic programming language with names, binding and $\alpha$-equivalence},
 	isbn = {978-3-540-22671-0 978-3-540-27775-0},
 	shorttitle = {$\alpha${Prolog}},
-	url = {https://link.springer.com/chapter/10.1007/978-3-540-27775-0_19},
-	doi = {10.1007/978-3-540-27775-0_19},
+	
+	
 	abstract = {There are two well-known approaches to programming with names, binding, and equivalence up to consistent renaming: representing names and bindings as concrete identifiers in a first-order language (such as Prolog), or encoding names and bindings as variables and abstractions in a higher-order language (such as $\lambda$Prolog). However, both approaches have drawbacks: the former often involves stateful name-generation and requires manual definitions for $\alpha$-equivalence and capture-avoiding substitution, and the latter is semantically very complicated, so reasoning about programs written using either approach can be very difficult. Gabbay and Pitts have developed a new approach to encoding abstract syntax with binding based on primitive operations of name-swapping and freshness. This paper presents $\alpha$Prolog, a logic programming language that uses this approach, along with several illustrative example programs and an operational semantics.},
 	language = {en},
-	urldate = {2017-11-29},
+	
 	booktitle = {Logic {Programming}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Cheney, James and Urban, Christian},
@@ -394,11 +394,11 @@
 	title = {$\alpha${leanTAP}: {A} declarative theorem prover for first-order classical logic},
 	isbn = {978-3-540-89981-5 978-3-540-89982-2},
 	shorttitle = {$\alpha${leanTAP}},
-	url = {https://link.springer.com/chapter/10.1007/978-3-540-89982-2_26},
-	doi = {10.1007/978-3-540-89982-2_26},
+	
+	
 	abstract = {We present $\alpha$leanTAP, a declarative tableau-based theorem prover written as a pure relation. Like leanTAP, on which it is based, $\alpha$leanTAP can prove ground theorems in first-order classical logic. Since it is declarative, $\alpha$leanTAPgenerates theorems and accepts non-ground theorems and proofs. The lack of mode restrictions also allows the user to provide guidance in proving complex theorems and to ask the prover to instantiate non-ground parts of theorems. We present a complete implementation of $\alpha$leanTAP, beginning with a translation of leanTAP into $\alpha$Kanren, an embedding of nominal logic programming in Scheme. We then show how to use a combination of tagging and nominal unification to eliminate the impure operators inherited from leanTAP, resulting in a purely declarative theorem prover.},
 	language = {en},
-	urldate = {2017-11-29},
+	
 	booktitle = {Logic {Programming}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Near, Joseph P. and Byrd, William E. and Friedman, Daniel P.},
@@ -412,11 +412,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Nominal techniques in {Isabelle}/{HOL}},
 	isbn = {978-3-540-28005-7 978-3-540-31864-4},
-	url = {https://link.springer.com/chapter/10.1007/11532231_4},
-	doi = {10.1007/11532231_4},
+	
+	
 	abstract = {In this paper we define an inductive set that is bijective with the $\alpha$-equated lambda-terms. Unlike de-Bruijn indices, however, our inductive definition includes names and reasoning about this definition is very similar to informal reasoning on paper. For this we provide a structural induction principle that requires to prove the lambda-case for fresh binders only. The main technical novelty of this work is that it is compatible with the axiom-of-choice (unlike earlier nominal logic work by Pitts et al); thus we were able to implement all results in Isabelle/HOL and use them to formalise the standard proofs for Church-Rosser and strong-normalisation.},
 	language = {en},
-	urldate = {2017-11-29},
+	
 	booktitle = {Automated {Deduction} {\textendash} {CADE}-20},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Urban, Christian and Tasson, Christine},
@@ -429,9 +429,9 @@
 @article{eisenberg_dependent_2016,
 	title = {Dependent types in {Haskell}: theory and practice},
 	shorttitle = {Dependent {Types} in {Haskell}},
-	url = {http://arxiv.org/abs/1610.07978},
+	
 	abstract = {Haskell, as implemented in the Glasgow Haskell Compiler (GHC), has been adding new type-level programming features for some time. Many of these features---chiefly: generalized algebraic datatypes (GADTs), type families, kind polymorphism, and promoted datatypes---have brought Haskell to the doorstep of dependent types. Many dependently typed programs can even currently be encoded, but often the constructions are painful. In this dissertation, I describe Dependent Haskell, which supports full dependent types via a backward-compatible extension to today's Haskell. An important contribution of this work is an implementation, in GHC, of a portion of Dependent Haskell, with the rest to follow. The features I have implemented are already released, in GHC 8.0. This dissertation contains several practical examples of Dependent Haskell code, a full description of the differences between Dependent Haskell and today's Haskell, a novel type-safe dependently typed lambda-calculus (called Pico) suitable for use as an intermediate language for compiling Dependent Haskell, and a type inference and elaboration algorithm, Bake, that translates Dependent Haskell to type-correct Pico.},
-	urldate = {2017-12-02},
+	
 	journal = {arXiv:1610.07978 [cs]},
 	author = {Eisenberg, Richard A.},
 	month = oct,
@@ -445,11 +445,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Interactive {Programs} in {Dependent} {Type} {Theory}},
 	isbn = {978-3-540-67895-3 978-3-540-44622-4},
-	url = {https://link.springer.com/chapter/10.1007/3-540-44622-2_21},
-	doi = {10.1007/3-540-44622-2_21},
+	
+	
 	abstract = {We propose a representation of interactive systems in dependent type theory. This is meant as a basis for an execution environment for dependently typed programs, and for reasoning about their construction. The inspiration is the {\textquoteleft}I/O-monad{\textquoteright} of Haskell. The fundamental notion is an I/O-tree; its definition is parameterised over a general notion of dependently typed, command-response interactions called a world. I/O-trees represent strategies for one of the parties in a command/response interaction - the notion is not confined to functional programming. We present I/O-trees in two forms. The first form, which is simpler, is suitable for Turing-complete functional programming languages with general recursion, but is non-normalising. The second is definable within (ordinary) normalising type theory and we identify programs written in it as {\textquoteleft}normalising I/O-programs{\textquoteright}. We define new looping constructs (while and repeat), and a new refinement construct (redirect), which permits the implementation of libraries. We introduce a bisimulation relation between interactive programs, with respect to which we prove the monad laws and defining equations of while. Most definitions in this article make essential use of the expressive strength of dependent typing.},
 	language = {en},
-	urldate = {2017-12-02},
+	
 	booktitle = {Computer {Science} {Logic}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Hancock, Peter and Setzer, Anton},
@@ -475,11 +475,11 @@
 	title = {Nominal rewriting},
 	volume = {205},
 	issn = {0890-5401},
-	url = {http://www.sciencedirect.com/science/article/pii/S0890540106001635},
-	doi = {10.1016/j.ic.2006.12.002},
+	
+	
 	abstract = {Nominal rewriting is based on the observation that if we add support for $\alpha$-equivalence to first-order syntax using the nominal-set approach, then systems with binding, including higher-order reduction schemes such as $\lambda$-calculus beta-reduction, can be smoothly represented. Nominal rewriting maintains a strict distinction between variables of the object-language (atoms) and of the meta-language (variables or unknowns). Atoms may be bound by a special abstraction operation, but variables cannot be bound, giving the framework a pronounced first-order character, since substitution of terms for variables is not capture-avoiding. We show how good properties of first-order rewriting survive the extension, by giving an efficient rewriting algorithm, a critical pair lemma, and a confluence theorem for orthogonal systems.},
 	number = {6},
-	urldate = {2017-12-02},
+	
 	journal = {Information and Computation},
 	author = {Fern{\'a}ndez, Maribel and Gabbay, Murdoch J.},
 	month = jun,
@@ -495,10 +495,10 @@
 	title = {Nominal rewriting with name generation: abstraction vs. locality},
 	isbn = {978-1-59593-090-3},
 	shorttitle = {Nominal {Rewriting} with {Name} {Generation}},
-	url = {http://doi.acm.org/10.1145/1069774.1069779},
-	doi = {10.1145/1069774.1069779},
+	
+	
 	abstract = {Nominal rewriting extends first-order rewriting with Gabbay-Pitts abstractors: bound entities are named, matching respects $\alpha$-conversion and can be directly implemented thanks to the use of freshness constraints. In this paper we study two extensions to nominal rewriting. First we introduce a NEW quantifier for modelling name generation and restriction. This allows us to model higher-order functions involving local state, and has also applications in concurrency theory. The second extension introduces new constraints in freshness contexts. This allows us to express strategies of reduction and has applications in programming language design and implementation. Finally, we study confluence properties of nominal rewriting and its extensions.},
-	urldate = {2017-12-02},
+	
 	booktitle = {Proceedings of the 7th {ACM} {SIGPLAN} {International} {Conference} on {Principles} and {Practice} of {Declarative} {Programming}},
 	publisher = {ACM},
 	author = {Fern{\'a}ndez, Maribel and Gabbay, Murdoch J.},
@@ -513,10 +513,10 @@
 	series = {{PPDP} '04},
 	title = {Nominal rewriting systems},
 	isbn = {978-1-58113-819-1},
-	url = {http://doi.acm.org/10.1145/1013963.1013978},
-	doi = {10.1145/1013963.1013978},
+	
+	
 	abstract = {We present a generalisation of first-order rewriting which allows us to deal with terms involving binding operations in an elegant and practical way. We use a nominal approach to binding, in which bound entities are explicitly named (rather than using a nameless syntax such as de Bruijn indices), yet we get a rewriting formalism which respects $\alpha$-conversion and can be directly implemented. This is achieved by adapting to the rewriting framework the powerful techniques developed by Pitts et al. in the FreshML project.Nominal rewriting can be seen as higher-order rewriting with a first-order syntax and built-in $\alpha$-conversion. We show that standard (first-order) rewriting is a particular case of nominal rewriting, and that very expressive higher-order systems such as Klop's Combinatory Reduction Systems can be easily defined as nominal rewriting systems. Finally we study confluence properties of nominal rewriting.},
-	urldate = {2017-12-02},
+	
 	booktitle = {Proceedings of the 6th {ACM} {SIGPLAN} {International} {Conference} on {Principles} and {Practice} of {Declarative} {Programming}},
 	publisher = {ACM},
 	author = {Fern{\'a}ndez, Maribel and Gabbay, Murdoch J. and Mackie, Ian},
@@ -529,12 +529,12 @@
 	title = {A new approach to abstract syntax with variable binding},
 	volume = {13},
 	issn = {0934-5043, 1433-299X},
-	url = {https://link.springer.com/article/10.1007/s001650200016},
-	doi = {10.1007/s001650200016},
+	
+	
 	abstract = {. The permutation model of set theory with atoms (FM-sets), devised by Fraenkel and Mostowski in the 1930s, supports notions of {\textquoteleft}name-abstraction{\textquoteright} and {\textquoteleft}fresh name{\textquoteright} that provide a new way to represent, compute with, and reason about the syntax of formal systems involving variable-binding operations. Inductively defined FM-sets involving the name-abstraction set former (together with Cartesian product and disjoint union) can correctly encode syntax modulo renaming of bound variables. In this way, the standard theory of algebraic data types can be extended to encompass signatures involving binding operators. In particular, there is an associated notion of structural recursion for defining syntax-manipulating functions (such as capture avoiding substitution, set of free variables, etc.) and a notion of proof by structural induction, both of which remain pleasingly close to informal practice in computer science.},
 	language = {en},
 	number = {3-5},
-	urldate = {2017-12-02},
+	
 	journal = {Form Aspects Comput},
 	author = {Gabbay, Murdoch J. and Pitts, Andrew M.},
 	month = jul,
@@ -547,11 +547,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {A metalanguage for programming with bound names modulo renaming},
 	isbn = {978-3-540-67727-7 978-3-540-45025-2},
-	url = {https://link.springer.com/chapter/10.1007/10722010_15},
-	doi = {10.1007/10722010_15},
+	
+	
 	abstract = {This paper describes work in progress on the design of an ML-style metalanguage FreshML for programming with recursively defined functions on user-defined, concrete data types whose constructors may involve variable binding. Up to operational equivalence, values of such FreshML data types can faithfully encode terms modulo $\alpha$-conversion for a wide range of object languages in a straightforward fashion. The design of FreshML is {\textquoteleft}semantically driven{\textquoteright}, in that it arises from the model of variable binding in set theory with atoms given by the authors in [7]. The language has a type constructor for abstractions over names ( = atoms) and facilities for declaring locally fresh names. Moreover, recursive definitions can use a form of pattern-matching on bound names in abstractions. The crucial point is that the FreshML type system ensures that these features can only be used in well-typed programs in ways that are insensitive to renaming of bound names.},
 	language = {en},
-	urldate = {2017-12-02},
+	
 	booktitle = {Mathematics of {Program} {Construction}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Pitts, Andrew M. and Gabbay, Murdoch J.},
@@ -565,11 +565,11 @@
 	title = {A typed context calculus},
 	volume = {266},
 	issn = {0304-3975},
-	url = {http://www.sciencedirect.com/science/article/pii/S0304397500001742},
-	doi = {10.1016/S0304-3975(00)00174-2},
+	
+	
 	abstract = {This paper develops a typed calculus for contexts i.e., lambda terms with {\textquotedblleft}holes{\textquotedblright}. In addition to ordinary lambda terms, the calculus contains labeled holes, hole abstraction and context application for manipulating first-class contexts. The primary operation for contexts is hole-filling, which captures free variables. This operation conflicts with substitution of the lambda calculus, and a straightforward mixture of the two results in an inconsistent system. We solve this problem by defining a type system that precisely specifies the variable-capturing nature of contexts and that keeps track of bound variable renaming. These mechanisms enable us to define a reduction system that properly integrates $\beta$-reduction and hole-filling. The resulting calculus is Church{\textendash}Rosser and the type system has the subject reduction property. We believe that the context calculus will serve as a basis for developing a programming language with advanced features that call for manipulation of open terms.},
 	number = {1},
-	urldate = {2017-12-02},
+	
 	journal = {Theoretical Computer Science},
 	author = {Hashimoto, Masatomo and Ohori, Atsushi},
 	month = sep,
@@ -579,8 +579,8 @@
 	file = {ScienceDirect Full Text PDF:/home/mvc/Dropbox/home/zotero/storage/2TG8A2IK/Hashimoto and Ohori - 2001 - A typed context calculus.pdf:application/pdf;ScienceDirect Snapshot:/home/mvc/Dropbox/home/zotero/storage/5V7MKGUV/S0304397500001742.html:text/html}
 }
 
-@book{byrd_kanren:_2007,
-	title = {$\alpha${Kanren}: {A} fresh name in nominal logic programming},
+@book{byrd_alphakanren:_2007,
+	title = {{alphaKanren}: {A} fresh name in nominal logic programming},
 	abstract = {We present $\alpha$Kanren, an embedding of nominal logic programming in Scheme. $\alpha$Kanren is inspired by $\alpha$Prolog and MLSOS, and allows programmers to easily write interpreters, type inferencers, and other programs that must reason about scope and binding. $\alpha$Kanren subsumes the functionality, syntax, and implementation of miniKanren, itself an embedding of logic programming in Scheme. We present the complete implementation of $\alpha$Kanren, written in portable R 5 RS Scheme. In addition to the implementation, we provide introductions to miniKanren and $\alpha$Kanren, and several example programs, including a type inferencer for the simply typed $\lambda$-calculus.},
 	publisher = {Scheme and Functional Programming Workshop},
 	author = {Byrd, William E. and Friedman, Daniel P.},
@@ -590,9 +590,9 @@
 
 @misc{mccarthy_lisp_1960,
 	title = {{LISP} 1.5 {Programmer}'s {Manual}},
-	url = {https://mitpress.mit.edu/books/lisp-15-programmers-manual},
+	
 	abstract = {The manual describes LISP, a formal mathematical language. LISP differs from most programming languages in three important ways. The first way is in the nature of the data.},
-	urldate = {2017-12-04},
+	
 	journal = {MIT Press},
 	author = {McCarthy, John},
 	year = {1960},
@@ -603,11 +603,11 @@
 	title = {Modelling {General} {Recursion} in {Type} {Theory}},
 	volume = {15},
 	issn = {0960-1295},
-	url = {http://dx.doi.org/10.1017/S0960129505004822},
-	doi = {10.1017/S0960129505004822},
+	
+	
 	abstract = {Constructive type theory is an expressive programming language in which both algorithms and proofs can be represented. A limitation of constructive type theory as a programming language is that only terminating programs can be defined in it. Hence, general recursive algorithms have no direct formalisation in type theory since they contain recursive calls that satisfy no syntactic condition guaranteeing termination. In this work, we present a method to formalise general recursive algorithms in type theory. Given a general recursive algorithm, our method is to define an inductive special-purpose accessibility predicate that characterises the inputs on which the algorithm terminates. The type-theoretic version of the algorithm is then defined by structural recursion on the proof that the input values satisfy this predicate. The method separates the computational and logical parts of the definitions and thus the resulting type-theoretic algorithms are clear, compact and easy to understand. They are as simple as their equivalents in a functional programming language, where there is no restriction on recursive calls. Here, we give a formal definition of the method and discuss its power and its limitations.},
 	number = {4},
-	urldate = {2017-12-06},
+	
 	journal = {Mathematical. Structures in Comp. Sci.},
 	author = {Bove, Ana and Capretta, Venanzio},
 	month = aug,
@@ -620,11 +620,11 @@
 	title = {Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the {Church}-{Rosser} theorem},
 	volume = {75},
 	issn = {1385-7258},
-	url = {http://www.sciencedirect.com/science/article/pii/1385725872900340},
-	doi = {10.1016/1385-7258(72)90034-0},
+	
+	
 	abstract = {In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the {\textquotedblleft}distance{\textquotedblright} to the binding $\lambda$ instead of a name attached to that $\lambda$. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.},
 	number = {5},
-	urldate = {2017-12-09},
+	
 	journal = {Indagationes Mathematicae (Proceedings)},
 	author = {de Bruijn, Nicolaas G.},
 	month = jan,
@@ -638,10 +638,10 @@
 	series = {{ICFP} '08},
 	title = {The {Power} of {Pi}},
 	isbn = {978-1-59593-919-7},
-	url = {http://doi.acm.org/10.1145/1411204.1411213},
-	doi = {10.1145/1411204.1411213},
+	
+	
 	abstract = {This paper exhibits the power of programming with dependent types by dint of embedding three domain-specific languages: Cryptol, a language for cryptographic protocols; a small data description language; and relational algebra. Each example demonstrates particular design patterns inherent to dependently-typed programming. Documenting these techniques paves the way for further research in domain-specific embedded type systems.},
-	urldate = {2017-12-10},
+	
 	booktitle = {Proceedings of the 13th {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
 	publisher = {ACM},
 	author = {Oury, Nicolas and Swierstra, Wouter},
@@ -655,10 +655,10 @@
 	title = {Efficiency of a good but not linear set union algorithm},
 	volume = {22},
 	issn = {0004-5411},
-	url = {http://doi.acm.org/10.1145/321879.321884},
-	doi = {10.1145/321879.321884},
+	
+	
 	number = {2},
-	urldate = {2017-12-13},
+	
 	journal = {J. ACM},
 	author = {Tarjan, Robert Endre},
 	month = apr,
@@ -673,9 +673,9 @@
 	title = {Nominal narrowing},
 	volume = {52},
 	isbn = {978-3-95977-010-1},
-	url = {http://drops.dagstuhl.de/opus/volltexte/2016/5983},
-	doi = {10.4230/LIPIcs.FSCD.2016.11},
-	urldate = {2017-12-13},
+	
+	
+	
 	booktitle = {1st {International} {Conference} on {Formal} {Structures} for {Computation} and {Deduction} ({FSCD} 2016)},
 	publisher = {Schloss Dagstuhl{\textendash}Leibniz-Zentrum fuer Informatik},
 	author = {Ayala-Rinc{\'o}n, Mauricio and Fern{\'a}ndez, Maribel and Nantes-Sobrinho, Daniele},
@@ -690,11 +690,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {The first-order nominal link},
 	isbn = {978-3-642-20550-7 978-3-642-20551-4},
-	url = {https://link.springer.com/chapter/10.1007/978-3-642-20551-4_15},
-	doi = {10.1007/978-3-642-20551-4_15},
+	
+	
 	abstract = {We define a morphism from nominal syntax, which supports binding, to standard (first-order) syntax. We use this morphism to extend Paterson and Wegman{\textquoteright}s linear first-order unification algorithm in order to deal with terms modulo alpha-equivalence. The nominal unification algorithm obtained is quadratic in time.},
 	language = {en},
-	urldate = {2017-12-13},
+	
 	booktitle = {Logic-{Based} {Program} {Synthesis} and {Transformation}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Calv{\`e}s, Christophe and Fern{\'a}ndez, Maribel},
@@ -718,11 +718,11 @@
 	title = {A {Framework} for {Defining} {Logics}},
 	volume = {40},
 	issn = {0004-5411},
-	url = {http://doi.acm.org/10.1145/138027.138060},
-	doi = {10.1145/138027.138060},
+	
+	
 	abstract = {The Edinburgh Logical Framework (LF) provides a means to define (or present) logics. It is based on a general treatment of syntax, rules, and proofs by means of a typed \&lgr;-calculus with dependent types. Syntax is treated in a style similar to, but more general than, Martin-Lo{\textasciidieresis}f's system of arities. The treatment of rules and proofs focuses on his notion of a judgment. Logics are represented in LF via a new principle, the judgments as types principle, whereby each judgment is identified with the type of its proofs. This allows for a smooth treatment of discharge and variable occurence conditions and leads to a uniform treatment of rules and proofs whereby rules are viewed as proofs of higher-order judgments and proof checking is reduced to type checking. The practical benefit of our treatment of formal systems is that logic-independent tools, such as proof editors and proof checkers, can be constructed.},
 	number = {1},
-	urldate = {2018-01-07},
+	
 	journal = {J. ACM},
 	author = {Harper, Robert and Honsell, Furio and Plotkin, Gordon},
 	month = jan,
@@ -746,12 +746,12 @@
 	title = {The locally nameless representation},
 	volume = {49},
 	issn = {0168-7433, 1573-0670},
-	url = {https://link.springer.com/article/10.1007/s10817-011-9225-2},
-	doi = {10.1007/s10817-011-9225-2},
+	
+	
 	abstract = {This paper provides an introduction to the locally nameless approach to the representation of syntax with variable binding, focusing in particular on the use of this technique in formal proofs. First, we explain the benefits of representing bound variables with de Bruijn indices while retaining names for free variables. Then, we explain how to describe and manipulate syntax in that form, and show how to define and reason about judgments on locally nameless terms.},
 	language = {en},
 	number = {3},
-	urldate = {2018-01-14},
+	
 	journal = {J Autom Reasoning},
 	author = {Chargu{\'e}raud, Arthur},
 	month = oct,
@@ -764,11 +764,11 @@
 	title = {A {Specification} for {Dependent} {Types} in {Haskell}},
 	volume = {1},
 	issn = {2475-1421},
-	url = {http://doi.acm.org/10.1145/3110275},
-	doi = {10.1145/3110275},
+	
+	
 	abstract = {We propose a core semantics for Dependent Haskell, an extension of Haskell with full-spectrum dependent types. Our semantics consists of two related languages. The first is a Curry-style dependently-typed language with nontermination, irrelevant arguments, and equality abstraction. The second, inspired by the Glasgow Haskell Compiler's core language FC, is its explicitly-typed analogue, suitable for implementation in GHC. All of our results---chiefly, type safety, along with theorems that relate these two languages---have been formalized using the Coq proof assistant. Because our work is backwards compatible with Haskell, our type safety proof holds in the presence of nonterminating computation. However, unlike other full-spectrum dependently-typed languages, such as Coq, Agda or Idris, because of this nontermination, Haskell's term language does not correspond to a consistent logic.},
 	number = {ICFP},
-	urldate = {2018-01-14},
+	
 	journal = {Proc. ACM Program. Lang.},
 	author = {Weirich, Stephanie and Voizard, Antoine and de Amorim, Pedro Henrique Azevedo and Eisenberg, Richard A.},
 	month = aug,
@@ -782,11 +782,11 @@
 	title = {Nominal unification from a higher-order perspective},
 	volume = {13},
 	issn = {15293785},
-	url = {http://arxiv.org/abs/1005.3731},
-	doi = {10.1145/2159531.2159532},
+	
+	
 	abstract = {Nominal Logic is a version of first-order logic with equality, name-binding, renaming via name-swapping and freshness of names. Contrarily to higher-order logic, bindable names, called atoms, and instantiable variables are considered as distinct entities. Moreover, atoms are capturable by instantiations, breaking a fundamental principle of lambda-calculus. Despite these differences, nominal unification can be seen from a higher-order perspective. From this view, we show that nominal unification can be reduced to a particular fragment of higher-order unification problems: Higher-Order Pattern Unification. This reduction proves that nominal unification can be decided in quadratic deterministic time, using the linear algorithm for Higher-Order Pattern Unification. We also prove that the translation preserves most generality of unifiers.},
 	number = {2},
-	urldate = {2018-01-14},
+	
 	journal = {ACM Transactions on Computational Logic},
 	author = {Levy, Jordi and Villaret, Mateu},
 	month = apr,
@@ -801,11 +801,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {A logic programming language with lambda-abstraction, function variables, and simple unification},
 	isbn = {978-3-540-53590-4 978-3-540-46879-0},
-	url = {https://link.springer.com/chapter/10.1007/BFb0038698},
-	doi = {10.1007/BFb0038698},
+	
+	
 	abstract = {It has been argued elsewhere that a logic programming language with function variables and $\lambda$-abstractions within terms makes a very good meta-programming language, especially when an object language contains notions of bound variables and scope. The $\lambda$Prolog logic programming language and the closely related Elf and Isabelle systems provide meta-programs with both function variables and $\lambda$-abstractions by containing implementations of higher-order unification. In this paper, we present a logic programming language, called L$\lambda$, that also contains both function variables and $\lambda$-abstractions, but certain restriction are placed on occurrences of function variables. As a result, an implementation of L$\lambda$ does not need to implement full higher-order unification. Instead, an extension to first-order unification that respects bound variable names and scopes is all that is required. Such unification problems are shown to be decidable and to possess most general unifiers when unifiers exist. A unification algorithm and logic programming interpreter are described and proved correct. Several examples of using L$\lambda$ as a meta-programming language are presented.},
 	language = {en},
-	urldate = {2018-01-14},
+	
 	booktitle = {Extensions of {Logic} {Programming}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Miller, Dale},
@@ -819,11 +819,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Unification of {Hypergraph} \$\${\textbackslash}lambda \$\$-{Terms}},
 	isbn = {978-3-319-68952-4 978-3-319-68953-1},
-	url = {https://link.springer.com/chapter/10.1007/978-3-319-68953-1_9},
-	doi = {10.1007/978-3-319-68953-1_9},
+	
+	
 	abstract = {We developed a technique for modeling formal systems involving name binding in a modeling language based on hypergraph rewriting. A hypergraph consists of graph nodes, edges with two endpoints and edges with multiple endpoints. The idea is that hypergraphs allow us to represent terms containing bindings and that our notion of a graph type keeps bound variables distinct throughout rewriting steps. We previously encoded the untyped $\lambda$$\lambda${\textbackslash}lambda -calculus and the evaluation and type checking of System F{\textless}:F{\textless}:F\_{\textbackslash}texttt \{{\textless}:\}, but the encoding of System F{\textless}:F{\textless}:F\_{\textbackslash}texttt \{{\textless}:\} type inference requires a unification algorithm. We studied and successfully implemented a unification algorithm modulo $\alpha$$\alpha${\textbackslash}alpha -equivalence for hypergraphs representing untyped $\lambda$$\lambda${\textbackslash}lambda -terms. The unification algorithm turned out to be similar to nominal unification despite the fact that our approach and nominal approach to name binding are very different. However, some basic properties of our framework are easier to establish compared to the ones in nominal unification. We believe this indicates that hypergraphs provide a nice framework for encoding formal systems involving binders and unification modulo $\alpha$$\alpha${\textbackslash}alpha -equivalence.},
 	language = {en},
-	urldate = {2018-01-15},
+	
 	booktitle = {Topics in {Theoretical} {Computer} {Science}},
 	publisher = {Springer, Cham},
 	author = {Yasen, Alimujiang and Ueda, Kazunori},
@@ -837,11 +837,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Nominal confluence tool},
 	isbn = {978-3-319-40228-4 978-3-319-40229-1},
-	url = {https://link.springer.com/chapter/10.1007/978-3-319-40229-1_12},
-	doi = {10.1007/978-3-319-40229-1_12},
+	
+	
 	abstract = {Nominal rewriting is a framework of higher-order rewriting introduced in (Fern{\'a}ndez, Gabbay \& Mackie, 2004; Fern{\'a}ndez \& Gabbay, 2007). Recently, (Suzuki et al., 2015) revisited confluence of nominal rewriting in the light of feasibility. We report on an implementation of a confluence tool for (non-closed) nominal rewriting, based on (Suzuki et al., 2015) and succeeding studies.},
 	language = {en},
-	urldate = {2018-01-15},
+	
 	booktitle = {Automated {Reasoning}},
 	publisher = {Springer, Cham},
 	author = {Aoto, Takahito and Kikuchi, Kentaro},
@@ -856,10 +856,10 @@
 	series = {{POPL} '94},
 	title = {A {Functional} {Theory} of {Local} {Names}},
 	isbn = {978-0-89791-636-3},
-	url = {http://doi.acm.org/10.1145/174675.175187},
-	doi = {10.1145/174675.175187},
+	
+	
 	abstract = {\&lgr;v is an extension of the \&lgr;-calculus with a binding construct for local names. The extension has properties analogous to classical \&lgr;-calculus and preserves all observational equivalences of \&lgr;. It is useful as a basis for modeling wide-spectrum languages that build on a functional core.},
-	urldate = {2018-01-20},
+	
 	booktitle = {Proceedings of the 21st {ACM} {SIGPLAN}-{SIGACT} {Symposium} on {Principles} of {Programming} {Languages}},
 	publisher = {ACM},
 	author = {Odersky, Martin},
@@ -879,11 +879,11 @@
 	volume = {49},
 	issn = {0022-4812, 1943-5886},
 	shorttitle = {Review},
-	url = {https://projecteuclid.org/euclid.jsl/1183741496},
+	
 	abstract = {Project Euclid - mathematics and statistics online},
 	language = {EN},
 	number = {1},
-	urldate = {2018-01-21},
+	
 	journal = {J. Symbolic Logic},
 	author = {Engeler, E.},
 	month = mar,
@@ -894,7 +894,7 @@
 
 @inproceedings{berger_inverse_1991,
 	title = {An inverse of the evaluation functional for typed lambda;-calculus},
-	doi = {10.1109/LICS.1991.151645},
+	
 	abstract = {A functional p{\textrightarrow}e (procedure{\textrightarrow}expression) that inverts the evaluation functional for typed $\lambda$-terms in any model of typed $\lambda$-calculus containing some basic arithmetic is defined. Combined with the evaluation functional, p{\textrightarrow}e yields an efficient normalization algorithm. The method is extended to $\lambda$-calculi with constants and is used to normalize (the $\lambda$-representations of) natural deduction proofs of (higher order) arithmetic. A consequence of theoretical interest is a strong completeness theorem for $\beta$$\eta$-reduction. If two $\lambda$-terms have the same value in some model containing representations of the primitive recursive functions (of level 1) then they are probably equal in the $\beta$$\eta$-calculus},
 	booktitle = {[1991] {Proceedings} {Sixth} {Annual} {IEEE} {Symposium} on {Logic} in {Computer} {Science}},
 	author = {Berger, U. and Schwichtenberg, H.},
@@ -911,9 +911,9 @@
 	title = {Typeful {Normalization} by {Evaluation}},
 	volume = {39},
 	isbn = {978-3-939897-88-0},
-	url = {http://drops.dagstuhl.de/opus/volltexte/2015/5492},
-	doi = {10.4230/LIPIcs.TYPES.2014.72},
-	urldate = {2018-02-07},
+	
+	
+	
 	booktitle = {20th {International} {Conference} on {Types} for {Proofs} and {Programs} ({TYPES} 2014)},
 	publisher = {Schloss Dagstuhl{\textendash}Leibniz-Zentrum fuer Informatik},
 	author = {Danvy, Olivier and Keller, Chantal and Puech, Matthias},
@@ -926,7 +926,7 @@
 
 @inproceedings{abel_normalization_2007,
 	title = {Normalization by {Evaluation} for {Martin}-{Lof} {Type} {Theory} with {Typed} {Equality} {Judgements}},
-	doi = {10.1109/LICS.2007.33},
+	
 	abstract = {The decidability of equality is proved for Martin-Lof type theory with a universe a la Russell and typed beta-eta- equality judgements. A corollary of this result is that the constructor for dependent function types is injective, a property which is crucial for establishing the correctness of the type-checking algorithm. The decision procedure uses normalization by evaluation, an algorithm which first interprets terms in a domain with untyped semantic elements and then extracts normal forms. The correctness of this algorithm is established using a PER-model and a logical relation between syntax and semantics.},
 	booktitle = {22nd {Annual} {IEEE} {Symposium} on {Logic} in {Computer} {Science} ({LICS} 2007)},
 	author = {Abel, A. and Coquand, T. and Dybjer, P.},
@@ -951,11 +951,11 @@
 	series = {Lecture {Notes} in {Computer} {Science}},
 	title = {Linear unification of higher-order patterns},
 	isbn = {978-3-540-56610-6 978-3-540-47598-9},
-	url = {https://link.springer.com/chapter/10.1007/3-540-56610-4_78},
-	doi = {10.1007/3-540-56610-4_78},
+	
+	
 	abstract = {Higher-order patterns are simply typed $\lambda$-terms in $\eta$-long form where free variables F only occur in the form F(x 1,...,x k ) with x 1, ...,x k being distinct bound variables. It has been proved in [6] that in the simply typed $\lambda$-calculus unification of higher-order patterns modulo $\alpha$, $\beta$ and $\eta$ reductions is decidable and unifiable higher-order patterns have a most general unifier.In this paper a unification algorithm for higher-order patterns is presented, whose time and space complexities are proved to be linear in the size of input.},
 	language = {en},
-	urldate = {2018-03-11},
+	
 	booktitle = {{TAPSOFT}'93: {Theory} and {Practice} of {Software} {Development}},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Qian, Zhenyu},
@@ -970,11 +970,11 @@
 	title = {System {Description}: {Twelf} {\textemdash} {A} {Meta}-{Logical} {Framework} for {Deductive} {Systems}},
 	isbn = {978-3-540-66222-8 978-3-540-48660-2},
 	shorttitle = {System {Description}},
-	url = {https://link.springer.com/chapter/10.1007/3-540-48660-7_14},
-	doi = {10.1007/3-540-48660-7_14},
+	
+	
 	abstract = {Twelf is a meta-logical framework for the specification, implementation, and meta-theory of deductive systems from the theory of programming languages and logics. It relies on the LF type theory and the judgments-as-types methodology for specification [HHP93], a constraint logic programming interpreter for implementation [Pfe91], and the meta-logic M2 for reasoning about object languages encoded in LF [SP98]. It is a significant extension and complete reimplementation of the Elf system [Pfe94].Twelf is written in Standard ML and runs under SML of New Jersey and MLWorks on Unix and Window platforms. The current version (1.2) is distributed with a complete manual, example suites, a tutorial in the form of on-line lecture notes [Pfe], and an Emacs interface. Source and binary distributions are accessible via the Twelf home page http://www.cs.cmu.edu/{\textasciitilde}twelf.},
 	language = {en},
-	urldate = {2018-03-11},
+	
 	booktitle = {Automated {Deduction} {\textemdash} {CADE}-16},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Pfenning, Frank and Sch{\"u}rmann, Carsten},
@@ -995,10 +995,10 @@
 
 @misc{friedman_reasoned_2005,
 	title = {The {Reasoned} {Schemer}},
-	url = {https://mitpress.mit.edu/books/reasoned-schemer},
+	
 	abstract = {Extending the functional language Scheme with logical constructs in order to help the functional programmer think logically and the logic programmer think functionally.},
 	language = {en-US},
-	urldate = {2018-03-11},
+	
 	journal = {MIT Press},
 	author = {Friedman, Daniel P. and Byrd, William E. and Kiselyov, Oleg},
 	year = {2005},
@@ -1009,11 +1009,11 @@
 	title = {Higher {Order} {Unification} via {Explicit} {Substitutions}},
 	volume = {157},
 	issn = {0890-5401},
-	url = {http://www.sciencedirect.com/science/article/pii/S0890540199928377},
-	doi = {10.1006/inco.1999.2837},
+	
+	
 	abstract = {Higher order unification is equational unification for $\beta$$\eta$-conversion. But it is not first order equational unification, as substitution has to avoid capture. Thus, the methods for equational unification (such as narrowing) built upon grafting (i.e., substitution without renaming) cannot be used for higher order unification, which needs specific algorithms. Our goal in this paper is to reduce higher order unification to first order equational unification in a suitable theory. This is achieved by replacing substitution by grafting, but this replacement is not straightforward as it raises two major problems. First, some unification problems have solutions with grafting but no solution with substitution. Then equational unification algorithms rest upon the fact that grafting and reduction commute. But grafting and $\beta$$\eta$-reduction do not commute in $\lambda$-calculus and reducing an equation may change the set of its solutions. This difficulty comes from the interaction between the substitutions initiated by $\beta$$\eta$-reduction and the ones initiated by the unification process. Two kinds of variables are involved: those of $\beta$$\eta$-conversion and those of unification. So, we need to set up a calculus which distinguishes between these two kinds of variables and such that reduction and grafting commute. For this purpose, the application of a substitution of a reduction variable to a unification one must be delayed until this variable is instantiated. Such a separation and delay are provided by a calculus of explicit substitutions. Unification in such a calculus can be performed by well-known algorithms such as narrowing, but we present a specialised algorithm for greater efficiency. At last we show how to relate unification in $\lambda$-calculus and in a calculus with explicit substitutions. Thus, we come up with a new higher order unification algorithm which eliminates some burdens of the previous algorithms, in particular the functional handling of scopes. Huet's algorithm can be seen as a specific strategy for our algorithm, since each of its steps can be decomposed into elementary ones, leading to a more atomic description of the unification process. Also, solved forms in $\lambda$-calculus can easily be computed from solved forms in $\lambda$$\sigma$-calculus.},
 	number = {1},
-	urldate = {2018-04-12},
+	
 	journal = {Information and Computation},
 	author = {Dowek, Gilles and Hardin, Th{\'e}r{\`e}se and Kirchner, Claude},
 	month = feb,
@@ -1027,11 +1027,11 @@
 	title = {Natural deduction as higher-order resolution},
 	volume = {3},
 	issn = {0743-1066},
-	url = {http://www.sciencedirect.com/science/article/pii/0743106686900154},
-	doi = {10.1016/0743-1066(86)90015-4},
+	
+	
 	abstract = {An interactive theorem prover, Isabelle, is under development. In lcf, each inference rule is represented by one function for forwards proof and another (a tactic) for backwards proof. In Isabelle, each inference rule is represented by a Horn clause. Resolution gives both forwards and backwards proof, supporting a large class of logics. Isabelle has been used to prove theorems in Martin-L{\"o}f's constructive type theory. Quantifiers pose several difficulties: substitution, bound variables, Skolemization. Isabelle's representation of logical syntax is the typed $\lambda$-calculus, requiring higher-order unification. It may have potential for logic programming. Depth-first subgoaling along inference rules constitutes a higher-order PROLOG.},
 	number = {3},
-	urldate = {2018-04-12},
+	
 	journal = {The Journal of Logic Programming},
 	author = {Paulson, Lawrence C.},
 	month = oct,
@@ -1055,11 +1055,11 @@
 	title = {System {Description}: {Twelf} {\textemdash} {A} {Meta}-{Logical} {Framework} for {Deductive} {Systems}},
 	isbn = {978-3-540-66222-8 978-3-540-48660-2},
 	shorttitle = {System {Description}},
-	url = {https://link.springer.com/chapter/10.1007/3-540-48660-7_14},
-	doi = {10.1007/3-540-48660-7_14},
+	
+	
 	abstract = {Twelf is a meta-logical framework for the specification, implementation, and meta-theory of deductive systems from the theory of programming languages and logics. It relies on the LF type theory and the judgments-as-types methodology for specification [HHP93], a constraint logic programming interpreter for implementation [Pfe91], and the meta-logic M2 for reasoning about object languages encoded in LF [SP98]. It is a significant extension and complete reimplementation of the Elf system [Pfe94].Twelf is written in Standard ML and runs under SML of New Jersey and MLWorks on Unix and Window platforms. The current version (1.2) is distributed with a complete manual, example suites, a tutorial in the form of on-line lecture notes [Pfe], and an Emacs interface. Source and binary distributions are accessible via the Twelf home page http://www.cs.cmu.edu/{\textasciitilde}twelf.},
 	language = {en},
-	urldate = {2018-04-12},
+	
 	booktitle = {Automated {Deduction} {\textemdash} {CADE}-16},
 	publisher = {Springer, Berlin, Heidelberg},
 	author = {Pfenning, Frank and Sch{\"u}rmann, Carsten},
@@ -1073,12 +1073,12 @@
 	title = {Five stages of accepting constructive mathematics},
 	volume = {54},
 	issn = {0273-0979, 1088-9485},
-	url = {http://www.ams.org/home/page/},
-	doi = {10.1090/bull/1556},
+	
+	
 	abstract = {On the odd day, a mathematician might wonder what constructive mathematics is all about. They may have heard arguments in favor of constructivism but are not at all convinced by them, and in any case they may care little about philosophy. A typical introductory text about constructivism spends a great deal of time explaining the principles and contains only trivial mathematics, while advanced constructive texts are impenetrable, like all unfamiliar mathematics. How then can a mathematician find out what constructive mathematics feels like? What new and relevant ideas does constructive mathematics have to offer, if any? I shall attempt to answer these questions.},
 	language = {en-US},
 	number = {3},
-	urldate = {2018-04-12},
+	
 	journal = {Bull. Amer. Math. Soc.},
 	author = {Bauer, Andrej},
 	year = {2017},
@@ -1100,11 +1100,11 @@
 	title = {A {Head}-to-{Head} {Comparison} of de {Bruijn} {Indices} and {Names}},
 	volume = {174},
 	issn = {1571-0661},
-	url = {http://www.sciencedirect.com/science/article/pii/S1571066107002319},
-	doi = {10.1016/j.entcs.2007.01.018},
+	
+	
 	abstract = {Often debates about pros and cons of various techniques for formalising lambda-calculi rely on subjective arguments, such as de Bruijn indices are hard to read for humans or nominal approaches come close to the style of reasoning employed in informal proofs. In this paper we will compare four formalisations based on de Bruijn indices and on names from the nominal logic work, thus providing some hard facts about the pros and cons of these two formalisation techniques. We conclude that the relative merits of the different approaches, as usual, depend on what task one has at hand and which goals one pursues with a formalisation.},
 	number = {5},
-	urldate = {2018-04-17},
+	
 	journal = {Electronic Notes in Theoretical Computer Science},
 	author = {Berghofer, Stefan and Urban, Christian},
 	month = jun,
@@ -1112,4 +1112,66 @@
 	keywords = {de Bruijn indices, Isabelle/HOL, lambda-calculi, nominal logic work, Proof assistants},
 	pages = {53--67},
 	file = {ScienceDirect Full Text PDF:/home/mvc/Dropbox/home/zotero/storage/64N8TZ7Y/Berghofer and Urban - 2007 - A Head-to-Head Comparison of de Bruijn Indices and.pdf:application/pdf;ScienceDirect Snapshot:/home/mvc/Dropbox/home/zotero/storage/6SYS6W8Y/S1571066107002319.html:text/html}
+}
+
+@inproceedings{alpuente_defining_2009,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Defining {Datalog} in {Rewriting} {Logic}},
+	isbn = {978-3-642-12591-1 978-3-642-12592-8},
+	
+	
+	abstract = {In recent work, the effectiveness of using declarative languages has been demonstrated for many problems in program analysis. Using a simple relational query language, like Datalog, complex interprocedural analyses involving dynamically created objects can be expressed in just a few lines. By exploiting the power of the Rewriting Logic language Maude, we aim at transforming Datalog programs into efficient rewrite systems that compute the same answers. A prototype has been implemented and applied to some real-world Datalog-based analyses. Experimental results show that the performance of solving Datalog queries in rewriting logic is comparable to state-of-the-art Datalog solvers.},
+	language = {en},
+	
+	booktitle = {Logic-{Based} {Program} {Synthesis} and {Transformation}},
+	publisher = {Springer, Berlin, Heidelberg},
+	author = {Alpuente, M. and Feli{\'u}, M. A. and Joubert, C. and Villanueva, A.},
+	month = sep,
+	year = {2009},
+	pages = {188--204},
+	file = {Snapshot:/home/mvc/Dropbox/home/zotero/storage/N928QLKG/978-3-642-12592-8_14.html:text/html}
+}
+
+@inproceedings{urban_avoiding_2005,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Avoiding {Equivariance} in {Alpha}-{Prolog}},
+	isbn = {978-3-540-25593-2 978-3-540-32014-2},
+	
+	
+	abstract = {$\alpha$Prolog is a logic programming language which is well-suited for rapid prototyping of type systems and operational semantics of typed $\lambda$-calculi and many other languages involving bound names. In $\alpha$Prolog, the nominal unification algorithm of Urban, Pitts and Gabbay is used instead of first-order unification. However, although $\alpha$Prolog can be viewed as Horn-clause logic programming in Pitts{\textquoteright} nominal logic, proof search using nominal unification is incomplete in nominal logic. Because of nominal logic{\textquoteright}s equivariance principle, complete proof search would require solving NP-hard equivariant unification problems. Nevertheless, the $\alpha$Prolog programs we studied run correctly without equivariant unification. In this paper, we give several examples of $\alpha$Prolog programs that do not require equivariant unification, develop a test for identifying such programs, and prove the correctness of this test via a proof-theoretic argument.},
+	language = {en},
+	
+	booktitle = {Typed {Lambda} {Calculi} and {Applications}},
+	publisher = {Springer, Berlin, Heidelberg},
+	author = {Urban, Christian and Cheney, James},
+	month = apr,
+	year = {2005},
+	pages = {401--416},
+	file = {Snapshot:/home/mvc/Dropbox/home/zotero/storage/I3VZUVK2/11417170_29.html:text/html}
+}
+
+@article{cheney_equivariant_2010,
+	title = {Equivariant {Unification}},
+	volume = {45},
+	issn = {0168-7433, 1573-0670},
+	
+	
+	abstract = {Nominal logic is a variant of first-order logic with special facilities for reasoning about names and binding based on the underlying concepts of swapping and freshness. It serves as the basis of logic programming, term rewriting, and automated theorem proving techniques that support reasoning about languages with name-binding. These applications often require nominal unification, or equational reasoning and constraint solving in nominal logic. Urban, Pitts and Gabbay developed an algorithm for a broadly applicable class of nominal unification problems. However, because of nominal logic{\textquoteright}s equivariance property, these applications also require a different form of unification, which we call equivariant unification. In this article, we first study the complexity of the decision problem for equivariant unification and equivariant matching. We show that these problems are NP-hard in general, as is nominal unification without the ground-name restrictions employed in previous work on nominal unification. Moreover, we present an exponential-time algorithm for equivariant unification that can be used to decide satisfiability, or produce a complete finite set of solutions. We also study special cases that can be solved efficiently. In particular, we present a polynomial time algorithm for swapping-free equivariant matching, that is, for matching problems in which the swapping operation does not appear.},
+	language = {en},
+	number = {3},
+	
+	journal = {J Autom Reasoning},
+	author = {Cheney, James},
+	month = oct,
+	year = {2010},
+	pages = {267--300},
+	file = {Snapshot:/home/mvc/Dropbox/home/zotero/storage/QBB8WSAZ/s10817-009-9164-3.html:text/html}
+}
+
+@article{bagwell_ideal_2001,
+	title = {Ideal {Hash} {Trees}},
+	abstract = {INTRODUCTION The Hash Array Mapped Trie (HAMT) is based on the simple notion of hashing a key and storing the key in a trie based on this hash value. The AMT is used to implement the required structure e\#ciently. The Array Mapped Trie (AMT) is a versatile data structure and yields attractive alternative to contemporary algorithms in many applications. Here I describe how it is used to develop Hash Trees with near ideal characteristics that avoid the traditional problem, setting the size of the initial root hash table or incurring the high cost of dynamic resizing to achieve an acceptable performance. Tries were first developed by Fredkin [1960] recently implemented elegantly by Bentley and Sedgewick [1997] as the Ternary Search Trees(TST), and by Nilsson and Tikkanen [1998] as Level Path Compressed(LPC) tries. AMT performs 3-4 times faster than TST using 60 percent less space and are faster than LPC tries. During a search bits are progressively used from the hash to traverse},
+	author = {Bagwell, Phil},
+	month = nov,
+	year = {2001}
 }
