@@ -51,11 +51,11 @@
 % }
 
 \newcommand{\dframe}[5] {
-  (#1, #2) \vdash #3 \Rightarrow_\delta (#4, #5)
+  #1; #2 \vdash #3 \Rightarrow_\delta #4; #5
 }
 
 \newcommand{\pframe}[5] {
-  (#1, #2) \vdash #3 \Rightarrow_\textrm{pull} (#4, #5)
+  #1; #2 \vdash #3 \Rightarrow_\textrm{pull} #4; #5
 }
 
 % \newcommand{\pframe}[5] {
@@ -72,6 +72,10 @@
 
 \newcommand{\pr}[2] {
  (#1\, #2)
+}
+
+\newcommand{\eq}[2] {
+ #1 = #2
 }
 
 \newcommand{\bd}[2] {
@@ -132,24 +136,23 @@
 \section{Introduction and background}
 
 The rules that identify terms, such as $\alpha$, $\beta$, and $\eta$
-in the $\lambda$-calculus~\cite{church_calculi_1941}, are critical to
+in the $\lambda$-calculus~\citep{church_calculi_1941}, are critical to
 building programming languages and formal systems.  As users of logic
 programming languages and theorem provers, we desire such rules to be
 out-of-the-box in the tool-kit.  Two theories have aimed to provide
-this convenience: Miller's higher-order pattern
-unification~\cite{miller_logic_1989} and nominal
-unification~\cite{urban_nominal_2004} introduced by Urban, Pitts, and
-Gabbay.  Higher-order pattern unification, which handles a fragment of
-$\beta\eta$-rules, is the foundation of
-Isabelle~\cite{paulson_natural_1986},
-$\lambda$Prolog~\cite{nadathur_overview_1988}, and
-Twelf~\cite{pfenning_system_1999-1}.  Nominal unification, which
+this convenience: higher-order pattern unification of
+\citet{miller_logic_1989} and nominal unification of
+\citet{urban_nominal_2004}.  Higher-order pattern unification, which
+handles a fragment of $\beta\eta$-rules, is the foundation of
+Isabelle~\citep{paulson_natural_1986},
+$\lambda$Prolog~\citep{nadathur_overview_1988}, and
+Twelf~\citep{pfenning_system_1999-1}.  Nominal unification, which
 focuses on the $\alpha$-rule, has inspired extensions of logic
-programming languages, like $\alpha$Prolog~\cite{cheney_prolog:_2004}
-and $\alpha$Kanren~\cite{byrd_alphakanren:_2007}, as well as theorem
-provers, like nominal Isabelle~\cite{urban_nominal_2005} and
-$\alpha$LeanTAP~\cite{near_leantap:_2008}.  Although these two
-theories can be reduced to eachother~\cite{cheney_relating_2005,
+programming languages, like $\alpha$Prolog~\citep{cheney_prolog:_2004}
+and $\alpha$Kanren~\citep{byrd_alphakanren:_2007}, as well as theorem
+provers, like nominal Isabelle~\citep{urban_nominal_2005} and
+$\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
+theories can be reduced to eachother~\citep{cheney_relating_2005,
   levy_nominal_2012}, implementing higher-order pattern unification is
 more complicated because it has to deal with application and
 capture-avoiding substitution.  On the other hand, implementation of
@@ -157,10 +160,10 @@ nominal unification, which essentially unifies first-order terms, is
 more straightforward and easier to formalize.  Beyond unification,
 techniques from the nominal approach, such as swapping and freshness
 environments, have impacted the areas as diverse as
-rewriting~\cite{fernandez_nominal_2004, fernandez_nominal_2005,
+rewriting~\citep{fernandez_nominal_2004, fernandez_nominal_2005,
   fernandez_nominal_2007, aoto_nominal_2016}, equational
-theories~\cite{ayala-rincon_nominal_2016}, and reasoning about
-bindings in abstract syntax~\cite{pitts_metalanguage_2000,
+theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
+bindings in abstract syntax~\citep{pitts_metalanguage_2000,
   gabbay_new_2002}.
 
 Concerning time complexity, \citet{qian_unification_1996} proved that
@@ -171,16 +174,14 @@ $O(n^2)$. \citet{levy_nominal_2012} give a quadratic time reduction
 from nominal unification to higher-order pattern unification.
 Meanwhile, algorithmic advances by \citet{paterson_linear_1978} and
 \citet{martelli_efficient_1982} for unification have inspired many
-improvements to the efficiency of nominal unification.  Also, the
-ideas like applying swappings lazily and composing swappings eagerly
-and sharing subterms have been
-explored. \citet{calves_polynomial_2008, calves_complexity_2010,
-  calves_first-order_2010} describe quadratic algorithms that extend
-Paterson-Wegman and Martelli-Montanari's algorithms with name
-handling; \citep{levy_efficient_2010} describe a new quadratic
-algorithm that reduces unification problems to a sequence of freshness
-and equality constraints in linear time and then solves the
-constraints in quadratic time.
+improvements to the efficiency of nominal unification.  Also, ideas
+like applying swappings lazily and composing swappings eagerly and
+sharing subterms have been explored. \citet{calves_complexity_2010}
+describes quadratic algorithms that extend Paterson-Wegman and
+Martelli-Montanari's algorithms with name handling;
+\citet{levy_efficient_2010} describe a quadratic algorithm that
+reduces unification problems to a sequence of freshness and equality
+constraints and then solves the constraints.
 
 The inefficiency of these nominal unification algorithms comes from
 the swapping actions, that is, to decide the $\alpha$-equivalence of
@@ -189,18 +190,21 @@ respect to the number of binders.  One might try to replace these
 lists with a more efficient lookup structure, such as a hash table,
 but then composing two swappings would take linear time, and that
 operation is also rather frequent.  Here we present an algorithm that
-does not use swappings, instead, this algorithm allows to utilize Hash
-Array Mapped Trie (HAMT)~\citep{bagwell_ideal_2001}, which provides
-efficient lookup and uses sharing to avoid duplication.
+does not use swappings but instead represents names with De Bruijn
+numbers which enables the use of persistent hash tables, in
+particular, a Hash Array Mapped Trie
+(HAMT)~\citep{bagwell_ideal_2001}. HAMTs provide efficient lookup and
+they use sharing to avoid the linear-time costs that would normally be
+associated with duplicating a hash table.
 
 We organize this paper as follows.  In section~\ref{closures}, we show
-a representation of de Bruijn numbers that is suitable for
-unification.  In section~\ref{unify}, we describe the abstract
+an alternative representation of de Bruijn numbers that is suitable
+for unification.  In section~\ref{unify}, we describe the abstract
 machines for name management and unification.  In
 section~\ref{efficiency}, we discuss the time complexity of this
-algorithm.  The related proofs formalized in Agda, available at
-\href{https://github.com/mvcccccc/UNIF2018}{the authors' Github}, is
-in progress.
+algorithm. The proofs of our claims are in progress and are available
+at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github},
+formalized in Agda.
   
 
 \section{De Bruijn numbers should coexist with names}
@@ -304,11 +308,10 @@ mappings of both directions: names to numbers and numbers to names.
 
 
 \begin{definition}
-  A closure is an ordered pair $\clos{t}{\Phi}$ of a term $t$, defined
-  in figure~\ref{table:terms}, and a scope $\Phi$, where the scope is
-  an ordered list of binders that occur in the enclosing context.
-  Hereafter, we refer to a name as an atom, and we refer to the atom
-  of an abstraction as a binder.
+  A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
+  defined in figure~\ref{table:terms}, and a scope $\Phi$, where the
+  scope is an ordered list of names for the binders in the enclosing
+  context.  Hereafter, we refer to a name as an \emph{atom}.
 \end{definition}
 
 When the term of a closure is an atom, the closure itself represents a
@@ -343,17 +346,32 @@ Figure~\ref{table:same-name} defines the rules to decide whether two
 atoms are $\alpha$-equivalent w.r.t theirs scopes, written as
 $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
+% temporary
+\pagebreak
+
 \section{Unification}
+
 \label{unify}
 \begin{wrapfigure}{r}{0.5\textwidth}
-  \caption{Unification terms\label{table:new-terms}}
+  \caption{Unification terms and problems\label{table:new-terms}}
     \begin{tabular}{r l l l}  
+    $X,Y$   &       &     & variables \\
+      $xs,ys$ & $::=$ & $\epsilon$& list of variables \\
+      & $|$&  $X,xs$ &  \\
     $t,l,r$ & $::=$ & $a$ & atoms \\
     & $|$ & $\lambda a.t$ & abstractions \\
     & $|$ & $\app{l}{r}$ & applications \\
-    & $|$ & $X,\,Y$ & variables \\
+      & $|$ & $X$ & \\
+      $e_\nu$  & $::=$ & $(a,\Phi) = (a,\Phi)$ & $\nu$-equations \\
+           & $|$ &  $(X,\Phi) = (a,\Phi)$ \\
+      $p_\nu$  & $::=$ & $\epsilon$ & $\nu$-problems \\
+           & $|$ & $e_\nu, p_\nu$ \\
+      $e_\delta$  & $::=$& $(X,\Phi) = (X,\Phi)$ & $\delta$-equations \\
+      $p_\delta$  & $::=$ & $\epsilon$ & $\delta$-problems \\
+           & $|$ & $e_\delta, p_\delta$
     \end{tabular}
 \end{wrapfigure}
+
 In figure~\ref{table:new-terms}, we introduce unification variables,
 shortened as var.  First, let's consider a simplified unification
 problem: a variable can only be instantiated by a name, that is,
@@ -385,82 +403,48 @@ $\sigma$ and $\delta$.
   \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
   \begin{tabular}{c}
-    \framebox{$\nuframe{\sigma}{problem_\nu^*}{\sigma}$} \\ \\
+    \framebox{$\nuframe{\sigma}{p_\nu}{\sigma}$} \\ \\
   \end{tabular}
   \end{minipage}
 
 \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
-    \infer[\transname{empty}]{\nuframe{\sigma_0}{\emptyset}{\sigma_0}}{%
+    \infer[\transname{Empty}]{\nuframe{\sigma_0}{\epsilon}{\sigma_0}}{%
 } \\ \\
 
     
-    \infer[\transname{name-name}]{\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p^*)}{\sigma_1}}{%
-    \nuframe{\sigma_0}{p^*}{\sigma_1} &
+    \infer[\transname{Name-Name}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}{%
+    \nuframe{\sigma_0}{p}{\sigma_1} &
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
 } \\ \\
 
-     \infer[\transname{name-meta}]{\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p^*)}{\sigma_1}}{%
-    \nuframe{(\{X_2/a_2\}\cup\sigma_0)}{p^*}{\sigma_1} &
+     \infer[\transname{Name-Meta}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p}{\sigma_1}}{%
+    \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} \\
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
 } \\
 
   \end{tabular}
   \end{minipage}
-  
-  \begin{minipage}[b]{\textwidth}
-  \caption{$\delta$-machine and pull}\label{machine:delta}
-  \begin{tabular}{c}
-    \fbox{\begin{varwidth}{\textwidth}
-        $\dframe{\sigma}{problem_\delta^*}{var^*}{\sigma}{problem_\delta^*}$ \\
-        $\pframe{\sigma}{var^*}{problem_\delta^*}{\sigma}{var^*}$
-        \end{varwidth}} \\ \\
-  \end{tabular}
-  \end{minipage}
+\end{wrapfigure}
 
-\begin{minipage}[b]{0.4\textwidth}
-  \begin{tabular}{l}
-         \infer[\transname{empty-q}]{\dframe{\sigma_0}{\delta_0}{\emptyset}{\sigma_0}{\delta_0}}{%
-} \\ \\
-
-         \infer[\transname{empty-D}]{\dframe{\sigma_0}{\emptyset}{X^*}{\sigma_0}{\emptyset}}{%
-} \\ \\
-
-        \infer[\transname{step}]{\dframe{\sigma_0}{\delta_0}{(X, X_0^*)}{\sigma_1}{\delta_1}}{%
-\dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{X_1^*}{\sigma_1}{\delta_1} \\
-                                                        \pframe{\sigma_0}{X_0^*}{\delta_0(X)}{\sigma_0'}{X_1^*}
-} \\ \\
-
-
-             \infer[\transname{empty}]{\pframe{\sigma_0}{q_0}{\emptyset}{\sigma_0}{q_0}}{%
-} \\ \\
-
-                 \infer[\transname{name-name}]{\pframe{\sigma_0}{X_0^*}{(\pr{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p^*)}{\sigma_1}{X_1^*}}{%
-    \pframe{\sigma_0}{X_0^*}{p^*}{\sigma_1}{X_1^*} \\
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & \sigma_0(Y_2) = a_2 
-} \\ \\
-
-                     \infer[\transname{name-meta}]{\pframe{\sigma_0}{X_0^*}{(\pr{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p^*)}{\sigma_1}{X_1^*}}{%
-    \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, X_0^*)}{p^*}{\sigma_1}{X_1^*} \\
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \\ \sigma_0(Y_1) = a_1 \\ Y_2\notin dom(\sigma_0)
-} 
-
-  \end{tabular}
-
-  \end{minipage}
-  \end{wrapfigure}
 
 The simplified problem is about solving three kinds of
-closure-equations: name-name, name-var, and var-var.  We refer to a
-name-name or name-var problem as a \emph{problem$_\nu$} and refer to a
-var-var problem as a \emph{problem$_\delta$}.  Given a set of
+closure-equations: atom-atom, atom-var, and var-var.
+{\color{red}[ talk about the equations and problems
+    defined in Figure~\ref{table:new-terms} ]}
+We refer to a
+atom-atom or atom-var problem as a \emph{problem$_\nu$} and refer to a
+var-var problem as a \emph{problem$_\delta$}.
+Given a set of
 problem$_\nu$ and a set of problem$_\delta$, we first run the
 $\nu$-machine, defined in figure~\ref{machine:nu}, on the set of
-problem$_\nu$ to generate a substitution.  Then the $\delta$-machine
-computes the final unifier on three inputs: the substitution resulted
-from the $\nu$-machine, $\delta$, and a list of known variables,
-initialized by the domain of the substitution.  If no transitions
-apply, the machine fails and the unification problem has no unifier.
+problem$_\nu$ to generate a substitution.
+
+The $\delta$-machine in Figure~\ref{machine:delta} computes the final
+unifier on three inputs: the substitution resulted from the
+$\nu$-machine, $\delta$, and a list of known variables, initialized by
+the domain of the substitution.  If no transitions apply, the machine
+fails and the unification problem has no unifier.
 
 
 \begin{lemma}\label{lemma:numachine}
@@ -472,10 +456,53 @@ apply, the machine fails and the unification problem has no unifier.
     By structural induction on the transitions of the machines.
 \end{proof}
 
+
 Now the question is how to generalize the previous algorithm, that is,
 given two arbitrary terms, where a variable may be instantiated by any
 term besides atoms, can we re-shape the two terms to create a proper
 input to the two machines?
+
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{minipage}[b]{\textwidth}
+  \caption{$\delta$-machine and the pull operation}\label{machine:delta}
+  \begin{tabular}{c}
+    \fbox{\begin{varwidth}{\textwidth}
+        $\dframe{\sigma}{p_\delta}{xs}{\sigma}{p_\delta}$ \\
+        $\pframe{\sigma}{xs}{p_\delta}{\sigma}{xs}$
+        \end{varwidth}} \\ \\
+  \end{tabular}
+  \end{minipage}
+
+\begin{minipage}[b]{0.4\textwidth}
+  \begin{tabular}{l}
+         \infer[\transname{Empty-Q}]{\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}{%
+} \\ \\
+
+         \infer[\transname{Empty-D}]{\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}{%
+} \\ \\
+
+        \infer[\transname{Step}]{\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}{%
+\dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1} \\
+                                                        \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1}
+} \\ \\
+
+
+\infer[\transname{Empty}]{\pframe{\sigma}{q}{\emptyset}{\sigma}{q}}{%
+} \\ \\
+
+\infer[\transname{Name-Name}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & \sigma_0(Y_2) = a_2 
+} \\ \\
+
+\infer[\transname{Name-Meta}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & Y_2\notin dom(\sigma_0)} 
+\end{tabular}
+
+\end{minipage}
+\end{wrapfigure}
 
 Finding the common structure, obviously, is merely a first-order
 unification problem.  The $\rho$-machine, defined in
