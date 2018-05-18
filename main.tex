@@ -425,8 +425,8 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
 
 The simplified problem is about solving three kinds of closure-equations:
 name-name, name-var, and var-var.
-We refer to the name-name and name-var problem as \emph{problem$_\nu$}
-and refer to the var-var problem as \emph{problem$_\delta$}.
+We refer to a name-name or name-var problem as a \emph{problem$_\nu$}
+and refer to a var-var problem as a \emph{problem$_\delta$}.
 Given a set of problem$_\nu$ and problem$_\delta$,
 we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on the $\nu$-problems to generate a substitution.
 Then the $\delta$-machine computes the final unifier on three inputs:
