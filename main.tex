@@ -33,24 +33,36 @@
   \lbrack #1, #2 \rbrack_\alpha
 }
 
+% \newcommand{\nuframe}[3] {
+%   #1 \lbrack #2 \rbrack_\nu\Rightarrow #3
+% }
+
 \newcommand{\nuframe}[3] {
-  #1 \lbrack #2 \rbrack_\nu\Rightarrow #3
+  #1 \vdash #2 \Rightarrow_\nu #3
 }
 
+% \newcommand{\dframe}[5] {
+%   (#1, #2) \lbrack #3 \rbrack_\delta\Rightarrow (#4, #5)
+% }
+
 \newcommand{\dframe}[5] {
-  (#1, #2) \lbrack #3 \rbrack_\delta\Rightarrow (#4, #5)
+  (#1, #2) \vdash #3 \Rightarrow_\delta (#4, #5)
 }
 
 \newcommand{\pframe}[5] {
-  (#1, #2) \lbrack #3 \rbrack_\textrm{pull}\Rightarrow (#4, #5)
+  (#1, #2) \vdash #3 \Rightarrow_\textrm{pull} (#4, #5)
 }
+
+% \newcommand{\pframe}[5] {
+%   (#1, #2) \lbrack #3 \rbrack_\textrm{pull}\Rightarrow (#4, #5)
+% }
 
 \newcommand{\rframe}[7] {
-  (#1, #2, #3) \lbrack #4 \rbrack_\rho\Rightarrow (#5, #6, #7)
+  (#1, #2, #3) \vdash #4 \Rightarrow_\rho (#5, #6, #7)
 }
 
-\newcommand{\cframe}[7] {
-  (#1, #2, #3) \lbrack #4 \rbrack_s\Rightarrow (#5, #6, #7)
+\newcommand{\sframe}[7] {
+  (#1, #2, #3) \vdash #4 \Rightarrow_\textrm{step} (#5, #6, #7)
 }
 
 \newcommand{\pr}[2] {
@@ -96,7 +108,7 @@
 
 \begin{abstract}
   We present a nominal unification algorithm
-  that runs in $O(n \times G(n))$ time,
+  that runs in $O(n \times log(n) \times G(n))$ time,
   where $G$ is the functional inverse of Ackermann's function.
   Nominal unification generates a set of variable assignments,
   if there exists one,
@@ -105,7 +117,7 @@
   Operations on name handling, i.e.,
   deciding the $\alpha$-equivalence of two names and
   inferring a name that $\alpha$-equals to a given one,
-  are in constant time.
+  are in logarithmic time.
   To reduce an arbitrary unification problem to such name handlings,
   we preprocess the unification terms
   with the idea of Martelli-Montanari.
@@ -166,29 +178,8 @@ structure, such as a hash table,
 but then composing two swappings would take linear time,
 and that operation is also rather frequent.
 Here we present an algorithm that does not use swappings,
-with the following contributions.
-
-\begin{itemize}
-\item \textbf{Special representations of de Bruijn numbers}
-  We use \textit{static closures} to represent de Bruijn numbers.
-  Static closures preserve both friendly interfaces for human comprehension
-  and efficient structures for machine manipulation.
-  
-\item \textbf{Better run-time efficiency}
-  The algorithm presented here runs in $O(n \times G(n))$.
-  Since we have constant time name management,
-  the overall time complexity is the same as first-order unification.
-  Previous improvements to nominal unification indicate
-  that it is difficult to improve beyond quadratic~\cite
-  {calves_polynomial_2008, calves_complexity_2010, calves_first-order_2010, levy_efficient_2010}.
-
-\item \textbf{Simpler implementation}
-  Unlike traditional nominal unification,
-  we do not use swappings and freshness environments.
-  Using less infrastructure allows an even easier implementation
-  than existing nominal unification algorithms.
-
- \end{itemize} 
+instead, this algorithm allows to utilize hamt~\cite{bagwell_ideal_2001},
+which provides efficient lookup and uses sharing to avoid duplication.
 
   We organize this paper as follows.
   In section~\ref{closures}, we show a representation of
@@ -260,7 +251,7 @@ Closures preserve the mappings of both directions: names to numbers and numbers 
 }\\ \\
 
 \infer[\transname{bound}]{\Phi \vdash \texttt{Bd}\,\, a\,\, i}{%
-  (\texttt{name$\rightarrow$idx}\, \Phi\, a)=i \\
+  (\texttt{name$\rightarrow$idx}\, \Phi\, a)=i &
   (\texttt{idx$\rightarrow$name}\, \Phi\, i)=a
 } \\
 
@@ -273,14 +264,14 @@ Closures preserve the mappings of both directions: names to numbers and numbers 
   \caption{$\approx$-rules\label{table:same-name}}
   \begin{tabular}{l}
 \infer[\transname{same-free}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
-    \Phi_1 \vdash \texttt{Fr}\,\, a_1 \\
-    \Phi_2 \vdash \texttt{Fr}\,\, a_2 \\
+    \Phi_1 \vdash \texttt{Fr}\,\, a_1 &
+    \Phi_2 \vdash \texttt{Fr}\,\, a_2 &
     a_1 = a_2
 } \\ \\
 
 \infer[\transname{same-bound}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
-    \Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 \\
-    \Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 \\
+    \Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 &
+    \Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 &
     i_1 = i_2
 } \\
 
@@ -345,7 +336,7 @@ First, let's consider a simplified unification problem:
 a variable can only be instantiated by a name,
 that is, finding the unifier of two terms
 that share the same structure but differ in atoms and variables.
-A unifier consists of two parts: $\sigma$ and $\Delta$.
+A unifier consists of two parts: $\sigma$ and $\delta$.
 \begin{definition}
   A substitution $\sigma$ is a partial finite function from variables, $X_i$, to terms, $t_i$.
   For readability, we write $\sigma$ as a set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$
@@ -356,52 +347,62 @@ A unifier consists of two parts: $\sigma$ and $\Delta$.
 \begin{definition}
   We call a pair of two closures that represent that same de Bruijn number
   a \emph{closure-equation}.
-  $\Delta$ is a partial finite function from variables to closure-equations,
-  where the variable appear in the term position of one side of the equation.
-  We write $\Delta$ as $\{\pr{C_1}{C_1'}, ..., \pr{C_i}{C_i'}\}$ and
-  we write $\{\pr{C}{C'}\}\cup\Delta$ for extending $\Delta$ with $\pr{C}{C'}$.
-  $\Delta(X)$ yields the list of pairs of closures, that $X$ is on one side of.
+  $\Delta$ is a set of closure-equations.
+  We write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}}, ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and
+  we write $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\delta$ for extending $\delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.
+  We write $\delta$ as a special form of $\Delta$, when for each equation in $\delta$, at least one term of the two closures is a variable.
+  Given a variable $X$, we write $\delta(X)$ as retrieving the list of equations that $X$ is on one side of.
 \end{definition}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
   \begin{tabular}{l l}
-    \transname{empty} & $\nuframe{\sigma_0}{\emptyset}{\sigma_0}$ \\
-    \transname{name-name} & $\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,P^*)}{\sigma_1}$ \\
-    & where $\nuframe{\sigma_0}{P^*}{\sigma_1}$ \\
-    & \hspace{8mm} $\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}$ \\
-    \transname{name-meta} & $\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,P^*)}{\sigma_1}$ \\
-    & where $\nuframe{\sigma_0'}{P^*}{\sigma_1}$ \\
-    & \hspace{8mm} $\sigma_0' = \{\bd{X_2}{a_2}\} \cup \sigma_0$ \\
-    & \hspace{8mm} $\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}$ \\
-    % & where $\aframe{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}\Rightarrow\textbf{true}$ \\
+    \infer[\transname{empty}]{\nuframe{\sigma_0}{\emptyset}{\sigma_0}}{%
+} \\ \\
+
+    
+    \infer[\transname{name-name}]{\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p^*)}{\sigma_1}}{%
+    \nuframe{\sigma_0}{p^*}{\sigma_1} &
+    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
+} \\ \\
+
+     \infer[\transname{name-meta}]{\nuframe{\sigma_0}{(\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p^*)}{\sigma_1}}{%
+    \nuframe{(\{X_2/a_2\}\cup\sigma_0)}{p^*}{\sigma_1} &
+    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
+} \\
+
   \end{tabular}
   \end{minipage}
   
 \begin{minipage}[b]{0.4\textwidth}
   \caption{$\delta$-machine and pull}\label{machine:delta}
-  \begin{tabular}{l l}
-    \transname{empty-q} & $\dframe{\sigma_0}{\Delta_0}{\emptyset}{\sigma_0}{\Delta_0}$ \\
-    \transname{empty-d} & $\dframe{\sigma_0}{\emptyset}{q}{\sigma_0}{\emptyset}$ \\
-    \transname{step}    & $\dframe{\sigma_0}{\Delta_0}{(X,\,q)}{\sigma_1}{\Delta_1}$ \\
-                        & where $\dframe{\sigma_0'}{\Delta_0'}{q'}{\sigma_1}{\Delta_1}$ \\
-                        & \hspace{8mm} $\pframe{\sigma_0}{q}{\Delta_0(X)}{\sigma_0'}{q'}$ \\
-                        & \hspace{8mm} $\Delta_0' = \Delta_0 \setminus \Delta_0(X)$ \\
-                        & \\
-    \transname{empty}   & $\pframe{\sigma_0}{q_0}{\emptyset}{\sigma_0}{q_0}$ \\
-    \transname{name-name}   & $\pframe{\sigma_0}{q_0}{(\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,P^*)}{\sigma_1}{q_1}$ \\
-                            & \hspace{8mm} $\pframe{\sigma_0}{q_0}{P^*}{\sigma_1}{q_1}$ \\
-                            & \hspace{8mm} $\sigma_0(X_1) = a_1$ \\
-                            & \hspace{8mm} $\sigma_0(X_2) = a_2$ \\
-                            & \hspace{8mm} $\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}$ \\
-    \transname{name-meta}   & $\pframe{\sigma_0}{q_0}{(\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,P^*)}{\sigma_1}{q_1}$ \\
-                            & \hspace{8mm} $\pframe{\sigma_0'}{q_0'}{P^*}{\sigma_1}{q_1}$ \\
-                            & \hspace{8mm} $\sigma_0' = \{\bd{X_2}{a_2}\} \cup \sigma_0$ \\
-                            & \hspace{8mm} $q_0' = (X_2, q_0)$ \\
-                            & \hspace{8mm} $\sigma_0(X_1) = a_1$ \\
-                            & \hspace{8mm} $ X_2 \notin dom(\sigma_0)$ \\
-                            & \hspace{8mm} $\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}$ \\
+  \begin{tabular}{l}
+         \infer[\transname{empty-q}]{\dframe{\sigma_0}{\delta_0}{\emptyset}{\sigma_0}{\delta_0}}{%
+} \\ \\
+
+         \infer[\transname{empty-D}]{\dframe{\sigma_0}{\emptyset}{q}{\sigma_0}{\emptyset}}{%
+} \\ \\
+
+        \infer[\transname{step}]{\dframe{\sigma_0}{\delta_0}{(X, q)}{\sigma_1}{\delta_1}}{%
+\dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{q'}{\sigma_1}{\delta_1} \\
+                                                        \pframe{\sigma_0}{q}{\delta_0(X)}{\sigma_0'}{q'}
+} \\ \\
+
+
+             \infer[\transname{empty}]{\pframe{\sigma_0}{q_0}{\emptyset}{\sigma_0}{q_0}}{%
+} \\ \\
+
+                 \infer[\transname{name-name}]{\pframe{\sigma_0}{q_0}{(\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}, p^*)}{\sigma_1}{q_1}}{%
+    \pframe{\sigma_0}{q_0}{p^*}{\sigma_1}{q_1} \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(X_1) = a_1 & \sigma_0(X_2) = a_2 
+} \\ \\
+
+                     \infer[\transname{name-meta}]{\pframe{\sigma_0}{q_0}{(\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}, p^*)}{\sigma_1}{q_1}}{%
+    \pframe{\{X_2/a_2\}\cup\sigma_0}{(X_2, q_0)}{p^*}{\sigma_1}{q_1} \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \\ \sigma_0(X_1) = a_1 \\ X_2\notin dom(\sigma_0)
+} 
+
   \end{tabular}
 
   \end{minipage}
@@ -409,11 +410,11 @@ A unifier consists of two parts: $\sigma$ and $\Delta$.
 
 The simplified problem is about solving three kinds of closure-equations:
 name-name, name-var, and var-var.
-Given $p^*$, a list of name-name and name-var problems and $\Delta$, the var-var problems,
+Given $p^*$, a list of name-name and name-var problems and $\delta$, the var-var problems,
 we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on $p*$ to generate a substitution.
 Then the $\delta$-machine computes the final unifier on three inputs:
 the substitution from $\nu$,
-the var-var problems, $\Delta$,
+the var-var problems, $\delta$,
 and a queue of known variables, which is initialized by the domain of the substitution.
 We write a transition as $\machineframe{acc}{arg}{l}{acc'}$,
 where $arg$ is the input, which the machine runs structural recursion on;
@@ -424,7 +425,7 @@ If no transitions apply, the machine fails and the unification problem has no un
 
 
   \begin{lemma}\label{lemma:numachine}
- For all finite $p^*$ and $\Delta$, the $\nu$-machine and the $\delta$-machine terminates;
+ For all finite $p^*$ and $\delta$, the $\nu$-machine and the $\delta$-machine terminates;
     for all input, the $\nu$-machine and the $\delta$-machine succeeds with the mgu
     if and only if there exists one.
     \end{lemma}
@@ -438,59 +439,101 @@ If no transitions apply, the machine fails and the unification problem has no un
 
     Finding the common structure, obviously, is merely a first-order unification problem.
     The $\rho$-machine, defined in figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari
-    and reduces an arbitrary nominal unification problem to a $p^*$, a $\Delta$, and a substitution.
+    and reduces an arbitrary nominal unification problem to a $p^*$, a $\delta$, and a substitution.
 
-      \begin{wrapfigure}{r}{0.5\textwidth}
+      %\begin{wrapfigure}{l}{0.5\textwidth}
+    \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
-  \begin{tabular}{l l}
-    \transname{empty} & $\rframe{p_0}{\Delta_0}{\sigma_0}{\emptyset}{p_0}{\Delta_0}{\sigma_0}$ \\
-    \transname{step} & $\rframe{p_0}{\Delta_0}{\sigma_0}{(U,\,U^*)}{p_1}{\Delta_1}{\sigma_1}$ \\
-                          & where $\rframe{p_0'}{\Delta_0'}{\sigma_0'}{U*}{p_1}{\Delta_1}{\sigma_1}$ \\
-                          & \hspace{8mm} $\cframe{p_0}{\Delta_0}{\sigma_0}{U}{p_0'}{\Delta_0'}{\sigma_0'}$ \\
-                      & \\
-    \transname{name-name} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_0'}{\Delta_0}{\sigma_0}$ \\
-                          & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}} \cup p_0$  \\
-    \transname{name-meta} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0'}{\Delta_0}{\sigma_0}$ \\
-                          & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
-    \transname{meta-meta} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\Delta_0'}{\sigma_0}$ \\
-                          & where $p_0' = {\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
-    \transname{app-app} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\ 
-    & where $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\Delta_0'}{\sigma_0'}$ \\
-    & \hspace{8mm} $\cframe{p_0'}{\Delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\
-    \transname{abs-abs} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\ 
-    & where $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\Delta_1}{\sigma_1}$ \\
-    & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
-    & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
-    \transname{meta-app} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\ 
-    & where $\cframe{p_0}{\Delta_0}{\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\Delta_0'}{\sigma_0''}$ \\
-    & \hspace{8mm} $\cframe{p_0'}{\Delta_0'}{\sigma_0''}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\
-    & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\app{X_l}{X_r}}\} \cup \sigma_0$ \\
-   \transname{meta-abs} & $\cframe{p_0}{\Delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\Delta_1}{\sigma_1}$ \\ 
-    & where $\cframe{p_0}{\Delta_0}{\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\Delta_1}{\sigma_1}$ \\
-    & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
-    & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
-    & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\lambda\,a_1.X_t}\} \cup \sigma_0$ \\
+  \begin{tabular}{l}
+    \infer[\transname{empty}]{\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}{%
+    } \\  \\
+
+    \infer[\transname{step}]{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}{%
+    \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} \\
+    \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}
+    } \\ \\
+
+        \infer[\transname{name-name}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+    p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
+    } \\ \\
+        \infer[\transname{name-meta}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+    p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
+    } \\ \\
+        \infer[\transname{meta-meta}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}{%
+    \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
+    } \\ \\
+        \infer[\transname{app-app}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
+    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
+    } \\ \\
+            \infer[\transname{abs-abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}\\
+    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)
+    } \\ \\
+        \infer[\transname{meta-app}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
+    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1} 
+    } \\ \\
+        \infer[\transname{meta-abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \\
+    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2) 
+    } \\ \\
+
+
+
+    % \transname{empty} & $\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}$ \\
+    % \transname{step} & $\rframe{p_0}{\delta_0}{\sigma_0}{(U,\,U^*)}{p_1}{\delta_1}{\sigma_1}$ \\
+    %                       & where $\rframe{p_0'}{\delta_0'}{\sigma_0'}{U*}{p_1}{\delta_1}{\sigma_1}$ \\
+    %                       & \hspace{8mm} $\cframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}$ \\
+    %                   & \\
+    % \transname{name-name} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
+   %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}} \cup p_0$  \\
+   %  \transname{name-meta} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
+   %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
+   %  \transname{meta-meta} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_0'}{\sigma_0}$ \\
+   %                        & where $p_0' = {\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
+   %  \transname{app-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'}$ \\
+   %  & \hspace{8mm} $\cframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\
+   %  \transname{abs-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
+   %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
+   %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
+   %  \transname{meta-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0''}$ \\
+   %  & \hspace{8mm} $\cframe{p_0'}{\delta_0'}{\sigma_0''}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\
+   %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\app{X_l}{X_r}}\} \cup \sigma_0$ \\
+   % \transname{meta-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
+   %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
+   %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
+   %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\lambda\,a_1.X_t}\} \cup \sigma_0$ \\
 
   \end{tabular}
-\end{wrapfigure}
+\end{figure}
 
 \section{A note on time complexity}
     \label{efficiency}
     In the previous sections, we represent scopes by lists for simplicity,
     but lists are inefficient for variable lookup.
     To have better time complexity,
-    we represent a scope with two immutable hashtables~\cite{bagwell_ideal_2001} and a counter.
+    we represent a scope with a counter and two immutable hashtables, also known as hamt~\cite{bagwell_ideal_2001}.
     One hashtable maps from names to numbers,
     the other maps from numbers to names,
     and the counter is used to track the de Bruijn number.
     When we extend a scope with a name,
     we extend the two hashtables with the corresponding maps and add one to the counter.
+    An immutable hashtable, in practice, has constant time for update and lookup,
+    thought the worst case scenario could be $O(log(n))$.
     Thus, \texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and \texttt{atom$\rightarrow$idx}
-    are amortized constant time.
-    Because there is no need to compose two scopes,
-    we may use hashtables to have constant time name management.
+    are all logarithmic time.
     In addition, using immutable structures avoids copying the entire data-structure
-    when branching, in particular, the \transname{app-app} rule of the $\rho$-machine.
+    when branching, in particular, during the \transname{app-app} rule of the $\rho$-machine.
+
+    We implement $\delta$ with a hashtable that maps from a variable
+    to the list that contains its closure-equations.
+    Doing so doubles the space, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$ exists in
+    both $X$'s entry and $Y$'s entry, but improves the time efficiency.
 
     Given this optimization, the $\nu$-machine and the $\delta$-machine
     are both linear w.r.t the size of the problems.
