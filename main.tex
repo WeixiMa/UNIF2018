@@ -12,6 +12,7 @@
 \usepackage{hyperref}
 \usepackage{wrapfig}
 \usepackage{varwidth}
+\usepackage{color}
 
 \hypersetup{
     colorlinks=true,
@@ -110,129 +111,144 @@
 \maketitle
 
 \begin{abstract}
-  We present a nominal unification algorithm
-  that runs in $O(n \times log(n) \times G(n))$ time,
-  where $G$ is the functional inverse of Ackermann's function.
-  Nominal unification generates a set of variable assignments,
-  if there exists one,
-  that makes terms involving binding operations $\alpha$-equivalent.
-  We preserve names while using special representations of de Bruijn numbers.
-  Operations on name handling, i.e.,
-  deciding the $\alpha$-equivalence of two names and
-  inferring a name that $\alpha$-equals to a given one,
-  are in logarithmic time.
-  To reduce an arbitrary unification problem to such name handlings,
-  we preprocess the unification terms
-  with the idea of Martelli-Montanari.
+  We present a nominal unification algorithm that runs in $O(n \times
+  log(n) \times G(n))$ time, where $G$ is the functional inverse of
+  Ackermann's function.  Nominal unification generates a set of
+  variable assignments, if there exists one, that makes terms
+  involving binding operations $\alpha$-equivalent.  We preserve names
+  while using special representations of de Bruijn numbers.
+  {\color{red}[The following sentence is not clear enough. --Jeremy]}
+  Operations on name handling, i.e., deciding the $\alpha$-equivalence
+  of two names and inferring a name that $\alpha$-equals to a given
+  one, are in logarithmic time.  To reduce an arbitrary unification
+  problem to such name handlings, we preprocess the unification terms
+  {\color{red} The following phrase needs to be reworded.  ``the''
+    indicates exactly one. But they had many ideas.  Which one are you
+    referring to? Be specific.}  with the idea of Martelli-Montanari.
 \end{abstract}
 
 \section{Introduction and background}
+
 The rules that identify terms, such as $\alpha$, $\beta$, and $\eta$
-in the $\lambda$-calculus~\cite{church_calculi_1941},
-are critical to building programming languages and formal systems.
-As users of logic programming languages and theorem provers,
-we desire such rules to be out-of-the-box in the tool-kit.
-Two theories have aimed to provide this convenience:
-Miller's higher-order pattern unification~\cite{miller_logic_1989} and
-nominal unification~\cite{urban_nominal_2004} introduced by Urban, Pitts, and Gabbay.
-Higher-order pattern unification, which handles a fragment of $\beta\eta$-rules,
-is the foundation of Isabelle~\cite{paulson_natural_1986}, $\lambda$Prolog~\cite{nadathur_overview_1988}, and Twelf~\cite{pfenning_system_1999-1}.
-Nominal unification, which focuses on the $\alpha$-rule,
-has inspired extensions of logic programming languages, like $\alpha$Prolog~\cite{cheney_prolog:_2004} and $\alpha$Kanren~\cite{byrd_alphakanren:_2007},
-as well as theorem provers, like nominal Isabelle~\cite{urban_nominal_2005} and $\alpha$LeanTAP~\cite{near_leantap:_2008}.
-Although these two theories have been shown to be equally powerful~\cite{cheney_relating_2005, levy_nominal_2012},
-implementing higher-order pattern unification is more complicated
-because it has to deal with application and capture-avoiding substitution.
-On the other hand, implementation of nominal unification,
-which essentially unifies first-order terms,
-is more straightforward and easier to formalize.
-Beyond unification, techniques from the nominal approach,
-such as swappings and freshness environments,
-have impacted the areas as diverse as
-rewriting~\cite{fernandez_nominal_2004, fernandez_nominal_2005, fernandez_nominal_2007, aoto_nominal_2016},
-equational theories~\cite{ayala-rincon_nominal_2016},
-and reasoning about bindings in abstract syntax~\cite{pitts_metalanguage_2000, gabbay_new_2002}.
+in the $\lambda$-calculus~\cite{church_calculi_1941}, are critical to
+building programming languages and formal systems.  As users of logic
+programming languages and theorem provers, we desire such rules to be
+out-of-the-box in the tool-kit.  Two theories have aimed to provide
+this convenience: Miller's higher-order pattern
+unification~\cite{miller_logic_1989} and nominal
+unification~\cite{urban_nominal_2004} introduced by Urban, Pitts, and
+Gabbay.  Higher-order pattern unification, which handles a fragment of
+$\beta\eta$-rules, is the foundation of
+Isabelle~\cite{paulson_natural_1986},
+$\lambda$Prolog~\cite{nadathur_overview_1988}, and
+Twelf~\cite{pfenning_system_1999-1}.  Nominal unification, which
+focuses on the $\alpha$-rule, has inspired extensions of logic
+programming languages, like $\alpha$Prolog~\cite{cheney_prolog:_2004}
+and $\alpha$Kanren~\cite{byrd_alphakanren:_2007}, as well as theorem
+provers, like nominal Isabelle~\cite{urban_nominal_2005} and
+$\alpha$LeanTAP~\cite{near_leantap:_2008}.  Although these two
+theories have been shown to be equally
+powerful~\cite{cheney_relating_2005, levy_nominal_2012}, implementing
+higher-order pattern unification is more complicated because it has to
+deal with application and capture-avoiding substitution.  On the other
+hand, implementation of nominal unification, which essentially unifies
+first-order terms, is more straightforward and easier to formalize.
+Beyond unification, techniques from the nominal approach, such as
+swappings and freshness environments, have impacted the areas as
+diverse as rewriting~\cite{fernandez_nominal_2004,
+  fernandez_nominal_2005, fernandez_nominal_2007, aoto_nominal_2016},
+equational theories~\cite{ayala-rincon_nominal_2016}, and reasoning
+about bindings in abstract syntax~\cite{pitts_metalanguage_2000,
+  gabbay_new_2002}.
 
-When efficiency is the concern, however, nominal unification is not so practical as higher-order pattern unification.
-Qian~\cite{qian_unification_1996} has shown a proof that higher-order pattern unification is decidable in linear time.
-On the other hand, it has been an open problem
-whether there exists a nominal unification algorithm
-that can do better than $O(n^2)$.
-Levy and Villaret~\cite{levy_nominal_2012} show a translation from nominal unification to higher-order pattern unification
-in quadratic time while preserving the mgu.
-Meanwhile, algorithmic advances by Paterson-Wegman~\cite{paterson_linear_1978} and Martelli-Montanari~\cite{martelli_efficient_1982} for unification
-have inspired many improvements to the efficiency of nominal unification.
-Also, the ideas like applying swappings lazily and composing swappings eagerly and sharing subterms have been explored.
-Calves and Fernandez~\cite{calves_polynomial_2008, calves_complexity_2010, calves_first-order_2010}
-describe quadratic
-algorithms that extend Paterson-Wegman and Martelli-Montanari's
-algorithms with name handling; Levy and
-Villaret~\cite{levy_efficient_2010} describe a new quadratic algorithm
-that reduces unification problems to a sequence of freshness and
-equality constraints in linear time and then solves the constraints in quadratic time.
+When efficiency is the concern, however, nominal unification is not so
+practical as higher-order pattern unification.
+Qian~\cite{qian_unification_1996} has shown a proof that higher-order
+pattern unification is decidable in linear time.  On the other hand,
+it has been an open problem whether there exists a nominal unification
+algorithm that can do better than $O(n^2)$.  Levy and
+Villaret~\cite{levy_nominal_2012} show a translation from nominal
+unification to higher-order pattern unification in quadratic time
+while preserving the mgu.  Meanwhile, algorithmic advances by
+Paterson-Wegman~\cite{paterson_linear_1978} and
+Martelli-Montanari~\cite{martelli_efficient_1982} for unification have
+inspired many improvements to the efficiency of nominal unification.
+Also, the ideas like applying swappings lazily and composing swappings
+eagerly and sharing subterms have been explored.  Calves and
+Fernandez~\cite{calves_polynomial_2008, calves_complexity_2010,
+  calves_first-order_2010} describe quadratic algorithms that extend
+Paterson-Wegman and Martelli-Montanari's algorithms with name
+handling; Levy and Villaret~\cite{levy_efficient_2010} describe a new
+quadratic algorithm that reduces unification problems to a sequence of
+freshness and equality constraints in linear time and then solves the
+constraints in quadratic time.
 
-The inefficiency of these nominal unification algorithms
-comes from the swapping actions, that is,
-to decide the $\alpha$-equivalence of two names,
-we need to linearly traverse a list
-whose length grows with respect to the number of binders.
-One might try to replace these lists with a more efficient lookup
-structure, such as a hash table,
-but then composing two swappings would take linear time,
-and that operation is also rather frequent.
-Here we present an algorithm that does not use swappings,
-instead, this algorithm allows to utilize hamt~\cite{bagwell_ideal_2001},
-which provides efficient lookup and uses sharing to avoid duplication.
+The inefficiency of these nominal unification algorithms comes from
+the swapping actions, that is, to decide the $\alpha$-equivalence of
+two names, we need to linearly traverse a list whose length grows with
+respect to the number of binders.  One might try to replace these
+lists with a more efficient lookup structure, such as a hash table,
+but then composing two swappings would take linear time, and that
+operation is also rather frequent.  Here we present an algorithm that
+does not use swappings, instead, this algorithm allows to utilize
+hamt~\cite{bagwell_ideal_2001}, which provides efficient lookup and
+uses sharing to avoid duplication.
 
-  We organize this paper as follows.
-  In section~\ref{closures}, we show a representation of
-  de Bruijn numbers that is suitable for unification.
-  In section~\ref{unify}, we describe the abstract machines
-  for name management and unification.
-  In section~\ref{efficiency}, we discuss the time complexity of this algorithm.
-  The related proofs formalized in Agda,
-  available at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github},
-  is in progress.
+We organize this paper as follows.  In section~\ref{closures}, we show
+a representation of de Bruijn numbers that is suitable for
+unification.  In section~\ref{unify}, we describe the abstract
+machines for name management and unification.  In
+section~\ref{efficiency}, we discuss the time complexity of this
+algorithm.  The related proofs formalized in Agda, available at
+\href{https://github.com/mvcccccc/UNIF2018}{the authors' Github}, is
+in progress.
   
 
-  \section{De Bruijn numbers should coexist with names}
+\section{De Bruijn numbers should coexist with names}
 \label{closures}
+
 De Bruijn numbers~\cite{de_bruijn_lambda_1972} are a technique for
-representing syntax with binding structure.
-A \emph{de Bruijn number} is a natural number that indicates
-the distance from a name occurrence to its corresponding binder.
-When all names in an expression are replaced with their corresponding de Bruijn numbers,
-a direct structural equality check is sufficient to decide $\alpha$-equivalence.
-A few programming languages~\cite{norell_towards_2007} use de Bruijn numbers
-in their internal representations for machine manipulation during operations such as type checking.
-The idea of using names for free variables and numbers for bound variables,
-known as the locally nameless approach~\cite{chargueraud_locally_2012},
-is employed for formalizing variable-theories~\cite{aydemir_nominal_2006, aydemir_engineering_2008}.
-Also, de Bruijn numbers, combined with explicit substitution, have been introduced in
-higher-order unification~\cite{dowek_higher_2000} to improve the efficiency of unification.
+representing syntax with binding structure.  A \emph{de Bruijn number}
+is a natural number that indicates the distance from a name occurrence
+to its corresponding binder.  When all names in an expression are
+replaced with their corresponding de Bruijn numbers, a direct
+structural equality check is sufficient to decide
+$\alpha$-equivalence.  A few programming
+languages~\cite{norell_towards_2007} use de Bruijn numbers in their
+internal representations for machine manipulation during operations
+such as type checking.  The idea of using names for free variables and
+numbers for bound variables, known as the locally nameless
+approach~\cite{chargueraud_locally_2012}, is employed for formalizing
+variable-theories~\cite{aydemir_nominal_2006,
+  aydemir_engineering_2008}.  Also, de Bruijn numbers, combined with
+explicit substitution, have been introduced in higher-order
+unification~\cite{dowek_higher_2000} to improve the efficiency of
+unification.
 
 Despite its convenience when implementing $\alpha$-equivalence,
-programs written with de Bruijn numbers are notoriously obfuscated for humans to read and understand.
-What's worse, as pointed out by Berghofer and Urban~\cite{berghofer_head--head_2007},
-translating pencil-and-paper style proofs to versions using de Bruijn numbers is surprisingly involved:
-such translation may alter the structures of proofs.
-Consequently, reproducing proofs with explicit names from de Bruijn numbers is difficult or even impossible.
-Thus, for the sake of both readers and writers of proofs, it is worth providing an interface with names.
+programs written with de Bruijn numbers are notoriously obfuscated for
+humans to read and understand.  What's worse, as pointed out by
+Berghofer and Urban~\cite{berghofer_head--head_2007}, translating
+pencil-and-paper style proofs to versions using de Bruijn numbers is
+surprisingly involved: such translation may alter the structures of
+proofs.  Consequently, reproducing proofs with explicit names from de
+Bruijn numbers is difficult or even impossible.  Thus, for the sake of
+both readers and writers of proofs, it is worth providing an interface
+with names.
 
-If our concern is simply deciding the $\alpha$-equivalence between expressions,
-an easy way to use de Bruijn numbers while preserving names is
-to traverse the expressions, annotate each name with its de Bruijn number,
-then read-back the expressions without numbers.
-This approach, however, does not work for unification,
-because it only contains the mapping \emph{from names to numbers}.
-In unification modulo $\alpha$-equivalence, one frequently needs
-the mapping \emph{from numbers to names} to decide
-what name to assign to a unification variable.
-
+If our concern is simply deciding the $\alpha$-equivalence between
+expressions, an easy way to use de Bruijn numbers while preserving
+names is to traverse the expressions, annotate each name with its de
+Bruijn number, then read-back the expressions without numbers.  This
+approach, however, does not work for unification, because it only
+contains the mapping \emph{from names to numbers}.  In unification
+modulo $\alpha$-equivalence, one frequently needs the mapping
+\emph{from numbers to names} to decide what name to assign to a
+unification variable.
 
 We propose to represent de Bruijn numbers by \emph{static closures},
-hereafter referred to as \emph{closures}.
-Closures preserve the mappings of both directions: names to numbers and numbers to names.
+hereafter referred to as \emph{closures}.  Closures preserve the
+mappings of both directions: names to numbers and numbers to names.
 
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -289,39 +305,44 @@ Closures preserve the mappings of both directions: names to numbers and numbers 
 
 
 \begin{definition}
-  A closure is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
-  defined in figure~\ref{table:terms},
-  and a scope $\Phi$,
-  where the scope is an ordered list of binders that occur in the enclosing context.
-  Hereafter, we refer to a name as an atom, and we refer to the atom of an abstraction as a binder.
+  A closure is an ordered pair $\clos{t}{\Phi}$ of a term $t$, defined
+  in figure~\ref{table:terms}, and a scope $\Phi$, where the scope is
+  an ordered list of binders that occur in the enclosing context.
+  Hereafter, we refer to a name as an atom, and we refer to the atom
+  of an abstraction as a binder.
 \end{definition}
 
 When the term of a closure is an atom, the closure itself represents a
 de Bruijn number.  For example, consider the term
 $\lambda\,x.\lambda\,y.x$. The de Bruijn number of the atom $x$ is $1$
 and the closure-representation of this number is $\clos{x}{(y\,x)}$.
-We can retrieve the number-representation by finding the
-position of the first appearance of the atom in the scope. In this
-case, the position of $x$ in the list $(y\,x)$ is $1$, which is its de
-Bruijn number. Similarly, the de Bruijn number of $y$ is $0$.
+We can retrieve the number-representation by finding the position of
+the first appearance of the atom in the scope. In this case, the
+position of $x$ in the list $(y\,x)$ is $1$, which is its de Bruijn
+number. Similarly, the de Bruijn number of $y$ is $0$.
 
-A scope, as a list, supports three operations:
-\texttt{ext-scope}, which extends the scope by adding an atom to the front of the list;
-\texttt{idx$\rightarrow$atom}, which returns the atom of a given index starting from the front of the list;
-and \texttt{atom$\rightarrow$idx}, which returns the location of the first appearance of a given atom counting from the front of the list.
-As we are building the list in reversed order, if repeated atoms appear, the first appearance in a list shadows the others.
+A scope, as a list, supports three operations: \texttt{ext-scope},
+which extends the scope by adding an atom to the front of the list;
+\texttt{idx$\rightarrow$atom}, which returns the atom of a given index
+starting from the front of the list; and
+\texttt{atom$\rightarrow$idx}, which returns the location of the first
+appearance of a given atom counting from the front of the list.  As we
+are building the list in reversed order, if repeated atoms appear, the
+first appearance in a list shadows the others.
 
-Now in figure~\ref{table:fb}, we can talk about free and bound variables ``constructively,''
-with de Bruijn numbers serving as evidence that variables are well-scoped.
-When an atom, $a$, does not appear in the scope, $\Phi$,
-we say, ``$a$ is free with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$;
-when $a$'s first appearance in $\Phi$ is the position $i$,
-we say, ``$a$ is bound at $i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\, a\,i$.
-The \transname{bound} rule has two premises to be algorithmic in both directions,
-that is, given an atom we can find its index
-and given an index we can find its atom, if no shadowing happen.
-Figure~\ref{table:same-name} defines the rules to decide whether two atoms are $\alpha$-equivalent w.r.t theirs scopes,
-written as $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
+Now in figure~\ref{table:fb}, we can talk about free and bound
+variables ``constructively,'' with de Bruijn numbers serving as
+evidence that variables are well-scoped.  When an atom, $a$, does not
+appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
+$\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$; when $a$'s first
+appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
+$i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
+a\,i$.  The \transname{bound} rule has two premises to be algorithmic
+in both directions, that is, given an atom we can find its index and
+given an index we can find its atom, if no shadowing happen.
+Figure~\ref{table:same-name} defines the rules to decide whether two
+atoms are $\alpha$-equivalent w.r.t theirs scopes, written as
+$\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
 \section{Unification}
 \label{unify}
@@ -334,33 +355,38 @@ written as $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     & $|$ & $X,\,Y$ & variables \\
     \end{tabular}
 \end{wrapfigure}
-In figure~\ref{table:new-terms}, we introduce unification variables, shortened as var.
-First, let's consider a simplified unification problem:
-a variable can only be instantiated by a name,
-that is, finding the unifier of two terms
-that share the same structure but differ in atoms and variables.
-A unifier consists of two parts: $\sigma$ and $\delta$.
+In figure~\ref{table:new-terms}, we introduce unification variables,
+shortened as var.  First, let's consider a simplified unification
+problem: a variable can only be instantiated by a name, that is,
+finding the unifier of two terms that share the same structure but
+differ in atoms and variables.  A unifier consists of two parts:
+$\sigma$ and $\delta$.
 \begin{definition}
-  A substitution $\sigma$ is a partial finite function from variables, $X_i$, to terms, $t_i$.
-  For readability, we write $\sigma$ as a set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$
-  and we write $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
+  A substitution $\sigma$ is a partial finite function from variables,
+  $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
+  set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
+  $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
   For now, we assume the co-domain of a $\sigma$ only includes atoms.
 \end{definition}
 
 \begin{definition}
-  A closure equation is a pair of two closures that are $\alpha$-equivalent.
-  $\Delta$ is a set of closure-equations.
-  We write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}}, ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and
-  we write $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.
-  We write $\delta$ as a special form of $\Delta$: for each equation in $\delta$, the term of both sides are variables.
-  Given a variable $X$, we write $\delta(X)$ as retrieving the list of closure-equations that $X$ is on one side of.
+  A closure equation is a pair of two closures that are
+  $\alpha$-equivalent.  $\Delta$ is a set of closure-equations.  We
+  write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}},
+  ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and we write
+  $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
+  $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
+  $\delta$ as a special form of $\Delta$: for each equation in
+  $\delta$, the term of both sides are variables.  Given a variable
+  $X$, we write $\delta(X)$ as retrieving the list of
+  closure-equations that $X$ is on one side of.
 \end{definition}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
   \begin{tabular}{c}
-    \framebox{$\nuframe{subst}{problem_\nu^*}{subst}$} \\ \\
+    \framebox{$\nuframe{\sigma}{problem_\nu^*}{\sigma}$} \\ \\
   \end{tabular}
   \end{minipage}
 
@@ -425,40 +451,42 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   \end{minipage}
   \end{wrapfigure}
 
-The simplified problem is about solving three kinds of closure-equations:
-name-name, name-var, and var-var.
-We refer to a name-name or name-var problem as a \emph{problem$_\nu$}
-and refer to a var-var problem as a \emph{problem$_\delta$}.
-Given a set of problem$_\nu$ and a set of problem$_\delta$,
-we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on the set of problem$_\nu$ to generate a substitution.
-Then the $\delta$-machine computes the final unifier on three inputs:
-the substitution resulted from the $\nu$-machine,
-$\delta$,
-and a list of known variables, initialized by the domain of the substitution.
-If no transitions apply, the machine fails and the unification problem has no unifier.
+The simplified problem is about solving three kinds of
+closure-equations: name-name, name-var, and var-var.  We refer to a
+name-name or name-var problem as a \emph{problem$_\nu$} and refer to a
+var-var problem as a \emph{problem$_\delta$}.  Given a set of
+problem$_\nu$ and a set of problem$_\delta$, we first run the
+$\nu$-machine, defined in figure~\ref{machine:nu}, on the set of
+problem$_\nu$ to generate a substitution.  Then the $\delta$-machine
+computes the final unifier on three inputs: the substitution resulted
+from the $\nu$-machine, $\delta$, and a list of known variables,
+initialized by the domain of the substitution.  If no transitions
+apply, the machine fails and the unification problem has no unifier.
 
 
-  \begin{lemma}\label{lemma:numachine}
- For all finite input, the $\nu$-machine and the $\delta$-machine terminates;
-    for all input, the $\nu$-machine and the $\delta$-machine succeeds with the mgu
-    if and only if there exists one.
-    \end{lemma}
-    \begin{proof}
-     By structural induction on the transitions of the machines.
-    \end{proof}
+\begin{lemma}\label{lemma:numachine}
+ For all finite input, the $\nu$-machine and the $\delta$-machine
+ terminates; for all input, the $\nu$-machine and the $\delta$-machine
+ succeeds with the mgu if and only if there exists one.
+\end{lemma}
+\begin{proof}
+    By structural induction on the transitions of the machines.
+\end{proof}
 
-    Now the question is how to generalize the previous algorithm, that is,
-    given two arbitrary terms, where a variable may be instantiated by any term besides atoms,
-    can we re-shape the two terms to create a proper input to the two machines?
+Now the question is how to generalize the previous algorithm, that is,
+given two arbitrary terms, where a variable may be instantiated by any
+term besides atoms, can we re-shape the two terms to create a proper
+input to the two machines?
 
-    Finding the common structure, obviously, is merely a first-order unification problem.
-    The $\rho$-machine, defined in figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari
-    and reduces an arbitrary nominal unification problem to a set of problem$_\nu$, a set of problem$_\delta$,
-    and a substitution.
-    Here we need to extend the definition of substitution:
-    it is now a partial finite function from variables to terms.
-    Also, in the \transname{meta-app} and \transname{meta-abs} rules,
-    we need to create new atoms and new variables.
+Finding the common structure, obviously, is merely a first-order
+unification problem.  The $\rho$-machine, defined in
+figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari and
+reduces an arbitrary nominal unification problem to a set of
+problem$_\nu$, a set of problem$_\delta$, and a substitution.  Here we
+need to extend the definition of substitution: it is now a partial
+finite function from variables to terms.  Also, in the
+\transname{meta-app} and \transname{meta-abs} rules, we need to create
+new atoms and new variables.
 
       %\begin{wrapfigure}{l}{0.5\textwidth}
     \begin{figure}
@@ -544,38 +572,42 @@ If no transitions apply, the machine fails and the unification problem has no un
 
 \section{A note on time complexity}
     \label{efficiency}
-    In the previous sections, we represent scopes by lists for simplicity,
-    but lists are inefficient for variable lookup.
-    To have better time complexity,
-    we represent a scope with a counter and two immutable hashtables, also known as hamt~\cite{bagwell_ideal_2001}.
-    One hashtable maps from names to numbers,
-    the other maps from numbers to names,
-    and the counter is used to track the de Bruijn number.
-    When we extend a scope with a name,
-    we extend the two hashtables with the corresponding maps and add one to the counter.
-    An immutable hashtable, in practice, has constant time for update and lookup,
-    thought the worst case scenario could be $O(log(n))$.
-    Thus, \texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and \texttt{atom$\rightarrow$idx}
-    are all logarithmic time.
-    In addition, using immutable structures avoids copying the entire data-structure
-    when branching, in particular, during the \transname{app-app} rule of the $\rho$-machine.
 
-    We implement $\delta$ with a hashtable that maps from a variable
-    to the list that contains its closure-equations.
-    Doing so doubles the space consumption, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$ exists in
-    both $X$'s entry and $Y$'s entry, but improves the time efficiency.
+In the previous sections, we represent scopes by lists for simplicity,
+but lists are inefficient for variable lookup.  To have better time
+complexity, we represent a scope with a counter and two immutable
+hashtables, also known as hamt~\cite{bagwell_ideal_2001}.  One
+hashtable maps from names to numbers, the other maps from numbers to
+names, and the counter is used to track the de Bruijn number.  When we
+extend a scope with a name, we extend the two hashtables with the
+corresponding maps and add one to the counter.  An immutable
+hashtable, in practice, has constant time for update and lookup,
+thought the worst case scenario could be $O(log(n))$.  Thus,
+\texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and
+\texttt{atom$\rightarrow$idx} are all logarithmic time.  In addition,
+using immutable structures avoids copying the entire data-structure
+when branching, in particular, during the \transname{app-app} rule of
+the $\rho$-machine.
 
-    Given the above optimizations, the $\nu$-machine and the $\delta$-machine
-    are both $O(n \times log(n))$ at the worst case, where $n$ is the number of atom occurrences and variable occurrences.
-    The algorithm of Martelli-Montanari is $O(n \times G(n))$,
-    when representing sets with UNION-FIND~\cite{tarjan_efficiency_1975},
-    where $n$ is the number of variable occurrences in the original terms.
-    The $\rho$-machine is similar except that two new factors are involved:
-    the update operation of an hamt and the generation of atoms and variables.
-    We consider the former one to have $O(log(n))$ complexity,
-    and we implement atom and variable creation with state monads in constant time.
-    Thus reducing an arbitrary unification problem to the input of the $\nu$ and $\delta$ machines
-    is $O(n \times log(n) \times G(n))$.
+We implement $\delta$ with a hashtable that maps from a variable to
+the list that contains its closure-equations.  Doing so doubles the
+space consumption, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$
+exists in both $X$'s entry and $Y$'s entry, but improves the time
+efficiency.
+
+Given the above optimizations, the $\nu$-machine and the
+$\delta$-machine are both $O(n \times log(n))$ at the worst case,
+where $n$ is the number of atom occurrences and variable occurrences.
+The algorithm of Martelli-Montanari is $O(n \times G(n))$, when
+representing sets with UNION-FIND~\cite{tarjan_efficiency_1975}, where
+$n$ is the number of variable occurrences in the original terms.  The
+$\rho$-machine is similar except that two new factors are involved:
+the update operation of an hamt and the generation of atoms and
+variables.  We consider the former one to have $O(log(n))$ complexity,
+and we implement atom and variable creation with state monads in
+constant time.  Thus reducing an arbitrary unification problem to the
+input of the $\nu$ and $\delta$ machines is $O(n \times log(n) \times
+G(n))$.
 
     \clearpage
 
