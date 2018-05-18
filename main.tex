@@ -463,7 +463,8 @@ term besides atoms, can we re-shape the two terms to create a proper
 input to the two machines?
 
 
-\begin{wrapfigure}{r}{0.5\textwidth}
+%\begin{wrapfigure}{r}{0.5\textwidth}
+\begin{figure}[htbp]
   \begin{minipage}[b]{\textwidth}
   \caption{$\delta$-machine and the pull operation}\label{machine:delta}
   \begin{tabular}{c}
@@ -497,12 +498,13 @@ input to the two machines?
 } \\ \\
 
 \infer[\transname{Name-Meta}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
-    \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} \\
+    \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} &
     \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & Y_2\notin dom(\sigma_0)} 
 \end{tabular}
 
 \end{minipage}
-\end{wrapfigure}
+\end{figure}
+%\end{wrapfigure}
 
 Finding the common structure, obviously, is merely a first-order
 unification problem.  The $\rho$-machine, defined in
@@ -514,8 +516,8 @@ finite function from variables to terms.  Also, in the
 \transname{meta-app} and \transname{meta-abs} rules, we need to create
 new atoms and new variables.
 
-      %\begin{wrapfigure}{l}{0.5\textwidth}
-    \begin{figure}
+\begin{wrapfigure}{l}{0.5\textwidth}
+%    \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
    \begin{minipage}[b]{\textwidth}
   \begin{tabular}{c}
@@ -594,7 +596,8 @@ new atoms and new variables.
 
   \end{tabular}
   \end{minipage}
-\end{figure}
+%\end{figure}
+\end{wrapfigure}
 
 \section{A note on time complexity}
     \label{efficiency}
