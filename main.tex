@@ -427,13 +427,12 @@ The simplified problem is about solving three kinds of closure-equations:
 name-name, name-var, and var-var.
 We refer to a name-name or name-var problem as a \emph{problem$_\nu$}
 and refer to a var-var problem as a \emph{problem$_\delta$}.
-Given a set of problem$_\nu$ and problem$_\delta$,
-we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on the $\nu$-problems to generate a substitution.
+Given a set of problem$_\nu$ and a set of problem$_\delta$,
+we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on the set of problem$_\nu$ to generate a substitution.
 Then the $\delta$-machine computes the final unifier on three inputs:
-the substitution from the $\nu$-machine,
-the var-var problems, $\delta$,
-and a list of known variables.
-is initialized by the domain of the substitution.
+the substitution resulted from the $\nu$-machine,
+$\delta$,
+and a list of known variables, initialized by the domain of the substitution.
 If no transitions apply, the machine fails and the unification problem has no unifier.
 
 
