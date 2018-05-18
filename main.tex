@@ -9,6 +9,7 @@
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{wrapfig}
+\usepackage{varwidth}
 
 \hypersetup{
     colorlinks=true,
@@ -355,9 +356,15 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
 \end{definition}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
-\begin{minipage}[b]{0.4\textwidth}
+  \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
-  \begin{tabular}{l l}
+  \begin{tabular}{c}
+    \framebox{$\nuframe{subst}{problem^*}{subst}$} \\ \\
+  \end{tabular}
+  \end{minipage}
+
+\begin{minipage}[b]{0.4\textwidth}
+  \begin{tabular}{l}
     \infer[\transname{empty}]{\nuframe{\sigma_0}{\emptyset}{\sigma_0}}{%
 } \\ \\
 
@@ -375,8 +382,17 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   \end{tabular}
   \end{minipage}
   
-\begin{minipage}[b]{0.4\textwidth}
+  \begin{minipage}[b]{0.4\textwidth}
   \caption{$\delta$-machine and pull}\label{machine:delta}
+  \begin{tabular}{c}
+    \fbox{\begin{varwidth}{\textwidth}
+        $\dframe{subst}{eqn^*}{var^*}{subst}{eqn^*}$ \\
+        $\pframe{subst}{var^*}{eqn^*}{subst}{var^*}$
+        \end{varwidth}} \\ \\
+  \end{tabular}
+  \end{minipage}
+
+\begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
          \infer[\transname{empty-q}]{\dframe{\sigma_0}{\delta_0}{\emptyset}{\sigma_0}{\delta_0}}{%
 } \\ \\
@@ -444,6 +460,16 @@ If no transitions apply, the machine fails and the unification problem has no un
       %\begin{wrapfigure}{l}{0.5\textwidth}
     \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
+   \begin{minipage}[b]{\textwidth}
+  \begin{tabular}{c}
+    \fbox{\begin{varwidth}{\textwidth}
+        $\rframe{problem^*}{eqn^*}{subst}{multieqn^*}{problem^*}{eqn^*}{subst}$ \\
+        $\sframe{problem^*}{eqn^*}{subst}{multieqn}{problem^*}{eqn^*}{subst}$ \\
+        \end{varwidth}} \\ \\
+  \end{tabular}
+  \end{minipage}
+
+  \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
     \infer[\transname{empty}]{\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}{%
     } \\  \\
@@ -510,6 +536,7 @@ If no transitions apply, the machine fails and the unification problem has no un
    %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\lambda\,a_1.X_t}\} \cup \sigma_0$ \\
 
   \end{tabular}
+  \end{minipage}
 \end{figure}
 
 \section{A note on time complexity}
