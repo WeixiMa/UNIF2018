@@ -385,8 +385,8 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   \caption{$\delta$-machine and pull}\label{machine:delta}
   \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\dframe{subst}{problem_\delta^*}{var^*}{subst}{problem_\delta^*}$ \\
-        $\pframe{subst}{var^*}{problem_\delta^*}{subst}{var^*}$
+        $\dframe{\sigma}{problem_\delta^*}{var^*}{\sigma}{problem_\delta^*}$ \\
+        $\pframe{\sigma}{var^*}{problem_\delta^*}{\sigma}{var^*}$
         \end{varwidth}} \\ \\
   \end{tabular}
   \end{minipage}
@@ -464,8 +464,8 @@ If no transitions apply, the machine fails and the unification problem has no un
    \begin{minipage}[b]{\textwidth}
   \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\rframe{problem_\nu^*}{problem_\delta^*}{subst}{multieqn^*}{problem_\nu^*}{problem_\delta^*}{subst}$ \\
-        $\sframe{problem_\nu^*}{problem_\delta^*}{subst}{multieqn}{problem_\nu^*}{problem_\delta^*}{subst}$ \\
+        $\rframe{problem_\nu^*}{problem_\delta^*}{\sigma}{multieqn^*}{problem_\nu^*}{problem_\delta^*}{\sigma}$ \\
+        $\sframe{problem_\nu^*}{problem_\delta^*}{\sigma}{multieqn}{problem_\nu^*}{problem_\delta^*}{\sigma}$ \\
         \end{varwidth}} \\ \\
   \end{tabular}
   \end{minipage}
