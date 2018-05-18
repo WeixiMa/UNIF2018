@@ -13,6 +13,7 @@
 \usepackage{wrapfig}
 \usepackage{varwidth}
 \usepackage{color}
+\usepackage{natbib}
 
 \hypersetup{
     colorlinks=true,
@@ -84,7 +85,8 @@
 \newcommand*{\transname}[1]{\textsc{#1}}
 
 
-\bibliographystyle{plainurl}
+%\bibliographystyle{plainurl}
+\bibliographystyle{plainnat}
 
 \title{Efficiency of a good but not linear nominal unification algorithm}
 
@@ -147,40 +149,37 @@ programming languages, like $\alpha$Prolog~\cite{cheney_prolog:_2004}
 and $\alpha$Kanren~\cite{byrd_alphakanren:_2007}, as well as theorem
 provers, like nominal Isabelle~\cite{urban_nominal_2005} and
 $\alpha$LeanTAP~\cite{near_leantap:_2008}.  Although these two
-theories have been shown to be equally
-powerful~\cite{cheney_relating_2005, levy_nominal_2012}, implementing
-higher-order pattern unification is more complicated because it has to
-deal with application and capture-avoiding substitution.  On the other
-hand, implementation of nominal unification, which essentially unifies
-first-order terms, is more straightforward and easier to formalize.
-Beyond unification, techniques from the nominal approach, such as
-swappings and freshness environments, have impacted the areas as
-diverse as rewriting~\cite{fernandez_nominal_2004,
-  fernandez_nominal_2005, fernandez_nominal_2007, aoto_nominal_2016},
-equational theories~\cite{ayala-rincon_nominal_2016}, and reasoning
-about bindings in abstract syntax~\cite{pitts_metalanguage_2000,
+theories can be reduced to eachother~\cite{cheney_relating_2005,
+  levy_nominal_2012}, implementing higher-order pattern unification is
+more complicated because it has to deal with application and
+capture-avoiding substitution.  On the other hand, implementation of
+nominal unification, which essentially unifies first-order terms, is
+more straightforward and easier to formalize.  Beyond unification,
+techniques from the nominal approach, such as swapping and freshness
+environments, have impacted the areas as diverse as
+rewriting~\cite{fernandez_nominal_2004, fernandez_nominal_2005,
+  fernandez_nominal_2007, aoto_nominal_2016}, equational
+theories~\cite{ayala-rincon_nominal_2016}, and reasoning about
+bindings in abstract syntax~\cite{pitts_metalanguage_2000,
   gabbay_new_2002}.
 
-When efficiency is the concern, however, nominal unification is not so
-practical as higher-order pattern unification.
-Qian~\cite{qian_unification_1996} has shown a proof that higher-order
-pattern unification is decidable in linear time.  On the other hand,
-it has been an open problem whether there exists a nominal unification
-algorithm that can do better than $O(n^2)$.  Levy and
-Villaret~\cite{levy_nominal_2012} show a translation from nominal
-unification to higher-order pattern unification in quadratic time
-while preserving the mgu.  Meanwhile, algorithmic advances by
-Paterson-Wegman~\cite{paterson_linear_1978} and
-Martelli-Montanari~\cite{martelli_efficient_1982} for unification have
-inspired many improvements to the efficiency of nominal unification.
-Also, the ideas like applying swappings lazily and composing swappings
-eagerly and sharing subterms have been explored.  Calves and
-Fernandez~\cite{calves_polynomial_2008, calves_complexity_2010,
+Concerning time complexity, \citet{qian_unification_1996} proved that
+higher-order pattern unification is decidable in linear time.  On the
+other hand, it has been an open problem whether there exists a nominal
+unification algorithm that can do better than
+$O(n^2)$. \citet{levy_nominal_2012} give a quadratic time reduction
+from nominal unification to higher-order pattern unification.
+Meanwhile, algorithmic advances by \citet{paterson_linear_1978} and
+\citet{martelli_efficient_1982} for unification have inspired many
+improvements to the efficiency of nominal unification.  Also, the
+ideas like applying swappings lazily and composing swappings eagerly
+and sharing subterms have been
+explored. \citet{calves_polynomial_2008, calves_complexity_2010,
   calves_first-order_2010} describe quadratic algorithms that extend
 Paterson-Wegman and Martelli-Montanari's algorithms with name
-handling; Levy and Villaret~\cite{levy_efficient_2010} describe a new
-quadratic algorithm that reduces unification problems to a sequence of
-freshness and equality constraints in linear time and then solves the
+handling; \citep{levy_efficient_2010} describe a new quadratic
+algorithm that reduces unification problems to a sequence of freshness
+and equality constraints in linear time and then solves the
 constraints in quadratic time.
 
 The inefficiency of these nominal unification algorithms comes from
@@ -190,9 +189,9 @@ respect to the number of binders.  One might try to replace these
 lists with a more efficient lookup structure, such as a hash table,
 but then composing two swappings would take linear time, and that
 operation is also rather frequent.  Here we present an algorithm that
-does not use swappings, instead, this algorithm allows to utilize
-hamt~\cite{bagwell_ideal_2001}, which provides efficient lookup and
-uses sharing to avoid duplication.
+does not use swappings, instead, this algorithm allows to utilize Hash
+Array Mapped Trie (HAMT)~\citep{bagwell_ideal_2001}, which provides
+efficient lookup and uses sharing to avoid duplication.
 
 We organize this paper as follows.  In section~\ref{closures}, we show
 a representation of de Bruijn numbers that is suitable for
@@ -207,28 +206,28 @@ in progress.
 \section{De Bruijn numbers should coexist with names}
 \label{closures}
 
-De Bruijn numbers~\cite{de_bruijn_lambda_1972} are a technique for
-representing syntax with binding structure.  A \emph{de Bruijn number}
-is a natural number that indicates the distance from a name occurrence
-to its corresponding binder.  When all names in an expression are
+De Bruijn numbers are a technique for representing syntax with binding
+structure~\citep{de_bruijn_lambda_1972}.  A \emph{de Bruijn number} is
+a natural number that indicates the distance from a name occurrence to
+its corresponding binder.  When all names in an expression are
 replaced with their corresponding de Bruijn numbers, a direct
 structural equality check is sufficient to decide
 $\alpha$-equivalence.  A few programming
-languages~\cite{norell_towards_2007} use de Bruijn numbers in their
+languages~\citep{norell_towards_2007} use de Bruijn numbers in their
 internal representations for machine manipulation during operations
 such as type checking.  The idea of using names for free variables and
 numbers for bound variables, known as the locally nameless
-approach~\cite{chargueraud_locally_2012}, is employed for formalizing
-variable-theories~\cite{aydemir_nominal_2006,
+approach~\citep{chargueraud_locally_2012}, is employed for formalizing
+variable-theories~\citep{aydemir_nominal_2006,
   aydemir_engineering_2008}.  Also, de Bruijn numbers, combined with
 explicit substitution, have been introduced in higher-order
-unification~\cite{dowek_higher_2000} to improve the efficiency of
+unification~\citep{dowek_higher_2000} to improve the efficiency of
 unification.
 
 Despite its convenience when implementing $\alpha$-equivalence,
 programs written with de Bruijn numbers are notoriously obfuscated for
 humans to read and understand.  What's worse, as pointed out by
-Berghofer and Urban~\cite{berghofer_head--head_2007}, translating
+Berghofer and Urban~\citep{berghofer_head--head_2007}, translating
 pencil-and-paper style proofs to versions using de Bruijn numbers is
 surprisingly involved: such translation may alter the structures of
 proofs.  Consequently, reproducing proofs with explicit names from de
@@ -576,7 +575,7 @@ new atoms and new variables.
 In the previous sections, we represent scopes by lists for simplicity,
 but lists are inefficient for variable lookup.  To have better time
 complexity, we represent a scope with a counter and two immutable
-hashtables, also known as hamt~\cite{bagwell_ideal_2001}.  One
+hashtables, also known as hamt~\citep{bagwell_ideal_2001}.  One
 hashtable maps from names to numbers, the other maps from numbers to
 names, and the counter is used to track the de Bruijn number.  When we
 extend a scope with a name, we extend the two hashtables with the
@@ -599,7 +598,7 @@ Given the above optimizations, the $\nu$-machine and the
 $\delta$-machine are both $O(n \times log(n))$ at the worst case,
 where $n$ is the number of atom occurrences and variable occurrences.
 The algorithm of Martelli-Montanari is $O(n \times G(n))$, when
-representing sets with UNION-FIND~\cite{tarjan_efficiency_1975}, where
+representing sets with UNION-FIND~\citep{tarjan_efficiency_1975}, where
 $n$ is the number of variable occurrences in the original terms.  The
 $\rho$-machine is similar except that two new factors are involved:
 the update operation of an hamt and the generation of atoms and
