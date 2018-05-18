@@ -317,7 +317,7 @@ when $a$'s first appearance in $\Phi$ is the position $i$,
 we say, ``$a$ is bound at $i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\, a\,i$.
 The \transname{bound} rule has two premises to be algorithmic in both directions,
 that is, given an atom we can find its index
-and given an index we can find its atom, if no shadowing happens.
+and given an index we can find its atom, if no shadowing happen.
 Figure~\ref{table:same-name} defines the rules to decide whether two atoms are $\alpha$-equivalent w.r.t theirs scopes,
 written as $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
@@ -346,13 +346,12 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
 \end{definition}
 
 \begin{definition}
-  We call a pair of two closures that represent that same de Bruijn number
-  a \emph{closure-equation}.
+  A closure equation is a pair of two closures that are $\alpha$-equivalent.
   $\Delta$ is a set of closure-equations.
   We write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}}, ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and
   we write $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.
   We write $\delta$ as a special form of $\Delta$: for each equation in $\delta$, the term of both sides are variables.
-  Given a variable $X$, we write $\delta(X)$ as retrieving the list of equations that $X$ is on one side of.
+  Given a variable $X$, we write $\delta(X)$ as retrieving the list of closure-equations that $X$ is on one side of.
 \end{definition}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
