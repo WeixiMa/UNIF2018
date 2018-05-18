@@ -350,8 +350,8 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   a \emph{closure-equation}.
   $\Delta$ is a set of closure-equations.
   We write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}}, ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and
-  we write $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\delta$ for extending $\delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.
-  We write $\delta$ as a special form of $\Delta$, when for each equation in $\delta$, at least one term of the two closures is a variable.
+  we write $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.
+  We write $\delta$ as a special form of $\Delta$: for each equation in $\delta$, the term of both sides are variables.
   Given a variable $X$, we write $\delta(X)$ as retrieving the list of equations that $X$ is on one side of.
 \end{definition}
 
@@ -359,7 +359,7 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
   \begin{tabular}{c}
-    \framebox{$\nuframe{subst}{problem^*}{subst}$} \\ \\
+    \framebox{$\nuframe{subst}{problem_\nu^*}{subst}$} \\ \\
   \end{tabular}
   \end{minipage}
 
@@ -382,12 +382,12 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
   \end{tabular}
   \end{minipage}
   
-  \begin{minipage}[b]{0.4\textwidth}
+  \begin{minipage}[b]{\textwidth}
   \caption{$\delta$-machine and pull}\label{machine:delta}
   \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\dframe{subst}{eqn^*}{var^*}{subst}{eqn^*}$ \\
-        $\pframe{subst}{var^*}{eqn^*}{subst}{var^*}$
+        $\dframe{subst}{problem_\delta^*}{var^*}{subst}{problem_\delta^*}$ \\
+        $\pframe{subst}{var^*}{problem_\delta^*}{subst}{var^*}$
         \end{varwidth}} \\ \\
   \end{tabular}
   \end{minipage}
@@ -426,17 +426,14 @@ A unifier consists of two parts: $\sigma$ and $\delta$.
 
 The simplified problem is about solving three kinds of closure-equations:
 name-name, name-var, and var-var.
-Given $p^*$, a list of name-name and name-var problems and $\delta$, the var-var problems,
-we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on $p*$ to generate a substitution.
+We refer to the name-name and name-var problem as problem$_\nu$
+and refer to the var-var problem as problem$_\delta$.
+Given a set of problem$_\nu$ and problem$_\delta$,
+we first run the $\nu$-machine, defined in figure~\ref{machine:nu}, on the $\nu$-problems to generate a substitution.
 Then the $\delta$-machine computes the final unifier on three inputs:
 the substitution from $\nu$,
 the var-var problems, $\delta$,
-and a queue of known variables, which is initialized by the domain of the substitution.
-We write a transition as $\machineframe{acc}{arg}{l}{acc'}$,
-where $arg$ is the input, which the machine runs structural recursion on;
-$l$ is the label of the machine;
-$acc$ is the input that serves as an accumulator;
-and $acc'$ is the result.
+and a list of known variables, which is initialized by the domain of the substitution.
 If no transitions apply, the machine fails and the unification problem has no unifier.
 
 
@@ -463,8 +460,8 @@ If no transitions apply, the machine fails and the unification problem has no un
    \begin{minipage}[b]{\textwidth}
   \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\rframe{problem^*}{eqn^*}{subst}{multieqn^*}{problem^*}{eqn^*}{subst}$ \\
-        $\sframe{problem^*}{eqn^*}{subst}{multieqn}{problem^*}{eqn^*}{subst}$ \\
+        $\rframe{problem_\nu^*}{problem_\delta^*}{subst}{multieqn^*}{problem_\nu^*}{problem_\delta^*}{subst}$ \\
+        $\sframe{problem_\nu^*}{problem_\delta^*}{subst}{multieqn}{problem_\nu^*}{problem_\delta^*}{subst}$ \\
         \end{varwidth}} \\ \\
   \end{tabular}
   \end{minipage}
