@@ -453,7 +453,12 @@ If no transitions apply, the machine fails and the unification problem has no un
 
     Finding the common structure, obviously, is merely a first-order unification problem.
     The $\rho$-machine, defined in figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari
-    and reduces an arbitrary nominal unification problem to a $p^*$, a $\delta$, and a substitution.
+    and reduces an arbitrary nominal unification problem to a set of problem$_\nu$, a set of problem$_\delta$,
+    and a substitution.
+    Here we need to extend the definition of substitution:
+    it is now a partial finite function from variables to terms.
+    Also, in the \transname{meta-app} and \transname{meta-abs} rules,
+    we need to create new atoms and new variables.
 
       %\begin{wrapfigure}{l}{0.5\textwidth}
     \begin{figure}
@@ -557,14 +562,20 @@ If no transitions apply, the machine fails and the unification problem has no un
 
     We implement $\delta$ with a hashtable that maps from a variable
     to the list that contains its closure-equations.
-    Doing so doubles the space, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$ exists in
+    Doing so doubles the space consumption, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$ exists in
     both $X$'s entry and $Y$'s entry, but improves the time efficiency.
 
-    Given this optimization, the $\nu$-machine and the $\delta$-machine
-    are both linear w.r.t the size of the problems.
-    The $\rho$-machine, as shown by Martelli and Montanari, is $O(n \times G(n))$,
+    Given the above optimizations, the $\nu$-machine and the $\delta$-machine
+    are both $O(n \times log(n))$ at the worst case, where $n$ is the number of atom occurrences and variable occurrences.
+    The algorithm of Martelli-Montanari is $O(n \times G(n))$,
     when representing sets with UNION-FIND~\cite{tarjan_efficiency_1975},
     where $n$ is the number of variable occurrences in the original terms.
+    The $\rho$-machine is similar except that two new factors are involved:
+    the update operation of an hamt and the generation of atoms and variables.
+    We consider the former one to have $O(log(n))$ complexity,
+    and we implement atom and variable creation with state monads in constant time.
+    Thus reducing an arbitrary unification problem to the input of the $\nu$ and $\delta$ machines
+    is $O(n \times log(n) \times G(n))$.
 
     \clearpage
 
