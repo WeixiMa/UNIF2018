@@ -15,6 +15,10 @@
 \usepackage{color}
 \usepackage{natbib}
 
+\newenvironment*{premises}{\begin{array}{@{}l@{}}}{\end{array}}
+\newcommand*{\infrule}[2]{\frac{\hspace{1ex}\vphantom{()}#1\hspace{1ex}}{\hspace{1ex}\vphantom{()}#2\hspace{1ex}}}
+\newcommand*{\RNAME}[1]{\,\ensuremath{\textsc{[#1]}}}
+
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -267,35 +271,45 @@ mappings in both directions: names to numbers and numbers to names.
 
   \caption{Free and bound\label{table:fb}}
   \begin{tabular}{l}
-\infer[\transname{free}]{\Phi \vdash \texttt{Fr}\,\, a}{%
+    $\infrule{%
     a \notin \Phi
-}\\ \\
-
-\infer[\transname{bound}]{\Phi \vdash \texttt{Bd}\,\, a\,\, i}{%
-  (\texttt{name$\rightarrow$idx}\, \Phi\, a)=i &
-  (\texttt{idx$\rightarrow$name}\, \Phi\, i)=a
-} \\
+    }{\Phi \vdash \texttt{Fr}\,\,a}
+    \RNAME{Free}$  \\ \\
 
 
- \end{tabular}
+     $\infrule{%
+    \begin{premises}
+      (\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\
+      (\texttt{idx$\rightarrow$name}\, \Phi\,i) = a 
+  \end{premises}
+    }{\Phi \vdash \texttt{Bd}\,\,a\,\,i}
+    \RNAME{Bound}$  \\ \\
+
+
+   \end{tabular}
 \end{minipage}
 
 \begin{minipage}[b]{0.4\textwidth}
 
   \caption{$\approx$-rules\label{table:same-name}}
   \begin{tabular}{l}
-\infer[\transname{same-free}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
-    \Phi_1 \vdash \texttt{Fr}\,\, a_1 &
-    \Phi_2 \vdash \texttt{Fr}\,\, a_2 &
-    a_1 = a_2
-} \\ \\
+    $\infrule{%
+    \begin{premises}
+    a_1 = a_2 \\
+    \Phi_1 \vdash \texttt{Fr}\,\, a_1 \quad
+    \Phi_2 \vdash \texttt{Fr}\,\, a_2 
+  \end{premises}
+    }{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
+    \RNAME{Same-Free}$  \\ \\
 
-\infer[\transname{same-bound}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
-    \Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 &
-    \Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 &
-    i_1 = i_2
-} \\
-
+        $\infrule{%
+    \begin{premises}
+    i_1 = i_2 \\
+      \Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 \quad
+    \Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 
+  \end{premises}
+    }{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
+    \RNAME{Same-Bound}$  \\ \\
 
  \end{tabular}
 \end{minipage}
@@ -410,19 +424,25 @@ $\sigma$ and $\delta$.
 
 \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
-    \infer[\transname{Empty}]{\nuframe{\sigma_0}{\epsilon}{\sigma_0}}{%
-} \\ \\
+    $\infrule{%
+    }{\nuframe{\sigma_0}{\epsilon}{\sigma_0}}
+    \RNAME{Empty}$ \\ \\
 
-    
-    \infer[\transname{Name-Name}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}{%
-    \nuframe{\sigma_0}{p}{\sigma_1} &
+    $\infrule{%
+        \begin{premises}
+    \nuframe{\sigma_0}{p}{\sigma_1} \\
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
-} \\ \\
+    \end{premises}
+    }{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
+    \RNAME{Name-Name}$ \\ \\
 
-     \infer[\transname{Name-Var}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p}{\sigma_1}}{%
+    $\infrule{%
+        \begin{premises}
     \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} \\
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
-} \\
+    \end{premises}
+    }{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
+    \RNAME{Name-Var}$ \\ \\
 
   \end{tabular}
   \end{minipage}
@@ -480,29 +500,44 @@ input to the two machines?
 
 \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
-         \infer[\transname{Empty-Q}]{\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}{%
-} \\ \\
 
-         \infer[\transname{Empty-D}]{\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}{%
-} \\ \\
+    $\infrule{%
+    }{\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}
+    \RNAME{Empty-xs}$ \\ \\
 
-        \infer[\transname{Step}]{\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}{%
-\dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1} \\
-                                                        \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1}
-} \\ \\
+    $\infrule{%
+    }{\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}
+    \RNAME{Empty-D}$ \\ \\
 
+    $\infrule{%
+        \begin{premises}
+          \dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1} \\
+          \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1}
+    \end{premises}
+    }{\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}
+    \RNAME{Pull}$ \\ \\
 
-\infer[\transname{Empty}]{\pframe{\sigma}{q}{\emptyset}{\sigma}{q}}{%
-} \\ \\
+    $\infrule{%
+    }{\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
+    \RNAME{Empty}$ \\ \\
 
-\infer[\transname{Name-Name}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    $\infrule{%
+        \begin{premises}
     \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} \\
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & \sigma_0(Y_2) = a_2 
-} \\ \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \quad \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2 
+    \end{premises}
+    }{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
+    \RNAME{Name-Name}$ \\ \\
 
-\infer[\transname{Name-Var}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
-    \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} &
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & Y_2\notin dom(\sigma_0)} 
+    $\infrule{%
+        \begin{premises}
+              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1}  \\
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \quad \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0)
+    \end{premises}
+    }{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
+    \RNAME{Name-Var}$ \\ \\
+
+
 \end{tabular}
 
 \end{minipage}
@@ -518,89 +553,89 @@ need to extend the definition of substitution: it is now a partial
 finite function from variables to terms.  Also, in the
 \transname{var-app} and \transname{var-abs} rules, we need to create
 new names and new variables.
+{\color{red} TODO:need formal definition of multi-equations}
 
-\begin{wrapfigure}{l}{0.5\textwidth}
-%    \begin{figure}
+%\begin{wrapfigure}{l}{0.5\textwidth}
+    \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
    \begin{minipage}[b]{\textwidth}
   \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\rframe{problem_\nu^*}{problem_\delta^*}{\sigma}{multieqn^*}{problem_\nu^*}{problem_\delta^*}{\sigma}$ \\
-        $\sframe{problem_\nu^*}{problem_\delta^*}{\sigma}{multieqn}{problem_\nu^*}{problem_\delta^*}{\sigma}$ \\
+        $\rframe{p_\nu^*}{p_\delta^*}{\sigma}{multieqn^*}{p_\nu^*}{p_\delta^*}{\sigma}$ \\
+        $\sframe{p_\nu^*}{p_\delta^*}{\sigma}{multieqn}{p_\nu^*}{p_\delta^*}{\sigma}$ \\
         \end{varwidth}} \\ \\
   \end{tabular}
   \end{minipage}
 
-  \begin{minipage}[b]{0.4\textwidth}
+  \begin{minipage}[b]{\textwidth}
   \begin{tabular}{l}
-    \infer[\transname{Empty}]{\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}{%
-    } \\  \\
 
-    \infer[\transname{Step}]{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}{%
+      $\infrule{
+      }{
+            \rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}
+      }\RNAME{Empty} $ \\ \\
+
+    $\infrule{%
+    \begin{premises}
     \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} \\
     \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}
-    } \\ \\
+    \end{premises}
+    }{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}
+    \RNAME{Step}$ \\ \\
 
-        \infer[\transname{Name-Name}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+    $\infrule{%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
-    } \\ \\
-        \infer[\transname{Name-Var}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    \RNAME{Name-Name}$ \\ \\
+
+    $\infrule{%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
-    } \\ \\
-        \infer[\transname{Var-Var}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}{%
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    \RNAME{Name-Var}$ \\ \\
+
+    $\infrule{%
     \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
-    } \\ \\
-        \infer[\transname{App-App}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
-    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
+    \RNAME{Var-Var}$ \\ \\
+
+    $\infrule{%
+        \begin{premises}
+              \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
-    } \\ \\
-            \infer[\transname{Abs-Abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \end{premises}
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \RNAME{App-App}$ \\ \\
+
+    $\infrule{%
+        \begin{premises}
     \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}\\
-    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)
-    } \\ \\
-        \infer[\transname{Var-App}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) \qquad \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)
+    \end{premises}
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \RNAME{Abs-Abs}$ \\ \\
+
+    $\infrule{%
+    \begin{premises}
     \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1} 
-    } \\ \\
-        \infer[\transname{Var-Abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+    \end{premises}
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \RNAME{Var-App}$ \\ \\
+
+    $\infrule{%
+    \begin{premises}
     \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \\
-    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2) 
-    } \\ \\
+    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2) 
+  \end{premises}
+    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \RNAME{Var-Abs}$ 
 
 
-
-    % \transname{empty} & $\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}$ \\
-    % \transname{step} & $\rframe{p_0}{\delta_0}{\sigma_0}{(U,\,U^*)}{p_1}{\delta_1}{\sigma_1}$ \\
-    %                       & where $\rframe{p_0'}{\delta_0'}{\sigma_0'}{U*}{p_1}{\delta_1}{\sigma_1}$ \\
-    %                       & \hspace{8mm} $\cframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}$ \\
-    %                   & \\
-    % \transname{name-name} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
-   %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}} \cup p_0$  \\
-   %  \transname{name-var} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
-   %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
-   %  \transname{var-var} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_0'}{\sigma_0}$ \\
-   %                        & where $p_0' = {\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
-   %  \transname{app-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
-   %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'}$ \\
-   %  & \hspace{8mm} $\cframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\
-   %  \transname{abs-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
-   %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
-   %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
-   %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
-   %  \transname{var-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
-   %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0''}$ \\
-   %  & \hspace{8mm} $\cframe{p_0'}{\delta_0'}{\sigma_0''}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\
-   %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\app{X_l}{X_r}}\} \cup \sigma_0$ \\
-   % \transname{var-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
-   %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
-   %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
-   %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
-   %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\lambda\,a_1.X_t}\} \cup \sigma_0$ \\
 
   \end{tabular}
   \end{minipage}
-%\end{figure}
-\end{wrapfigure}
+\end{figure}
+%\end{wrapfigure}
 
 \section{A note on time complexity}
     \label{efficiency}
