@@ -361,11 +361,11 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     & $|$ & $\lambda a.t$ & abstractions \\
     & $|$ & $\app{l}{r}$ & applications \\
       & $|$ & $X$ & \\
-      $e_\nu$  & $::=$ & $(a,\Phi) = (a,\Phi)$ & $\nu$-equations \\
+      $e_\nu$  & $::=$ & $(a,\Phi) = (a,\Phi)$ & $\nu$-equation \\
            & $|$ &  $(X,\Phi) = (a,\Phi)$ \\
       $p_\nu$  & $::=$ & $\epsilon$ & $\nu$-problems \\
            & $|$ & $e_\nu, p_\nu$ \\
-      $e_\delta$  & $::=$& $(X,\Phi) = (X,\Phi)$ & $\delta$-equations \\
+      $e_\delta$  & $::=$& $(X,\Phi) = (X,\Phi)$ & $\delta$-equation \\
       $p_\delta$  & $::=$ & $\epsilon$ & $\delta$-problems \\
            & $|$ & $e_\delta, p_\delta$
     \end{tabular}
@@ -429,20 +429,22 @@ $\sigma$ and $\delta$.
 
 The simplified problem is about solving three kinds of
 closure-equations: atom-atom, atom-var, and var-var.
-{\color{red}[ talk about the equations and problems
-    defined in Figure~\ref{table:new-terms} ]}
-We refer to a
-atom-atom or atom-var problem as a \emph{problem$_\nu$} and refer to a
-var-var problem as a \emph{problem$_\delta$}.
-Given a set of
-problem$_\nu$ and a set of problem$_\delta$, we first run the
-$\nu$-machine, defined in Figure~\ref{machine:nu}, on the set of
-problem$_\nu$ to generate a substitution.
-
-The $\delta$-machine in Figure~\ref{machine:delta} computes the final
-unifier on three inputs: the substitution resulted from the
-$\nu$-machine, $\delta$, and a list of known variables, initialized by
-the domain of the substitution.  If no transitions apply, the machine
+% {\color{red}[ talk about the equations and problems
+%     defined in Figure~\ref{table:new-terms} ]}
+As defined in Figure~\ref{table:new-terms},
+we refer to an atom-atom or atom-var equation as
+\emph{$e_\nu$} and refer to a
+var-var equation as a \emph{$e_\delta$}.
+Given two lists, $p_\nu$ and $p_\delta$, of these equations,
+we first run the
+$\nu$-machine, defined in Figure~\ref{machine:nu},
+on $p_\nu$ to generate a substitution.
+The $\delta$-machine, defined in Figure~\ref{machine:delta},
+then computes the final unifier on three inputs:
+the substitution resulted from the $\nu$-machine,
+$\delta$, and a list of known variables, initialized by
+the domain of the substitution.
+If no transitions apply, the machine
 fails and the unification problem has no unifier.
 
 
