@@ -121,7 +121,7 @@
   log(n) \times G(n))$ time, where $G$ is the functional inverse of
   Ackermann's function.  Nominal unification generates a set of
   variable assignments, if there exists one, that makes terms
-  involving binding operations $\alpha$-equivalent. We preserve names
+  involving binding operations $\alpha$-equivalent. We preserve names (atoms)
   while using special representations of de Bruijn numbers
   to enable efficient name management.
   % {\color{red}[The following sentence is not clear enough. --Jeremy]}
@@ -257,7 +257,7 @@ mappings in both directions: names to numbers and numbers to names.
   \begin{minipage}[b]{0.4\textwidth}
    \caption{Terms\label{table:terms}}
   \begin{tabular}{r l l l}
-    $t,l,r$ & $::=$ & $a$ & atom \\
+    $t,l,r$ & $::=$ & $a$ & name \\
     & $|$ & $\lambda a.t$ & abstractions \\
     & $|$ & $\app{l}{r}$ & applications \\
     \end{tabular}
@@ -272,8 +272,8 @@ mappings in both directions: names to numbers and numbers to names.
 }\\ \\
 
 \infer[\transname{bound}]{\Phi \vdash \texttt{Bd}\,\, a\,\, i}{%
-  (\texttt{atom$\rightarrow$idx}\, \Phi\, a)=i &
-  (\texttt{idx$\rightarrow$atom}\, \Phi\, i)=a
+  (\texttt{name$\rightarrow$idx}\, \Phi\, a)=i &
+  (\texttt{idx$\rightarrow$name}\, \Phi\, i)=a
 } \\
 
 
@@ -282,7 +282,7 @@ mappings in both directions: names to numbers and numbers to names.
 
 \begin{minipage}[b]{0.4\textwidth}
 
-  \caption{$\approx$-rules\label{table:same-atom}}
+  \caption{$\approx$-rules\label{table:same-name}}
   \begin{tabular}{l}
 \infer[\transname{same-free}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
     \Phi_1 \vdash \texttt{Fr}\,\, a_1 &
@@ -310,39 +310,39 @@ mappings in both directions: names to numbers and numbers to names.
   A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
   defined in Figure~\ref{table:terms}, and a scope $\Phi$, where the
   scope is an ordered list of names for the binders in the enclosing
-  context.  Hereafter, we refer to a name as an \emph{atom}.
+  context.  Hereafter, we refer to a name as an \emph{name}.
 \end{definition}
 
-When the term of a closure is an atom, the closure itself represents a
+When the term of a closure is a name, the closure itself represents a
 de Bruijn number.  For example, consider the term
-$\lambda\,x.\lambda\,y.x$. The de Bruijn number of the atom $x$ is $1$
+$\lambda\,x.\lambda\,y.x$. The de Bruijn number of the name $x$ is $1$
 and the closure-representation of this number is $\clos{x}{(y\,x)}$.
 We can retrieve the number-representation by finding the position of
-the first appearance of the atom in the scope. In this case, the
+the first appearance of the name in the scope. In this case, the
 position of $x$ in the list $(y\,x)$ is $1$, which is its de Bruijn
 number. Similarly, the de Bruijn number of $y$ is $0$.
 
 A scope, as a list, supports three operations: \texttt{ext-scope},
-which extends the scope by adding an atom to the front of the list;
-\texttt{idx$\rightarrow$atom}, which returns the atom of a given index
+which extends the scope by adding a name to the front of the list;
+\texttt{idx$\rightarrow$name}, which returns the name of a given index
 starting from the front of the list; and
-\texttt{atom$\rightarrow$idx}, which returns the location of the first
-appearance of a given atom counting from the front of the list.  As we
-are building the list in reversed order, if repeated atoms appear, the
+\texttt{name$\rightarrow$idx}, which returns the location of the first
+appearance of a given name counting from the front of the list.  As we
+are building the list in reversed order, if repeated names appear, the
 first appearance in a list shadows the others.
 
 Now in Figure~\ref{table:fb}, we can talk about free and bound
 variables ``constructively,'' with de Bruijn numbers serving as
-evidence that variables are well-scoped.  When an atom, $a$, does not
+evidence that variables are well-scoped.  When a name, $a$, does not
 appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
 $\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$; when $a$'s first
 appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
 $i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
 a\,i$.  The \transname{bound} rule has two premises to be algorithmic
-in both directions, that is, given an atom we can find its index and
-given an index we can find its atom, if no shadowings occur.
-Figure~\ref{table:same-atom} defines the rules to decide whether two
-atoms are $\alpha$-equivalent w.r.t their scopes, written as
+in both directions, that is, given a name we can find its index and
+given an index we can find its name, if no shadowings occur.
+Figure~\ref{table:same-name} defines the rules to decide whether two
+names are $\alpha$-equivalent w.r.t their scopes, written as
 $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
 % temporary
@@ -357,7 +357,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     $X,Y$   &       &     & variables \\
       $xs,ys$ & $::=$ & $\epsilon$& list of variables \\
       & $|$&  $X,xs$ &  \\
-    $t,l,r$ & $::=$ & $a$ & atoms \\
+    $t,l,r$ & $::=$ & $a$ & names \\
     & $|$ & $\lambda a.t$ & abstractions \\
     & $|$ & $\app{l}{r}$ & applications \\
       & $|$ & $X$ & \\
@@ -373,16 +373,16 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
 In Figure~\ref{table:new-terms}, we introduce unification variables,
 shortened as var.  First, let's consider a simplified unification
-problem: a variable can only be instantiated by an atom, that is,
+problem: a variable can only be instantiated by a name, that is,
 finding the unifier of two terms that share the same structure but
-differ in atoms and variables.  A unifier consists of two parts:
+differ in names and variables.  A unifier consists of two parts:
 $\sigma$ and $\delta$.
 \begin{definition}
   A substitution $\sigma$ is a partial finite function from variables,
   $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
   set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
   $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
-  For the simplified problems, we restrict $t$ to an atom.
+  For the simplified problems, we restrict $t$ to a name.
 \end{definition}
 
 \begin{definition}
@@ -430,11 +430,11 @@ $\sigma$ and $\delta$.
 
 
 The simplified problem is about solving three kinds of
-closure-equations: atom-atom, atom-var, and var-var.
+closure-equations: name-name, name-var, and var-var.
 % {\color{red}[ talk about the equations and problems
 %     defined in Figure~\ref{table:new-terms} ]}
 As defined in Figure~\ref{table:new-terms},
-we refer to an atom-atom or atom-var equation as
+we refer to a name-name or name-var equation as
 \emph{$e_\nu$} and refer to a
 var-var equation as a \emph{$e_\delta$}.
 Given two lists, $p_\nu$ and $p_\delta$, of these equations,
@@ -462,7 +462,7 @@ fails and the unification problem has no unifier.
 
 Now the question is how to generalize the previous algorithm, that is,
 given two arbitrary terms, where a variable may be instantiated by any
-term besides atoms, can we re-shape the two terms to create a proper
+term besides names, can we re-shape the two terms to create a proper
 input to the two machines?
 
 
@@ -517,7 +517,7 @@ problem$_\nu$, a set of problem$_\delta$, and a substitution.  Here we
 need to extend the definition of substitution: it is now a partial
 finite function from variables to terms.  Also, in the
 \transname{var-app} and \transname{var-abs} rules, we need to create
-new atoms and new variables.
+new names and new variables.
 
 \begin{wrapfigure}{l}{0.5\textwidth}
 %    \begin{figure}
@@ -609,14 +609,14 @@ In the previous sections, we represent scopes by lists for simplicity,
 but lists are inefficient for variable lookup.  To have better time
 complexity, we represent a scope with a counter and two persistent
 hashtables, also known as HAMT~\citep{bagwell_ideal_2001}.  One
-hashtable maps from atoms to numbers, the other maps from numbers to
-atoms, and the counter is used to track the de Bruijn number.  When we
-extend a scope with an atom, we extend the two hashtables with the
+hashtable maps from names to numbers, the other maps from numbers to
+names, and the counter is used to track the de Bruijn number.  When we
+extend a scope with a name, we extend the two hashtables with the
 corresponding maps and add one to the counter.  A persistent
 hashtable, in practice, has constant time for update and lookup,
 although the worst case scenario could be $O(log(n))$.  Thus,
-\texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and
-\texttt{atom$\rightarrow$idx} are all logarithmic time.  In addition,
+\texttt{ext-scope}, \texttt{idx$\rightarrow$name}, and
+\texttt{name$\rightarrow$idx} are all logarithmic time.  In addition,
 using persistent structures avoids copying the entire data-structure
 when branching, in particular, during the \transname{app-app} rule of
 the $\rho$-machine.
@@ -629,14 +629,14 @@ efficiency.
 
 Given the above optimizations, the $\nu$-machine and the
 $\delta$-machine are both worst case $O(n \times log(n))$,
-where $n$ is the sum of atom and variable occurrences.
+where $n$ is the sum of name and variable occurrences.
 The algorithm of Martelli-Montanari is $O(n \times G(n))$, when
 representing sets with UNION-FIND~\citep{tarjan_efficiency_1975}, where
 $n$ is the number of variable occurrences in the original terms.  The
 $\rho$-machine is similar except that two new factors are involved:
-the update operation of HAMT and the generation of atoms and
+the update operation of HAMT and the generation of names and
 variables.  We consider the former one to have $O(log(n))$ complexity,
-and we implement atom and variable creation with state monads in
+and we implement name and variable creation with state monads in
 constant time.  Thus reducing an arbitrary unification problem to the
 input of the $\nu$ and $\delta$ machines becomes $O(n \times log(n) \times
 G(n))$.
