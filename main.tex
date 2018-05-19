@@ -126,7 +126,7 @@
   to enable efficient name management.
   % {\color{red}[The following sentence is not clear enough. --Jeremy]}
   We use Martelli-Montanari style multi-equation reduction
-  to generate the name management problems from arbitrary unification terms.
+  to generate these name management problems from arbitrary unification terms.
   % {\color{red} The following phrase needs to be reworded.  ``the''
   %   indicates exactly one. But they had many ideas.  Which one are you
   %   referring to? Be specific.}  with the idea of Martelli-Montanari.
@@ -145,10 +145,10 @@ this convenience: higher-order pattern unification of
 handles a fragment of $\beta\eta$-rules, is the foundation of
 Isabelle~\citep{paulson_natural_1986},
 $\lambda$Prolog~\citep{nadathur_overview_1988}, and
-Twelf~\citep{pfenning_system_1999-1}.  Nominal unification, which
+Twelf~\citep{pfenning_system_1999}.  Nominal unification, which
 focuses on the $\alpha$-rule, has inspired extensions of logic
 programming languages, like $\alpha$Prolog~\citep{cheney_prolog:_2004}
-and $\alpha$Kanren~\citep{byrd_alphakanren:_2007}, as well as theorem
+and $\alpha$Kanren~\citep{byrd_kanren_2007}, as well as theorem
 provers, like nominal Isabelle~\citep{urban_nominal_2005} and
 $\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
 theories can be reduced to one another~\citep{cheney_relating_2005,
@@ -162,10 +162,10 @@ environments, have impacted the areas as diverse as
 rewriting~\citep{fernandez_nominal_2004, fernandez_nominal_2005,
   fernandez_nominal_2007, aoto_nominal_2016}, equational
 theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
-bindings in abstract syntax~\citep{pitts_varlanguage_2000,
+bindings in abstract syntax~\citep{pitts_metalanguage_2000,
   gabbay_new_2002}.
 
-Concerning time complexity, \citet{qian_unification_1996} prove that
+Concerning time complexity, \citet{qian_unification_1996} proves that
 higher-order pattern unification is decidable in linear time.  On the
 other hand, it has been an open problem whether there exists a nominal
 unification algorithm that can do better than
@@ -340,9 +340,9 @@ appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
 $i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
 a\,i$.  The \transname{bound} rule has two premises to be algorithmic
 in both directions, that is, given an atom we can find its index and
-given an index we can find its atom, if no shadowing occur.
+given an index we can find its atom, if no shadowings occur.
 Figure~\ref{table:same-atom} defines the rules to decide whether two
-atoms are $\alpha$-equivalent w.r.t theirs scopes, written as
+atoms are $\alpha$-equivalent w.r.t their scopes, written as
 $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
 % temporary
@@ -382,7 +382,7 @@ $\sigma$ and $\delta$.
   $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
   set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
   $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
-  For the simplified problem, we restrict that $t$ can only be an atom.
+  For the simplified problems, we restrict $t$ to an atom.
 \end{definition}
 
 \begin{definition}
@@ -393,9 +393,11 @@ $\sigma$ and $\delta$.
   $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
   $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
   $\delta$ as a special form of $\Delta$: for each equation in
-  $\delta$, the terms on both sides are variables.  Given a variable
-  $X$, we write $\delta(X)$ as retrieving the list of
-  closure-equations that $X$ is on one side of.
+  $\delta$, the terms on both sides are variables.
+  {\color{red}}
+  Given a variable
+  $X$, $\delta(X)$ yields the list of
+  closure-equations where $X$ appears at least once.
 \end{definition}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -606,13 +608,13 @@ new atoms and new variables.
 In the previous sections, we represent scopes by lists for simplicity,
 but lists are inefficient for variable lookup.  To have better time
 complexity, we represent a scope with a counter and two persistent
-hashtables, also known as hamt~\citep{bagwell_ideal_2001}.  One
+hashtables, also known as HAMT~\citep{bagwell_ideal_2001}.  One
 hashtable maps from atoms to numbers, the other maps from numbers to
 atoms, and the counter is used to track the de Bruijn number.  When we
-extend a scope with a atom, we extend the two hashtables with the
-corresponding maps and add one to the counter.  An persistent
+extend a scope with an atom, we extend the two hashtables with the
+corresponding maps and add one to the counter.  A persistent
 hashtable, in practice, has constant time for update and lookup,
-thought the worst case scenario could be $O(log(n))$.  Thus,
+although the worst case scenario could be $O(log(n))$.  Thus,
 \texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and
 \texttt{atom$\rightarrow$idx} are all logarithmic time.  In addition,
 using persistent structures avoids copying the entire data-structure
@@ -626,17 +628,17 @@ exists in both $X$'s entry and $Y$'s entry, but improves the time
 efficiency.
 
 Given the above optimizations, the $\nu$-machine and the
-$\delta$-machine are both $O(n \times log(n))$ at the worst case,
-where $n$ is the number of atom occurrences and variable occurrences.
+$\delta$-machine are both worst case $O(n \times log(n))$,
+where $n$ is the sum of atom and variable occurrences.
 The algorithm of Martelli-Montanari is $O(n \times G(n))$, when
 representing sets with UNION-FIND~\citep{tarjan_efficiency_1975}, where
 $n$ is the number of variable occurrences in the original terms.  The
 $\rho$-machine is similar except that two new factors are involved:
-the update operation of an hamt and the generation of atoms and
+the update operation of HAMT and the generation of atoms and
 variables.  We consider the former one to have $O(log(n))$ complexity,
 and we implement atom and variable creation with state monads in
 constant time.  Thus reducing an arbitrary unification problem to the
-input of the $\nu$ and $\delta$ machines is $O(n \times log(n) \times
+input of the $\nu$ and $\delta$ machines becomes $O(n \times log(n) \times
 G(n))$.
 
     \clearpage
