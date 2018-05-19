@@ -151,7 +151,7 @@ programming languages, like $\alpha$Prolog~\citep{cheney_prolog:_2004}
 and $\alpha$Kanren~\citep{byrd_alphakanren:_2007}, as well as theorem
 provers, like nominal Isabelle~\citep{urban_nominal_2005} and
 $\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
-theories can be reduced to eachother~\citep{cheney_relating_2005,
+theories can be reduced to one another~\citep{cheney_relating_2005,
   levy_nominal_2012}, implementing higher-order pattern unification is
 more complicated because it has to deal with application and
 capture-avoiding substitution.  On the other hand, implementation of
@@ -189,7 +189,7 @@ respect to the number of binders.  One might try to replace these
 lists with a more efficient lookup structure, such as a hash table,
 but then composing two swappings would take linear time, and that
 operation is also rather frequent.  Here we present an algorithm that
-does not use swappings but instead represents names with De Bruijn
+does not use swappings but instead represents names with de Bruijn
 numbers which enables the use of persistent hash tables, in
 particular, a Hash Array Mapped Trie
 (HAMT)~\citep{bagwell_ideal_2001}. HAMTs provide efficient lookup and
@@ -340,7 +340,7 @@ appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
 $i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
 a\,i$.  The \transname{bound} rule has two premises to be algorithmic
 in both directions, that is, given an atom we can find its index and
-given an index we can find its atom, if no shadowing happen.
+given an index we can find its atom, if no shadowing occur.
 Figure~\ref{table:same-name} defines the rules to decide whether two
 atoms are $\alpha$-equivalent w.r.t theirs scopes, written as
 $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.

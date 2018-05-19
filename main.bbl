@@ -1,0 +1,236 @@
+\begin{thebibliography}{32}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aoto and Kikuchi(2016)]{aoto_nominal_2016}
+Takahito Aoto and Kentaro Kikuchi.
+\newblock Nominal confluence tool.
+\newblock In \emph{Automated {Reasoning}}, Lecture {Notes} in {Computer}
+  {Science}, pages 173--182. Springer, Cham, June 2016.
+\newblock ISBN 978-3-319-40228-4 978-3-319-40229-1.
+
+\bibitem[Ayala-Rinc{\'o}n et~al.(2016)Ayala-Rinc{\'o}n, Fern{\'a}ndez, and
+  Nantes-Sobrinho]{ayala-rincon_nominal_2016}
+Mauricio Ayala-Rinc{\'o}n, Maribel Fern{\'a}ndez, and Daniele Nantes-Sobrinho.
+\newblock Nominal narrowing.
+\newblock In Delia Kesner and Brigitte Pientka, editors, \emph{1st
+  {International} {Conference} on {Formal} {Structures} for {Computation} and
+  {Deduction} ({FSCD} 2016)}, volume~52 of \emph{Leibniz {International}
+  {Proceedings} in {Informatics} ({LIPIcs})}, pages 11:1--11:17, Dagstuhl,
+  Germany, 2016. Schloss Dagstuhl{\textendash}Leibniz-Zentrum fuer Informatik.
+\newblock ISBN 978-3-95977-010-1.
+
+\bibitem[Aydemir et~al.(2006)Aydemir, Bohannon, and
+  Weirich]{aydemir_nominal_2006}
+Brian Aydemir, Aaron Bohannon, and Stephanie Weirich.
+\newblock Nominal {Reasoning} {Techniques} in {Coq}.
+\newblock In \emph{International {Workshop} on {Logical} {Frameworks} and
+  {Meta}-{Languages}:{Theory} and {Practice} ({LFMTP})}, Seattle, WA, USA,
+  August 2006.
+
+\bibitem[Aydemir et~al.(2008)Aydemir, Chargu{\'e}raud, Pierce, Pollack, and
+  Weirich]{aydemir_engineering_2008}
+Brian Aydemir, Arthur Chargu{\'e}raud, Benjamin~C. Pierce, Randy Pollack, and
+  Stephanie Weirich.
+\newblock Engineering formal metatheory.
+\newblock In \emph{Proceedings of the 35th {Annual} {ACM} {SIGPLAN}-{SIGACT}
+  {Symposium} on {Principles} of {Programming} {Languages}}, {POPL} '08, pages
+  3--15, New York, NY, USA, 2008. ACM.
+\newblock ISBN 978-1-59593-689-9.
+
+\bibitem[Bagwell(2001)]{bagwell_ideal_2001}
+Phil Bagwell.
+\newblock Ideal {Hash} {Trees}.
+\newblock November 2001.
+
+\bibitem[Berghofer and Urban(2007)]{berghofer_head--head_2007}
+Stefan Berghofer and Christian Urban.
+\newblock A {Head}-to-{Head} {Comparison} of de {Bruijn} {Indices} and {Names}.
+\newblock \emph{Electronic Notes in Theoretical Computer Science}, 174\penalty0
+  (5):\penalty0 53--67, June 2007.
+\newblock ISSN 1571-0661.
+
+\bibitem[Byrd and Friedman(2007)]{byrd_alphakanren:_2007}
+William~E. Byrd and Daniel~P. Friedman.
+\newblock \emph{{alphaKanren}: {A} fresh name in nominal logic programming}.
+\newblock Scheme and Functional Programming Workshop, 2007.
+
+\bibitem[Calv{\`e}s(2010)]{calves_complexity_2010}
+Christophe Calv{\`e}s.
+\newblock \emph{Complexity and {Implementation} of {Nominal} {Algorithms}}.
+\newblock {PhD} thesis. King{\textquoteright}s College of London, 2010.
+
+\bibitem[Chargu{\'e}raud(2012)]{chargueraud_locally_2012}
+Arthur Chargu{\'e}raud.
+\newblock The locally nameless representation.
+\newblock \emph{J Autom Reasoning}, 49\penalty0 (3):\penalty0 363--408, October
+  2012.
+\newblock ISSN 0168-7433, 1573-0670.
+
+\bibitem[Cheney(2005)]{cheney_relating_2005}
+James Cheney.
+\newblock Relating nominal and higher-order pattern unification.
+\newblock In \emph{Proceedings of {UNIF} 2005}, pages 104--119, 2005.
+
+\bibitem[Cheney and Urban(2004)]{cheney_prolog:_2004}
+James Cheney and Christian Urban.
+\newblock $\alpha${Prolog}: {A} logic programming language with names, binding
+  and $\alpha$-equivalence.
+\newblock In \emph{Logic {Programming}}, Lecture {Notes} in {Computer}
+  {Science}, pages 269--283. Springer, Berlin, Heidelberg, September 2004.
+\newblock ISBN 978-3-540-22671-0 978-3-540-27775-0.
+
+\bibitem[Church(1941)]{church_calculi_1941}
+Alonzo Church.
+\newblock \emph{The {Calculi} of {Lambda} {Conversion}}.
+\newblock 1941.
+
+\bibitem[de~Bruijn(1972)]{de_bruijn_lambda_1972}
+Nicolaas~G. de~Bruijn.
+\newblock Lambda calculus notation with nameless dummies, a tool for automatic
+  formula manipulation, with application to the {Church}-{Rosser} theorem.
+\newblock \emph{Indagationes Mathematicae (Proceedings)}, 75\penalty0
+  (5):\penalty0 381--392, January 1972.
+\newblock ISSN 1385-7258.
+
+\bibitem[Dowek et~al.(2000)Dowek, Hardin, and Kirchner]{dowek_higher_2000}
+Gilles Dowek, Th{\'e}r{\`e}se Hardin, and Claude Kirchner.
+\newblock Higher {Order} {Unification} via {Explicit} {Substitutions}.
+\newblock \emph{Information and Computation}, 157\penalty0 (1):\penalty0
+  183--235, February 2000.
+\newblock ISSN 0890-5401.
+
+\bibitem[Fern{\'a}ndez and Gabbay(2005)]{fernandez_nominal_2005}
+Maribel Fern{\'a}ndez and Murdoch~J. Gabbay.
+\newblock Nominal rewriting with name generation: abstraction vs. locality.
+\newblock In \emph{Proceedings of the 7th {ACM} {SIGPLAN} {International}
+  {Conference} on {Principles} and {Practice} of {Declarative} {Programming}},
+  {PPDP} '05, pages 47--58, New York, NY, USA, 2005. ACM.
+\newblock ISBN 978-1-59593-090-3.
+
+\bibitem[Fern{\'a}ndez and Gabbay(2007)]{fernandez_nominal_2007}
+Maribel Fern{\'a}ndez and Murdoch~J. Gabbay.
+\newblock Nominal rewriting.
+\newblock \emph{Information and Computation}, 205\penalty0 (6):\penalty0
+  917--965, June 2007.
+\newblock ISSN 0890-5401.
+
+\bibitem[Fern{\'a}ndez et~al.(2004)Fern{\'a}ndez, Gabbay, and
+  Mackie]{fernandez_nominal_2004}
+Maribel Fern{\'a}ndez, Murdoch~J. Gabbay, and Ian Mackie.
+\newblock Nominal rewriting systems.
+\newblock In \emph{Proceedings of the 6th {ACM} {SIGPLAN} {International}
+  {Conference} on {Principles} and {Practice} of {Declarative} {Programming}},
+  {PPDP} '04, pages 108--119, New York, NY, USA, 2004. ACM.
+\newblock ISBN 978-1-58113-819-1.
+
+\bibitem[Gabbay and Pitts(2002)]{gabbay_new_2002}
+Murdoch~J. Gabbay and Andrew~M. Pitts.
+\newblock A new approach to abstract syntax with variable binding.
+\newblock \emph{Form Aspects Comput}, 13\penalty0 (3-5):\penalty0 341--363,
+  July 2002.
+\newblock ISSN 0934-5043, 1433-299X.
+
+\bibitem[Levy and Villaret(2010)]{levy_efficient_2010}
+Jordi Levy and Mateu Villaret.
+\newblock An efficient nominal unification algorithm, 2010.
+
+\bibitem[Levy and Villaret(2012)]{levy_nominal_2012}
+Jordi Levy and Mateu Villaret.
+\newblock Nominal unification from a higher-order perspective.
+\newblock \emph{ACM Transactions on Computational Logic}, 13\penalty0
+  (2):\penalty0 1--31, April 2012.
+\newblock ISSN 15293785.
+\newblock arXiv: 1005.3731.
+
+\bibitem[Martelli and Montanari(1982)]{martelli_efficient_1982}
+Alberto Martelli and Ugo Montanari.
+\newblock An efficient unification algorithm.
+\newblock \emph{ACM Trans. Program. Lang. Syst.}, 4\penalty0 (2):\penalty0
+  258--282, April 1982.
+\newblock ISSN 0164-0925.
+
+\bibitem[Miller(1989)]{miller_logic_1989}
+Dale Miller.
+\newblock A logic programming language with lambda-abstraction, function
+  variables, and simple unification.
+\newblock In \emph{Extensions of {Logic} {Programming}}, Lecture {Notes} in
+  {Computer} {Science}, pages 253--281. Springer, Berlin, Heidelberg, December
+  1989.
+\newblock ISBN 978-3-540-53590-4 978-3-540-46879-0.
+
+\bibitem[Nadathur and Miller(1988)]{nadathur_overview_1988}
+Gopalan Nadathur and Dale Miller.
+\newblock An {Overview} of {Lambda}-{Prolog}.
+\newblock pages 810--827, June 1988.
+
+\bibitem[Near et~al.(2008)Near, Byrd, and Friedman]{near_leantap:_2008}
+Joseph~P. Near, William~E. Byrd, and Daniel~P. Friedman.
+\newblock $\alpha${leanTAP}: {A} declarative theorem prover for first-order
+  classical logic.
+\newblock In \emph{Logic {Programming}}, Lecture {Notes} in {Computer}
+  {Science}, pages 238--252. Springer, Berlin, Heidelberg, December 2008.
+\newblock ISBN 978-3-540-89981-5 978-3-540-89982-2.
+
+\bibitem[Norell(2007)]{norell_towards_2007}
+Ulf Norell.
+\newblock \emph{Towards {A} {Practical} {Programming} {Language} {Based} on
+  {Dependent} {Type} {Theory}}.
+\newblock 2007.
+
+\bibitem[Paterson and Wegman(1978)]{paterson_linear_1978}
+M.~S. Paterson and M.~N. Wegman.
+\newblock Linear unification.
+\newblock \emph{Journal of Computer and System Sciences}, 16\penalty0
+  (2):\penalty0 158--167, April 1978.
+\newblock ISSN 0022-0000.
+
+\bibitem[Paulson(1986)]{paulson_natural_1986}
+Lawrence~C. Paulson.
+\newblock Natural deduction as higher-order resolution.
+\newblock \emph{The Journal of Logic Programming}, 3\penalty0 (3):\penalty0
+  237--258, October 1986.
+\newblock ISSN 0743-1066.
+
+\bibitem[Pfenning and Sch{\"u}rmann(1999)]{pfenning_system_1999-1}
+Frank Pfenning and Carsten Sch{\"u}rmann.
+\newblock System {Description}: {Twelf} {\textemdash} {A} {Meta}-{Logical}
+  {Framework} for {Deductive} {Systems}.
+\newblock In \emph{Automated {Deduction} {\textemdash} {CADE}-16}, Lecture
+  {Notes} in {Computer} {Science}, pages 202--206. Springer, Berlin,
+  Heidelberg, July 1999.
+\newblock ISBN 978-3-540-66222-8 978-3-540-48660-2.
+
+\bibitem[Qian(1996)]{qian_unification_1996}
+Z.~Qian.
+\newblock Unification of {Higher}-order {Patterns} in {Linear} {Time} and
+  {Space}.
+\newblock \emph{J Logic Computation}, 6\penalty0 (3):\penalty0 315--341, June
+  1996.
+\newblock ISSN 0955-792X.
+
+\bibitem[Tarjan(1975)]{tarjan_efficiency_1975}
+Robert~Endre Tarjan.
+\newblock Efficiency of a good but not linear set union algorithm.
+\newblock \emph{J. ACM}, 22\penalty0 (2):\penalty0 215--225, April 1975.
+\newblock ISSN 0004-5411.
+
+\bibitem[Urban and Tasson(2005)]{urban_nominal_2005}
+Christian Urban and Christine Tasson.
+\newblock Nominal techniques in {Isabelle}/{HOL}.
+\newblock In \emph{Automated {Deduction} {\textendash} {CADE}-20}, Lecture
+  {Notes} in {Computer} {Science}, pages 38--53. Springer, Berlin, Heidelberg,
+  July 2005.
+\newblock ISBN 978-3-540-28005-7 978-3-540-31864-4.
+
+\bibitem[Urban et~al.(2004)Urban, Pitts, and Gabbay]{urban_nominal_2004}
+Christian Urban, Andrew~M. Pitts, and Murdoch~J. Gabbay.
+\newblock Nominal unification.
+\newblock \emph{Theoretical Computer Science}, 323\penalty0 (1-3):\penalty0
+  473--497, September 2004.
+\newblock ISSN 03043975.
+
+\end{thebibliography}
