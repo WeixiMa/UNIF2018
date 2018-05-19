@@ -121,16 +121,15 @@
   log(n) \times G(n))$ time, where $G$ is the functional inverse of
   Ackermann's function.  Nominal unification generates a set of
   variable assignments, if there exists one, that makes terms
-  involving binding operations $\alpha$-equivalent.  We preserve names
-  while using special representations of de Bruijn numbers.
-  {\color{red}[The following sentence is not clear enough. --Jeremy]}
-  Operations on name handling, i.e., deciding the $\alpha$-equivalence
-  of two names and inferring a name that $\alpha$-equals to a given
-  one, are in logarithmic time.  To reduce an arbitrary unification
-  problem to such name handlings, we preprocess the unification terms
-  {\color{red} The following phrase needs to be reworded.  ``the''
-    indicates exactly one. But they had many ideas.  Which one are you
-    referring to? Be specific.}  with the idea of Martelli-Montanari.
+  involving binding operations $\alpha$-equivalent. We preserve names
+  while using special representations of de Bruijn numbers
+  to enable efficient name management.
+  % {\color{red}[The following sentence is not clear enough. --Jeremy]}
+  We use Martelli-Montanari style multi-equation reduction
+  to generate the name management problems from arbitrary unification terms.
+  % {\color{red} The following phrase needs to be reworded.  ``the''
+  %   indicates exactly one. But they had many ideas.  Which one are you
+  %   referring to? Be specific.}  with the idea of Martelli-Montanari.
 \end{abstract}
 
 \section{Introduction and background}
@@ -163,10 +162,10 @@ environments, have impacted the areas as diverse as
 rewriting~\citep{fernandez_nominal_2004, fernandez_nominal_2005,
   fernandez_nominal_2007, aoto_nominal_2016}, equational
 theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
-bindings in abstract syntax~\citep{pitts_metalanguage_2000,
+bindings in abstract syntax~\citep{pitts_varlanguage_2000,
   gabbay_new_2002}.
 
-Concerning time complexity, \citet{qian_unification_1996} proved that
+Concerning time complexity, \citet{qian_unification_1996} prove that
 higher-order pattern unification is decidable in linear time.  On the
 other hand, it has been an open problem whether there exists a nominal
 unification algorithm that can do better than
@@ -231,7 +230,7 @@ unification.
 Despite its convenience when implementing $\alpha$-equivalence,
 programs written with de Bruijn numbers are notoriously obfuscated for
 humans to read and understand.  What's worse, as pointed out by
-Berghofer and Urban~\citep{berghofer_head--head_2007}, translating
+~\citet{berghofer_head--head_2007}, translating
 pencil-and-paper style proofs to versions using de Bruijn numbers is
 surprisingly involved: such translation may alter the structures of
 proofs.  Consequently, reproducing proofs with explicit names from de
@@ -249,9 +248,9 @@ modulo $\alpha$-equivalence, one frequently needs the mapping
 \emph{from numbers to names} to decide what name to assign to a
 unification variable.
 
-We propose to represent de Bruijn numbers by \emph{static closures},
+We represent de Bruijn numbers by \emph{static closures},
 hereafter referred to as \emph{closures}.  Closures preserve the
-mappings of both directions: names to numbers and numbers to names.
+mappings in both directions: names to numbers and numbers to names.
 
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -273,8 +272,8 @@ mappings of both directions: names to numbers and numbers to names.
 }\\ \\
 
 \infer[\transname{bound}]{\Phi \vdash \texttt{Bd}\,\, a\,\, i}{%
-  (\texttt{name$\rightarrow$idx}\, \Phi\, a)=i &
-  (\texttt{idx$\rightarrow$name}\, \Phi\, i)=a
+  (\texttt{atom$\rightarrow$idx}\, \Phi\, a)=i &
+  (\texttt{idx$\rightarrow$atom}\, \Phi\, i)=a
 } \\
 
 
@@ -283,7 +282,7 @@ mappings of both directions: names to numbers and numbers to names.
 
 \begin{minipage}[b]{0.4\textwidth}
 
-  \caption{$\approx$-rules\label{table:same-name}}
+  \caption{$\approx$-rules\label{table:same-atom}}
   \begin{tabular}{l}
 \infer[\transname{same-free}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
     \Phi_1 \vdash \texttt{Fr}\,\, a_1 &
@@ -374,7 +373,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
 In figure~\ref{table:new-terms}, we introduce unification variables,
 shortened as var.  First, let's consider a simplified unification
-problem: a variable can only be instantiated by a name, that is,
+problem: a variable can only be instantiated by an atom, that is,
 finding the unifier of two terms that share the same structure but
 differ in atoms and variables.  A unifier consists of two parts:
 $\sigma$ and $\delta$.
@@ -383,7 +382,7 @@ $\sigma$ and $\delta$.
   $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
   set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
   $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
-  For now, we assume the co-domain of a $\sigma$ only includes atoms.
+  For the simplified problem, we restrict that $t$ can only be an atom.
 \end{definition}
 
 \begin{definition}
@@ -418,7 +417,7 @@ $\sigma$ and $\delta$.
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
 } \\ \\
 
-     \infer[\transname{Name-Meta}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p}{\sigma_1}}{%
+     \infer[\transname{Name-Var}]{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p}{\sigma_1}}{%
     \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} \\
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
 } \\
@@ -497,7 +496,7 @@ input to the two machines?
     \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & \sigma_0(Y_2) = a_2 
 } \\ \\
 
-\infer[\transname{Name-Meta}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+\infer[\transname{Name-Var}]{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
     \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} &
     \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} & \sigma_0(Y_1) = a_1 & Y_2\notin dom(\sigma_0)} 
 \end{tabular}
@@ -513,7 +512,7 @@ reduces an arbitrary nominal unification problem to a set of
 problem$_\nu$, a set of problem$_\delta$, and a substitution.  Here we
 need to extend the definition of substitution: it is now a partial
 finite function from variables to terms.  Also, in the
-\transname{meta-app} and \transname{meta-abs} rules, we need to create
+\transname{var-app} and \transname{var-abs} rules, we need to create
 new atoms and new variables.
 
 \begin{wrapfigure}{l}{0.5\textwidth}
@@ -530,36 +529,36 @@ new atoms and new variables.
 
   \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
-    \infer[\transname{empty}]{\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}{%
+    \infer[\transname{Empty}]{\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}{%
     } \\  \\
 
-    \infer[\transname{step}]{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}{%
+    \infer[\transname{Step}]{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}{%
     \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} \\
     \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}
     } \\ \\
 
-        \infer[\transname{name-name}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+        \infer[\transname{Name-Name}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
     } \\ \\
-        \infer[\transname{name-meta}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
+        \infer[\transname{Name-Var}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}{%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
     } \\ \\
-        \infer[\transname{meta-meta}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}{%
+        \infer[\transname{Var-Var}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}{%
     \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
     } \\ \\
-        \infer[\transname{app-app}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+        \infer[\transname{App-App}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\
-            \infer[\transname{abs-abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+            \infer[\transname{Abs-Abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}\\
     \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)
     } \\ \\
-        \infer[\transname{meta-app}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+        \infer[\transname{Var-App}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1} 
     } \\ \\
-        \infer[\transname{meta-abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
+        \infer[\transname{Var-Abs}]{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \\
     \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) & \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2) 
     } \\ \\
@@ -573,9 +572,9 @@ new atoms and new variables.
     %                   & \\
     % \transname{name-name} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
    %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}} \cup p_0$  \\
-   %  \transname{name-meta} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
+   %  \transname{name-var} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0'}{\delta_0}{\sigma_0}$ \\
    %                        & where $p_0' = {\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
-   %  \transname{meta-meta} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_0'}{\sigma_0}$ \\
+   %  \transname{var-var} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_0'}{\sigma_0}$ \\
    %                        & where $p_0' = {\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}} \cup p_0$  \\
    %  \transname{app-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
    %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'}$ \\
@@ -584,11 +583,11 @@ new atoms and new variables.
    %  & where $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
    %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
    %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
-   %  \transname{meta-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   %  \transname{var-app} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
    %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0''}$ \\
    %  & \hspace{8mm} $\cframe{p_0'}{\delta_0'}{\sigma_0''}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\
    %  & \hspace{8mm} $\sigma_0' = \{\bd{X_1}{\app{X_l}{X_r}}\} \cup \sigma_0$ \\
-   % \transname{meta-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
+   % \transname{var-abs} & $\cframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}$ \\ 
    %  & where $\cframe{p_0}{\delta_0}{\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}$ \\
    %  & \hspace{8mm} $\Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1)$ \\
    %  & \hspace{8mm} $\Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)$ \\
@@ -604,17 +603,17 @@ new atoms and new variables.
 
 In the previous sections, we represent scopes by lists for simplicity,
 but lists are inefficient for variable lookup.  To have better time
-complexity, we represent a scope with a counter and two immutable
+complexity, we represent a scope with a counter and two persistent
 hashtables, also known as hamt~\citep{bagwell_ideal_2001}.  One
-hashtable maps from names to numbers, the other maps from numbers to
-names, and the counter is used to track the de Bruijn number.  When we
-extend a scope with a name, we extend the two hashtables with the
-corresponding maps and add one to the counter.  An immutable
+hashtable maps from atoms to numbers, the other maps from numbers to
+atoms, and the counter is used to track the de Bruijn number.  When we
+extend a scope with a atom, we extend the two hashtables with the
+corresponding maps and add one to the counter.  An persistent
 hashtable, in practice, has constant time for update and lookup,
 thought the worst case scenario could be $O(log(n))$.  Thus,
 \texttt{ext-scope}, \texttt{idx$\rightarrow$atom}, and
 \texttt{atom$\rightarrow$idx} are all logarithmic time.  In addition,
-using immutable structures avoids copying the entire data-structure
+using persistent structures avoids copying the entire data-structure
 when branching, in particular, during the \transname{app-app} rule of
 the $\rho$-machine.
 
