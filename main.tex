@@ -308,7 +308,7 @@ mappings in both directions: names to numbers and numbers to names.
 
 \begin{definition}
   A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
-  defined in figure~\ref{table:terms}, and a scope $\Phi$, where the
+  defined in Figure~\ref{table:terms}, and a scope $\Phi$, where the
   scope is an ordered list of names for the binders in the enclosing
   context.  Hereafter, we refer to a name as an \emph{atom}.
 \end{definition}
@@ -331,7 +331,7 @@ appearance of a given atom counting from the front of the list.  As we
 are building the list in reversed order, if repeated atoms appear, the
 first appearance in a list shadows the others.
 
-Now in figure~\ref{table:fb}, we can talk about free and bound
+Now in Figure~\ref{table:fb}, we can talk about free and bound
 variables ``constructively,'' with de Bruijn numbers serving as
 evidence that variables are well-scoped.  When an atom, $a$, does not
 appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
@@ -371,7 +371,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     \end{tabular}
 \end{wrapfigure}
 
-In figure~\ref{table:new-terms}, we introduce unification variables,
+In Figure~\ref{table:new-terms}, we introduce unification variables,
 shortened as var.  First, let's consider a simplified unification
 problem: a variable can only be instantiated by an atom, that is,
 finding the unifier of two terms that share the same structure but
@@ -393,7 +393,7 @@ $\sigma$ and $\delta$.
   $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
   $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
   $\delta$ as a special form of $\Delta$: for each equation in
-  $\delta$, the term of both sides are variables.  Given a variable
+  $\delta$, the terms on both sides are variables.  Given a variable
   $X$, we write $\delta(X)$ as retrieving the list of
   closure-equations that $X$ is on one side of.
 \end{definition}
@@ -436,7 +436,7 @@ atom-atom or atom-var problem as a \emph{problem$_\nu$} and refer to a
 var-var problem as a \emph{problem$_\delta$}.
 Given a set of
 problem$_\nu$ and a set of problem$_\delta$, we first run the
-$\nu$-machine, defined in figure~\ref{machine:nu}, on the set of
+$\nu$-machine, defined in Figure~\ref{machine:nu}, on the set of
 problem$_\nu$ to generate a substitution.
 
 The $\delta$-machine in Figure~\ref{machine:delta} computes the final
@@ -507,7 +507,7 @@ input to the two machines?
 
 Finding the common structure, obviously, is merely a first-order
 unification problem.  The $\rho$-machine, defined in
-figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari and
+Figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari and
 reduces an arbitrary nominal unification problem to a set of
 problem$_\nu$, a set of problem$_\delta$, and a substitution.  Here we
 need to extend the definition of substitution: it is now a partial
