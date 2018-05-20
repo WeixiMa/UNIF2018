@@ -41,7 +41,7 @@
 	abstract = {This paper studies the notion of {\textquotedblleft}freshness{\textquotedblright} that often occurs in the meta-theory of computer science languages involving various kinds of names. Nominal Equational Logic is an extension of ordinary equational logic with assertions about the freshness of names. It is shown to be both sound and complete for the support interpretation of freshness and equality provided by the Gabbay-Pitts nominal sets model of names, binding and $\alpha$-conversion.},
 	number = {Supplement C},
 	urldate = {2017-10-11},
-	journal = {Electronic Notes in Theoretical Computer Science},
+	journal = {ENTCS},
 	author = {Clouston, Ranald A. and Pitts, Andrew M.},
 	month = apr,
 	year = {2007},
@@ -351,9 +351,8 @@
 }
 
 @inproceedings{cheney_prolog:_2004,
-	series = {{LNCS}},
+	series = {{LNCS} 3132},
 	title = {$\alpha${Prolog}: {A} logic programming language with names, binding and $\alpha$-equivalence},
-	volume = {3132},
 	shorttitle = {$\alpha${Prolog}},
 	abstract = {There are two well-known approaches to programming with names, binding, and equivalence up to consistent renaming: representing names and bindings as concrete identifiers in a first-order language (such as Prolog), or encoding names and bindings as variables and abstractions in a higher-order language (such as $\lambda$Prolog). However, both approaches have drawbacks: the former often involves stateful name-generation and requires manual definitions for $\alpha$-equivalence and capture-avoiding substitution, and the latter is semantically very complicated, so reasoning about programs written using either approach can be very difficult. Gabbay and Pitts have developed a new approach to encoding abstract syntax with binding based on primitive operations of name-swapping and freshness. This paper presents $\alpha$Prolog, a logic programming language that uses this approach, along with several illustrative example programs and an operational semantics.},
 	language = {en},
@@ -368,9 +367,8 @@
 }
 
 @inproceedings{near_leantap:_2008,
-	series = {{LNCS}},
+	series = {{LNCS} 5366},
 	title = {$\alpha${leanTAP}: {A} declarative theorem prover for first-order classical logic},
-	volume = {5366},
 	shorttitle = {$\alpha${leanTAP}},
 	abstract = {We present $\alpha$leanTAP, a declarative tableau-based theorem prover written as a pure relation. Like leanTAP, on which it is based, $\alpha$leanTAP can prove ground theorems in first-order classical logic. Since it is declarative, $\alpha$leanTAPgenerates theorems and accepts non-ground theorems and proofs. The lack of mode restrictions also allows the user to provide guidance in proving complex theorems and to ask the prover to instantiate non-ground parts of theorems. We present a complete implementation of $\alpha$leanTAP, beginning with a translation of leanTAP into $\alpha$Kanren, an embedding of nominal logic programming in Scheme. We then show how to use a combination of tagging and nominal unification to eliminate the impure operators inherited from leanTAP, resulting in a purely declarative theorem prover.},
 	language = {en},
@@ -385,9 +383,8 @@
 }
 
 @inproceedings{urban_nominal_2005,
-	series = {{LNCS}},
+	series = {{LNCS} 3632},
 	title = {Nominal techniques in {Isabelle}/{HOL}},
-	volume = {3632},
 	abstract = {In this paper we define an inductive set that is bijective with the $\alpha$-equated lambda-terms. Unlike de-Bruijn indices, however, our inductive definition includes names and reasoning about this definition is very similar to informal reasoning on paper. For this we provide a structural induction principle that requires to prove the lambda-case for fresh binders only. The main technical novelty of this work is that it is compatible with the axiom-of-choice (unlike earlier nominal logic work by Pitts et al); thus we were able to implement all results in Isabelle/HOL and use them to formalise the standard proofs for Church-Rosser and strong-normalisation.},
 	language = {en},
 	urldate = {2017-11-29},
@@ -506,9 +503,8 @@
 }
 
 @inproceedings{pitts_metalanguage_2000,
-	series = {{LNCS}},
+	series = {{LNCS} 1837},
 	title = {A metalanguage for programming with bound names modulo renaming},
-	volume = {1837},
 	abstract = {This paper describes work in progress on the design of an ML-style metalanguage FreshML for programming with recursively defined functions on user-defined, concrete data types whose constructors may involve variable binding. Up to operational equivalence, values of such FreshML data types can faithfully encode terms modulo $\alpha$-conversion for a wide range of object languages in a straightforward fashion. The design of FreshML is {\textquoteleft}semantically driven{\textquoteright}, in that it arises from the model of variable binding in set theory with atoms given by the authors in [7]. The language has a type constructor for abstractions over names ( = atoms) and facilities for declaring locally fresh names. Moreover, recursive definitions can use a form of pattern-matching on bound names in abstractions. The crucial point is that the FreshML type system ensures that these features can only be used in well-typed programs in ways that are insensitive to renaming of bound names.},
 	language = {en},
 	urldate = {2017-12-02},
@@ -733,9 +729,8 @@
 }
 
 @inproceedings{miller_logic_1989,
-	series = {{LNCS}},
+	series = {{LNCS} 475},
 	title = {A logic programming language with lambda-abstraction, function variables, and simple unification},
-	volume = {475},
 	abstract = {It has been argued elsewhere that a logic programming language with function variables and $\lambda$-abstractions within terms makes a very good meta-programming language, especially when an object language contains notions of bound variables and scope. The $\lambda$Prolog logic programming language and the closely related Elf and Isabelle systems provide meta-programs with both function variables and $\lambda$-abstractions by containing implementations of higher-order unification. In this paper, we present a logic programming language, called L$\lambda$, that also contains both function variables and $\lambda$-abstractions, but certain restriction are placed on occurrences of function variables. As a result, an implementation of L$\lambda$ does not need to implement full higher-order unification. Instead, an extension to first-order unification that respects bound variable names and scopes is all that is required. Such unification problems are shown to be decidable and to possess most general unifiers when unifiers exist. A unification algorithm and logic programming interpreter are described and proved correct. Several examples of using L$\lambda$ as a meta-programming language are presented.},
 	language = {en},
 	urldate = {2018-01-14},
@@ -924,9 +919,8 @@
 }
 
 @inproceedings{pfenning_system_1999,
-	series = {{LNCS}},
+	series = {{LNCS} 1632},
 	title = {System {Description}: {Twelf} {\textemdash} {A} {Meta}-{Logical} {Framework} for {Deductive} {Systems}},
-	volume = {1632},
 	shorttitle = {System {Description}},
 	abstract = {Twelf is a meta-logical framework for the specification, implementation, and meta-theory of deductive systems from the theory of programming languages and logics. It relies on the LF type theory and the judgments-as-types methodology for specification [HHP93], a constraint logic programming interpreter for implementation [Pfe91], and the meta-logic M2 for reasoning about object languages encoded in LF [SP98]. It is a significant extension and complete reimplementation of the Elf system [Pfe94].Twelf is written in Standard ML and runs under SML of New Jersey and MLWorks on Unix and Window platforms. The current version (1.2) is distributed with a complete manual, example suites, a tutorial in the form of on-line lecture notes [Pfe], and an Emacs interface. Source and binary distributions are accessible via the Twelf home page http://www.cs.cmu.edu/{\textasciitilde}twelf.},
 	language = {en},
@@ -1061,11 +1055,10 @@
 
 @article{berghofer_head--head_2007,
 	title = {A {Head}-to-{Head} {Comparison} of {De} {Bruijn} {Indices} and {Names}},
-	volume = {174},
 	abstract = {Often debates about pros and cons of various techniques for formalising lambda-calculi rely on subjective arguments, such as de Bruijn indices are hard to read for humans or nominal approaches come close to the style of reasoning employed in informal proofs. In this paper we will compare four formalisations based on de Bruijn indices and on names from the nominal logic work, thus providing some hard facts about the pros and cons of these two formalisation techniques. We conclude that the relative merits of the different approaches, as usual, depend on what task one has at hand and which goals one pursues with a formalisation.},
 	number = {5},
 	urldate = {2018-05-19},
-	journal = {ENTCS},
+	journal = {ENTCS 174},
 	author = {Berghofer, Stefan and Urban, Christian},
 	month = jun,
 	year = {2007},
@@ -1097,9 +1090,8 @@
 }
 
 @inproceedings{aoto_nominal_2016,
-	series = {{LNCS}},
+	series = {{LNCS} 9706},
 	title = {Nominal {Confluence} {Tool}},
-	volume = {9706},
 	abstract = {Nominal rewriting is a framework of higher-order rewriting introduced in (Fern{\'a}ndez, Gabbay \& Mackie, 2004; Fern{\'a}ndez \& Gabbay, 2007). Recently, (Suzuki et al., 2015) revisited confluence of nominal rewriting in the light of feasibility. We report on an implementation of a confluence tool for (non-closed) nominal rewriting, based on (Suzuki et al., 2015) and succeeding studies.},
 	language = {en},
 	urldate = {2018-05-19},
