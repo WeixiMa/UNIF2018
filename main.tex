@@ -15,10 +15,6 @@
 \usepackage{color}
 \usepackage{natbib}
 
-\newenvironment*{premises}{\begin{array}{@{}l@{}}}{\end{array}}
-\newcommand*{\infrule}[2]{\frac{\hspace{1ex}\vphantom{()}#1\hspace{1ex}}{\hspace{1ex}\vphantom{()}#2\hspace{1ex}}}
-\newcommand*{\RNAME}[1]{\,\ensuremath{\textsc{[#1]}}}
-
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -91,6 +87,10 @@
 }
 
 \newcommand*{\transname}[1]{\textsc{#1}}
+
+\newcommand*{\transrule}[3]{
+  \infer[\transname{#1}]{#2}{#3}
+}
 
 
 %\bibliographystyle{plainurl}
@@ -256,7 +256,6 @@ We represent de Bruijn numbers by \emph{static closures},
 hereafter referred to as \emph{closures}.  Closures preserve the
 mappings in both directions: names to numbers and numbers to names.
 
-
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
    \caption{Terms\label{table:terms}}
@@ -271,21 +270,16 @@ mappings in both directions: names to numbers and numbers to names.
 
   \caption{Free and bound\label{table:fb}}
   \begin{tabular}{l}
-    $\infrule{%
-    a \notin \Phi
-    }{\Phi \vdash \texttt{Fr}\,\,a}
-    \RNAME{Free}$  \\ \\
+    \transrule{Free}
+    {\Phi \vdash \texttt{Fr}\,\,a}
+    {a \notin \Phi} \\ \\
 
-
-     $\infrule{%
-    \begin{premises}
-      (\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\
-      (\texttt{idx$\rightarrow$name}\, \Phi\,i) = a 
-  \end{premises}
-    }{\Phi \vdash \texttt{Bd}\,\,a\,\,i}
-    \RNAME{Bound}$  \\ \\
-
-
+    \transrule{Bound}
+    {\Phi \vdash \texttt{Bd}\,\,a\,\,i}
+    {
+    (\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\
+    (\texttt{idx$\rightarrow$name}\, \Phi\,i) = a
+    }
    \end{tabular}
 \end{minipage}
 
@@ -293,24 +287,20 @@ mappings in both directions: names to numbers and numbers to names.
 
   \caption{$\approx$-rules\label{table:same-name}}
   \begin{tabular}{l}
-    $\infrule{%
-    \begin{premises}
-    a_1 = a_2 \\
+    \transrule{Same-Free}
+    {\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
+    a_1 = a_2 \hfill \\
     \Phi_1 \vdash \texttt{Fr}\,\, a_1 \quad
     \Phi_2 \vdash \texttt{Fr}\,\, a_2 
-  \end{premises}
-    }{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
-    \RNAME{Same-Free}$  \\ \\
+    } \\ \\
 
-        $\infrule{%
-    \begin{premises}
-    i_1 = i_2 \\
+    \transrule{Same-Bound}
+    {\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
+    {%
+    i_1 = i_2 \hfill \\
       \Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 \quad
     \Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 
-  \end{premises}
-    }{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
-    \RNAME{Same-Bound}$  \\ \\
-
+    }
  \end{tabular}
 \end{minipage}
 
@@ -336,7 +326,7 @@ the first appearance of the name in the scope. In this case, the
 position of $x$ in the scope $(y\,x)$ is $1$, which is its de Bruijn
 number. Similarly, the de Bruijn number of $y$ is $0$.
 
-A scope, as a list, supports three operations: \texttt{ext-scope},
+A scope, as a list, supports three operations: \texttt{ext},
 which extends the scope by adding a name to the front of the scope;
 \texttt{idx$\rightarrow$name}, which returns the name of a given index
 starting from the front of the scope; and
@@ -417,32 +407,28 @@ $\sigma$ and $\delta$.
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
   \caption{$\nu$-machine}\label{machine:nu}
-  \begin{tabular}{c}
     \framebox{$\nuframe{\sigma}{p_\nu}{\sigma}$} \\ \\
-  \end{tabular}
   \end{minipage}
 
 \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
-    $\infrule{%
-    }{\nuframe{\sigma_0}{\epsilon}{\sigma_0}}
-    \RNAME{Empty}$ \\ \\
+    \transrule{Empty}
+    {\nuframe{\sigma_0}{\epsilon}{\sigma_0}}{} \\ \\
 
-    $\infrule{%
-        \begin{premises}
-    \nuframe{\sigma_0}{p}{\sigma_1} \\
-    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
-    \end{premises}
-    }{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
-    \RNAME{Name-Name}$ \\ \\
+    \transrule{Name-Name}
+    {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
+    {
+        \nuframe{\sigma_0}{p}{\sigma_1} \\
+    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill
+    } \\ \\
 
-    $\infrule{%
-        \begin{premises}
-    \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} \\
-    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2}                        
-    \end{premises}
-    }{\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
-    \RNAME{Name-Var}$ \\ \\
+
+    \transrule{Name-Var}
+    {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
+    {
+    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill \\
+        \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} 
+    }
 
   \end{tabular}
   \end{minipage}
@@ -486,63 +472,58 @@ term besides names, can we re-shape the two terms to create a proper
 input to the two machines?
 
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-%\begin{figure}[htbp]
+%\begin{wrapfigure}{r}{0.5\textwidth}
+\begin{figure}[htbp]
   \begin{minipage}[b]{\textwidth}
   \caption{$\delta$-machine and the pull operation}\label{machine:delta}
-  \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
         $\dframe{\sigma}{p_\delta}{xs}{\sigma}{p_\delta}$ \\
         $\pframe{\sigma}{xs}{p_\delta}{\sigma}{xs}$
         \end{varwidth}} \\ \\
-  \end{tabular}
   \end{minipage}
 
 \begin{minipage}[b]{0.4\textwidth}
   \begin{tabular}{l}
 
-    $\infrule{%
-    }{\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}
-    \RNAME{Empty-xs}$ \\ \\
+    \transrule{Empty-Xs}
+    {\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}
+    {} \\ \\
+    
+    \transrule{Empty-D}
+    {\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}
+    {} \\ \\ 
 
-    $\infrule{%
-    }{\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}
-    \RNAME{Empty-D}$ \\ \\
+    \transrule{Pull}
+    {\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}
+    {
+          \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1} \\
+          \dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1}
+    } \\ \\
 
-    $\infrule{%
-        \begin{premises}
-          \dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1} \\
-          \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1}
-    \end{premises}
-    }{\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}
-    \RNAME{Pull}$ \\ \\
+    \transrule{Empty}
+    {\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
+    {} \\ \\
 
-    $\infrule{%
-    }{\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
-    \RNAME{Empty}$ \\ \\
+    \transrule{Name-Name}
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
+    {%
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
+    \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2  \hfill \\
+    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} 
+    } \\ \\
 
-    $\infrule{%
-        \begin{premises}
-    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} \\
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \quad \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2 
-    \end{premises}
-    }{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
-    \RNAME{Name-Name}$ \\ \\
-
-    $\infrule{%
-        \begin{premises}
-              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1}  \\
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \quad \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0)
-    \end{premises}
-    }{\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
-    \RNAME{Name-Var}$ \\ \\
-
+    \transrule{Name-Var}
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
+    \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0) \hfill \\
+              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} 
+    } \\ \\
 
 \end{tabular}
 
 \end{minipage}
-%\end{figure}
-\end{wrapfigure}
+\end{figure}
+%\end{wrapfigure}
 
 Finding the common structure, obviously, is merely a first-order
 unification problem.  The $\rho$-machine, defined in
@@ -559,79 +540,70 @@ new names and new variables.
     \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
    \begin{minipage}[b]{\textwidth}
-  \begin{tabular}{c}
     \fbox{\begin{varwidth}{\textwidth}
-        $\rframe{p_\nu^*}{p_\delta^*}{\sigma}{multieqn^*}{p_\nu^*}{p_\delta^*}{\sigma}$ \\
-        $\sframe{p_\nu^*}{p_\delta^*}{\sigma}{multieqn}{p_\nu^*}{p_\delta^*}{\sigma}$ \\
-        \end{varwidth}} \\ \\
-  \end{tabular}
-  \end{minipage}
+        $\rframe{p_\nu}{p_\delta}{\sigma}{multieqn^*}{p_\nu}{p_\delta}{\sigma}$ \\
+        $\sframe{p_\nu}{p_\delta}{\sigma}{multieqn}{p_\nu}{p_\delta}{\sigma}$ 
+        \end{varwidth}}
+  \end{minipage} \\ \\
 
   \begin{minipage}[b]{\textwidth}
   \begin{tabular}{l}
 
-      $\infrule{
-      }{
-            \rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}
-      }\RNAME{Empty} $ \\ \\
+    \transrule{Empty}
+    {\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}
+    {} \\ \\
 
-    $\infrule{%
-    \begin{premises}
-    \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} \\
-    \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'}
-    \end{premises}
-    }{\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}
-    \RNAME{Step}$ \\ \\
+    \transrule{Step}
+    {\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}
+    {%
+    \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'} \\
+    \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} 
+    } \\ \\
 
-    $\infrule{%
+    \transrule{Name-Name}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
-    \RNAME{Name-Name}$ \\ \\
+    } \\ \\
 
-    $\infrule{%
+    \transrule{Name-Var}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
-    \RNAME{Name-Var}$ \\ \\
+    } \\ \\ 
 
-    $\infrule{%
+    \transrule{Var-Var}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
+    {%
     \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
-    \RNAME{Var-Var}$ \\ \\
+    } \\ \\
 
-    $\infrule{%
-        \begin{premises}
+    \transrule{App-App}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    {%
               \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
-    \end{premises}
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
-    \RNAME{App-App}$ \\ \\
+    } \\ \\
 
-    $\infrule{%
-        \begin{premises}
-    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}\\
-    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) \qquad \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2)
-    \end{premises}
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
-    \RNAME{Abs-Abs}$ \\ \\
+    \transrule{Abs-Abs}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    {%
+     \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\
+    \sframe{p_0}{\delta_0}{sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
+    } \\ \\ 
 
-    $\infrule{%
-    \begin{premises}
+    \transrule{Var-App}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
-    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1} 
-    \end{premises}
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
-    \RNAME{Var-App}$ \\ \\
+    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}  \hfill
+    } \\ \\
 
-    $\infrule{%
-    \begin{premises}
-    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \\
-    \Phi_1' = (\texttt{ext-scope}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext-scope}\, \Phi_2\, a_2) 
-  \end{premises}
-    }{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
-    \RNAME{Var-Abs}$ 
-
-
-
+    \transrule{Var-Abs}
+    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    {%
+    \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2)  \hfill \\
+    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
+    } 
   \end{tabular}
   \end{minipage}
 \end{figure}
@@ -650,7 +622,7 @@ extend a scope with a name, we extend the two hashtables with the
 corresponding maps and add one to the counter.  A persistent
 hashtable, in practice, has constant time for update and lookup,
 although the worst case scenario could be $O(log(n))$.  Thus,
-\texttt{ext-scope}, \texttt{idx$\rightarrow$name}, and
+\texttt{ext}, \texttt{idx$\rightarrow$name}, and
 \texttt{name$\rightarrow$idx} are all logarithmic time.  In addition,
 using persistent structures avoids copying the entire data-structure
 when branching, in particular, during the \transname{app-app} rule of
