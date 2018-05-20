@@ -125,7 +125,7 @@
   log(n) \times G(n))$ time, where $G$ is the functional inverse of
   Ackermann's function.  Nominal unification generates a set of
   variable assignments, if there exists one, that makes terms
-  involving binding operations $\alpha$-equivalent. We preserve names (atoms)
+  involving binding operations $\alpha$-equivalent. We preserve names
   while using special representations of de Bruijn numbers
   to enable efficient name management.
   % {\color{red}[The following sentence is not clear enough. --Jeremy]}
@@ -181,7 +181,7 @@ improvements to the efficiency of nominal unification.  Also, ideas
 like applying swappings lazily and composing swappings eagerly and
 sharing subterms have been explored. \citet{calves_complexity_2010}
 describes quadratic algorithms that extend Paterson-Wegman and
-Martelli-Montanari's algorithms with name handling;
+Martelli-Montanari's algorithms with name (atom) handling;
 \citet{levy_efficient_2010} describe a quadratic algorithm that
 reduces unification problems to a sequence of freshness and equality
 constraints and then solves the constraints.
@@ -194,7 +194,7 @@ lists with a more efficient lookup structure, such as a hash table,
 but then composing two swappings would take linear time, and that
 operation is also rather frequent.  Here we present an algorithm that
 does not use swappings but instead represents names with de Bruijn
-numbers which enables the use of persistent hash tables, in
+numbers. De Bruijn numbers enable the use of persistent hash tables, in
 particular, a Hash Array Mapped Trie
 (HAMT)~\citep{bagwell_ideal_2001}. HAMTs provide efficient lookup and
 they use sharing to avoid the linear-time costs that would normally be
@@ -231,7 +231,7 @@ explicit substitution, have been introduced in higher-order
 unification~\citep{dowek_higher_2000} to improve the efficiency of
 unification.
 
-Despite its convenience when implementing $\alpha$-equivalence,
+Despite the convenience when implementing $\alpha$-equivalence,
 programs written with de Bruijn numbers are notoriously obfuscated for
 humans to read and understand.  What's worse, as pointed out by
 ~\citet{berghofer_head--head_2007}, translating
@@ -324,7 +324,7 @@ mappings in both directions: names to numbers and numbers to names.
   A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
   defined in Figure~\ref{table:terms}, and a scope $\Phi$, where the
   scope is an ordered list of names for the binders in the enclosing
-  context.  Hereafter, we refer to a name as an \emph{name}.
+  context.
 \end{definition}
 
 When the term of a closure is a name, the closure itself represents a
@@ -333,17 +333,17 @@ $\lambda\,x.\lambda\,y.x$. The de Bruijn number of the name $x$ is $1$
 and the closure-representation of this number is $\clos{x}{(y\,x)}$.
 We can retrieve the number-representation by finding the position of
 the first appearance of the name in the scope. In this case, the
-position of $x$ in the list $(y\,x)$ is $1$, which is its de Bruijn
+position of $x$ in the scope $(y\,x)$ is $1$, which is its de Bruijn
 number. Similarly, the de Bruijn number of $y$ is $0$.
 
 A scope, as a list, supports three operations: \texttt{ext-scope},
-which extends the scope by adding a name to the front of the list;
+which extends the scope by adding a name to the front of the scope;
 \texttt{idx$\rightarrow$name}, which returns the name of a given index
-starting from the front of the list; and
+starting from the front of the scope; and
 \texttt{name$\rightarrow$idx}, which returns the location of the first
-appearance of a given name counting from the front of the list.  As we
-are building the list in reversed order, if repeated names appear, the
-first appearance in a list shadows the others.
+appearance of a given name counting from the front of the scope.  As we
+are building the scope in reversed order, if repeated names appear, the
+first appearance in a scope shadows the others.
 
 Now in Figure~\ref{table:fb}, we can talk about free and bound
 variables ``constructively,'' with de Bruijn numbers serving as
@@ -455,8 +455,8 @@ closure-equations: name-name, name-var, and var-var.
 %     defined in Figure~\ref{table:new-terms} ]}
 As defined in Figure~\ref{table:new-terms},
 we refer to a name-name or name-var equation as
-\emph{$e_\nu$} and refer to a
-var-var equation as a \emph{$e_\delta$}.
+an \emph{$e_\nu$} and refer to a
+var-var equation as an \emph{$e_\delta$}.
 Given two lists, $p_\nu$ and $p_\delta$, of these equations,
 we first run the
 $\nu$-machine, defined in Figure~\ref{machine:nu},
@@ -486,8 +486,8 @@ term besides names, can we re-shape the two terms to create a proper
 input to the two machines?
 
 
-%\begin{wrapfigure}{r}{0.5\textwidth}
-\begin{figure}[htbp]
+\begin{wrapfigure}{r}{0.5\textwidth}
+%\begin{figure}[htbp]
   \begin{minipage}[b]{\textwidth}
   \caption{$\delta$-machine and the pull operation}\label{machine:delta}
   \begin{tabular}{c}
@@ -541,8 +541,8 @@ input to the two machines?
 \end{tabular}
 
 \end{minipage}
-\end{figure}
-%\end{wrapfigure}
+%\end{figure}
+\end{wrapfigure}
 
 Finding the common structure, obviously, is merely a first-order
 unification problem.  The $\rho$-machine, defined in
@@ -555,7 +555,7 @@ finite function from variables to terms.  Also, in the
 new names and new variables.
 {\color{red} TODO:need formal definition of multi-equations}
 
-%\begin{wrapfigure}{l}{0.5\textwidth}
+%\begin{wrapfigure}{r}{0.5\textwidth}
     \begin{figure}
   \caption{$\rho$-machine}\label{table:rmachine}
    \begin{minipage}[b]{\textwidth}
