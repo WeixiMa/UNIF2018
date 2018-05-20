@@ -458,8 +458,8 @@ fails and the unification problem has no unifier.
 
 \begin{lemma}\label{lemma:numachine}
  For all finite input, the $\nu$-machine and the $\delta$-machine
- terminates; for all input, the $\nu$-machine and the $\delta$-machine
- succeeds with the mgu if and only if there exists one.
+ terminate; for all input, the $\nu$-machine and the $\delta$-machine
+ succeed with the mgu if and only if there exists one.
 \end{lemma}
 \begin{proof}
     By structural induction on the transitions of the machines.
@@ -525,7 +525,7 @@ input to the two machines?
 \end{figure}
 %\end{wrapfigure}
 
-Finding the common structure, obviously, is merely a first-order
+Finding the common structure is a first-order
 unification problem.  The $\rho$-machine, defined in
 Figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari and
 reduces an arbitrary nominal unification problem to a set of
@@ -630,7 +630,7 @@ the $\rho$-machine.
 
 We implement $\delta$ with a hashtable that maps from a variable to
 the list that contains its closure-equations.  Doing so doubles the
-space consumption, i.e, the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$
+space consumption, i.e., the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$
 exists in both $X$'s entry and $Y$'s entry, but improves the time
 efficiency.
 
