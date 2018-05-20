@@ -525,16 +525,33 @@ input to the two machines?
 \end{figure}
 %\end{wrapfigure}
 
-Finding the common structure is a first-order
-unification problem.  The $\rho$-machine, defined in
-Figure~\ref{table:rmachine}, adapts the idea of Martelli-Montanari and
-reduces an arbitrary nominal unification problem to a set of
-problem$_\nu$, a set of problem$_\delta$, and a substitution.  Here we
-need to extend the definition of substitution: it is now a partial
-finite function from variables to terms.  Also, in the
+Here we use the idea of Martelli-Montanari,
+in particular,
+finding the shared shape of two terms by computing
+the common parts and frontiers over a multi-equation.
+\citet{martelli_efficient_1982} define
+the common part of two terms to be a term obtained by superimposing,
+and the frontier as the substitution that
+captures the differences between each term and the common part.
+For example, given distinct names $a$, $b$, and $c$,
+distinct vars $X$ and $Y$,
+and two terms $(a\,X)$ and $(Y\,(b\,c))$,
+the common part is the term $(Y\,X)$,
+and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
+A multi-equation groups together many closures to be unified,
+where the variable-closures are on the left-hand side,
+and the non-variable-closures are on the other side.
+
+The $\rho$-machine, defined in
+Figure~\ref{table:rmachine}, 
+reduces an arbitrary nominal unification problem to
+$p_\nu$, $p_\delta$, and a substitution where the co-domain is unrestricted.
+Unlike the Martelli-Montanari algorithm,
+the $\rho$-machine finds the maximum common part instead of the minimum.
+Thus, in the
 \transname{var-app} and \transname{var-abs} rules, we need to create
-new names and new variables.
-{\color{red} TODO:need formal definition of multi-equations}
+new names and new variables
+to extend the shape of a variable with its counterpart.
 
 %\begin{wrapfigure}{r}{0.5\textwidth}
     \begin{figure}
