@@ -58,16 +58,21 @@
   #1; #2 \vdash #3 \Rightarrow_\textrm{pull} #4; #5
 }
 
+\newcommand{\pframebreak}[5] {
+  #1; #2 \vdash #3 \\ \Rightarrow_\textrm{pull} #4; #5
+}
+
+
 % \newcommand{\pframe}[5] {
 %   (#1, #2) \lbrack #3 \rbrack_\textrm{pull}\Rightarrow (#4, #5)
 % }
 
 \newcommand{\rframe}[7] {
-  (#1, #2, #3) \vdash #4 \Rightarrow_\rho (#5, #6, #7)
+  #1; #2; #3 \vdash #4 \Rightarrow_\rho #5; #6; #7
 }
 
 \newcommand{\sframe}[7] {
-  (#1, #2, #3) \vdash #4 \Rightarrow_\textrm{step} (#5, #6, #7)
+  #1; #2; #3 \vdash #4 \Rightarrow_s #5; #6; #7
 }
 
 \newcommand{\pr}[2] {
@@ -160,15 +165,16 @@ theories can be reduced to one another~\citep{cheney_relating_2005,
 more complicated because it has to deal with application and
 capture-avoiding substitution.  On the other hand, implementation of
 nominal unification, which essentially unifies first-order terms, is
-more straightforward and easier to formalize.  Beyond unification,
-techniques from the nominal approach, such as swapping and freshness
-environments, have impacted the areas as diverse as
-rewriting~\citep{fernandez_nominal_2004, fernandez_nominal_2005,
-  fernandez_nominal_2007, aoto_nominal_2016}, equational
-theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
-bindings in abstract syntax~\citep{pitts_metalanguage_2000,
-  gabbay_new_2002}.
+more straightforward and easier to formalize.
 
+% Beyond unification,
+% techniques from the nominal approach, such as swapping and freshness
+% environments, have impacted the areas as diverse as
+% rewriting~\citep{fernandez_nominal_2004, fernandez_nominal_2005,
+%   fernandez_nominal_2007, aoto_nominal_2016}, equational
+% theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
+% bindings in abstract syntax~\citep{pitts_metalanguage_2000,
+%   gabbay_new_2002}.
 Concerning time complexity, \citet{qian_unification_1996} proves that
 higher-order pattern unification is decidable in linear time.  On the
 other hand, it has been an open problem whether there exists a nominal
@@ -212,49 +218,6 @@ formalized in Agda.
 
 \section{De Bruijn numbers should coexist with names}
 \label{closures}
-
-De Bruijn numbers are a technique for representing syntax with binding
-structure~\citep{de_bruijn_lambda_1972}.  A \emph{de Bruijn number} is
-a natural number that indicates the distance from a name occurrence to
-its corresponding binder.  When all names in an expression are
-replaced with their corresponding de Bruijn numbers, a direct
-structural equality check is sufficient to decide
-$\alpha$-equivalence.  A few programming
-languages~\citep{norell_towards_2007} use de Bruijn numbers in their
-internal representations for machine manipulation during operations
-such as type checking.  The idea of using names for free variables and
-numbers for bound variables, known as the locally nameless
-approach~\citep{chargueraud_locally_2012}, is employed for formalizing
-variable-theories~\citep{aydemir_nominal_2006,
-  aydemir_engineering_2008}.  Also, de Bruijn numbers, combined with
-explicit substitution, have been introduced in higher-order
-unification~\citep{dowek_higher_2000} to improve the efficiency of
-unification.
-
-Despite the convenience when implementing $\alpha$-equivalence,
-programs written with de Bruijn numbers are notoriously obfuscated for
-humans to read and understand.  What's worse, as pointed out by
-~\citet{berghofer_head--head_2007}, translating
-pencil-and-paper style proofs to versions using de Bruijn numbers is
-surprisingly involved: such translation may alter the structures of
-proofs.  Consequently, reproducing proofs with explicit names from de
-Bruijn numbers is difficult or even impossible.  Thus, for the sake of
-both readers and writers of proofs, it is worth providing an interface
-with names.
-
-If our concern is simply deciding the $\alpha$-equivalence between
-expressions, an easy way to use de Bruijn numbers while preserving
-names is to traverse the expressions, annotate each name with its de
-Bruijn number, then read-back the expressions without numbers.  This
-approach, however, does not work for unification, because it only
-contains the mapping \emph{from names to numbers}.  In unification
-modulo $\alpha$-equivalence, one frequently needs the mapping
-\emph{from numbers to names} to decide what name to assign to a
-unification variable.
-
-We represent de Bruijn numbers by \emph{static closures},
-hereafter referred to as \emph{closures}.  Closures preserve the
-mappings in both directions: names to numbers and numbers to names.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
@@ -307,8 +270,48 @@ mappings in both directions: names to numbers and numbers to names.
 
 \end{wrapfigure}
 
-%{\renewcommand{\arraystretch}{1} 
+De Bruijn numbers are a technique for representing syntax with binding
+structure~\citep{de_bruijn_lambda_1972}.  A \emph{de Bruijn number} is
+a natural number that indicates the distance from a name occurrence to
+its corresponding binder.  When all names in an expression are
+replaced with their corresponding de Bruijn numbers, a direct
+structural equality check is sufficient to decide
+$\alpha$-equivalence.  A few programming
+languages~\citep{norell_towards_2007} use de Bruijn numbers in their
+internal representations for machine manipulation during operations
+such as type checking.  The idea of using names for free variables and
+numbers for bound variables, known as the locally nameless
+approach~\citep{chargueraud_locally_2012}, is employed for formalizing
+variable-theories~\citep{aydemir_nominal_2006,
+  aydemir_engineering_2008}.  Also, de Bruijn numbers, combined with
+explicit substitution, have been introduced in higher-order
+unification~\citep{dowek_higher_2000} to improve the efficiency of
+unification.
 
+Despite the convenience when implementing $\alpha$-equivalence,
+programs written with de Bruijn numbers are notoriously obfuscated for
+humans to read and understand.  What's worse, as pointed out by
+~\citet{berghofer_head--head_2007}, translating
+pencil-and-paper style proofs to versions using de Bruijn numbers is
+surprisingly involved: such translation may alter the structures of
+proofs.  Consequently, reproducing proofs with explicit names from de
+Bruijn numbers is difficult or even impossible.  Thus, for the sake of
+both readers and writers of proofs, it is worth providing an interface
+with names.
+
+If our concern is simply deciding the $\alpha$-equivalence between
+expressions, an easy way to use de Bruijn numbers while preserving
+names is to traverse the expressions, annotate each name with its de
+Bruijn number, then read-back the expressions without numbers.  This
+approach, however, does not work for unification, because it only
+contains the mapping \emph{from names to numbers}.  In unification
+modulo $\alpha$-equivalence, one frequently needs the mapping
+\emph{from numbers to names} to decide what name to assign to a
+unification variable.
+
+We represent de Bruijn numbers by \emph{static closures},
+hereafter referred to as \emph{closures}.  Closures preserve the
+mappings in both directions: names to numbers and numbers to names.
 
 \begin{definition}
   A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
@@ -335,26 +338,6 @@ appearance of a given name counting from the front of the scope.  As we
 are building the scope in reversed order, if repeated names appear, the
 first appearance in a scope shadows the others.
 
-Now in Figure~\ref{table:fb}, we can talk about free and bound
-variables ``constructively,'' with de Bruijn numbers serving as
-evidence that variables are well-scoped.  When a name, $a$, does not
-appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
-$\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$; when $a$'s first
-appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
-$i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
-a\,i$.  The \transname{bound} rule has two premises to be algorithmic
-in both directions, that is, given a name we can find its index and
-given an index we can find its name, if no shadowings occur.
-Figure~\ref{table:same-name} defines the rules to decide whether two
-names are $\alpha$-equivalent w.r.t their scopes, written as
-$\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
-
-% temporary
-\pagebreak
-
-\section{Unification}
-
-\label{unify}
 \begin{wrapfigure}{r}{0.5\textwidth}
   \caption{Unification terms and problems\label{table:new-terms}}
     \begin{tabular}{r l l l}  
@@ -375,34 +358,25 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     \end{tabular}
 \end{wrapfigure}
 
-In Figure~\ref{table:new-terms}, we introduce unification variables,
-shortened as var.  First, let's consider a simplified unification
-problem: a variable can only be instantiated by a name, that is,
-finding the unifier of two terms that share the same structure but
-differ in names and variables.  A unifier consists of two parts:
-$\sigma$ and $\delta$.
-\begin{definition}
-  A substitution $\sigma$ is a partial finite function from variables,
-  $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
-  set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
-  $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
-  For the simplified problems, we restrict $t$ to a name.
-\end{definition}
+Now in Figure~\ref{table:fb}, we can talk about free and bound
+variables ``constructively,'' with de Bruijn numbers serving as
+evidence that variables are well-scoped.  When a name, $a$, does not
+appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
+$\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$; when $a$'s first
+appearance in $\Phi$ is the position $i$, we say, ``$a$ is bound at
+$i$ with respect to $\Phi$,'' written as $\Phi \vdash \texttt{Bd}\,
+a\,i$.  The \transname{bound} rule has two premises to be algorithmic
+in both directions, that is, given a name we can find its index and
+given an index we can find its name, if no shadowings occur.
+Figure~\ref{table:same-name} defines the rules to decide whether two
+names are $\alpha$-equivalent w.r.t their scopes, written as
+$\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
-\begin{definition}
-  A closure equation is a pair of two closures that are
-  $\alpha$-equivalent.  $\Delta$ is a set of closure-equations.  We
-  write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}},
-  ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and we write
-  $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
-  $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
-  $\delta$ as a special form of $\Delta$: for each equation in
-  $\delta$, the terms on both sides are variables.
-  {\color{red}}
-  Given a variable
-  $X$, $\delta(X)$ yields the list of
-  closure-equations where $X$ appears at least once.
-\end{definition}
+% temporary
+\pagebreak
+
+\section{Unification}
+\label{unify}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
@@ -432,8 +406,86 @@ $\sigma$ and $\delta$.
 
   \end{tabular}
   \end{minipage}
+%\end{wrapfigure}
+
+%\begin{wrapfigure}{r}{0.5\textwidth}
+%\begin{figure}[htbp]
+  \begin{minipage}[b]{\textwidth}
+  \caption{$\delta$-machine and the pull operation}\label{machine:delta}
+    \fbox{\begin{varwidth}{\textwidth}
+        $\dframe{\sigma}{p_\delta}{xs}{\sigma}{p_\delta}$ \\
+        $\pframe{\sigma}{xs}{p_\delta}{\sigma}{xs}$
+        \end{varwidth}} \\ \\
+  \end{minipage}
+
+\begin{minipage}[b]{0.4\textwidth}
+  \begin{tabular}{l}
+
+    \transrule{Empty-Xs}
+    {\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}
+    {} \\ \\
+    
+    \transrule{Empty-D}
+    {\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}
+    {} \\ \\ 
+
+    \transrule{Pull}
+    {\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}
+    {
+          \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1} \\
+          \dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1}
+    } \\ \\
+
+    \transrule{Empty}
+    {\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
+    {} \\ \\
+
+    \transrule{N-N}
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
+    {%
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
+    \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2  \hfill \\
+    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} 
+    } \\ \\
+
+    \transrule{N-V}
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
+    \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0) \hfill \\
+              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} 
+    } \\ \\
+
+\end{tabular}
+
+\end{minipage}
+%\end{figure}
 \end{wrapfigure}
 
+In Figure~\ref{table:new-terms}, we introduce unification variables,
+shortened as var.  First, let's consider a simplified unification
+problem: a variable can only be instantiated by a name, that is,
+finding the unifier of two terms that share the same structure but
+differ in names and variables.  A unifier consists of two parts:
+$\sigma$ and $\delta$.
+
+  A substitution $\sigma$ is a partial finite function from variables,
+  $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
+  set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
+  $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
+  For the simplified problems, we restrict $t$ to a name.
+
+  A closure equation is a pair of two closures that are
+  $\alpha$-equivalent.  $\Delta$ is a set of closure-equations.  We
+  write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}},
+  ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and we write
+  $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
+  $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
+  $\delta$ as a special form of $\Delta$: for each equation in
+  $\delta$, the terms on both sides are variables.
+  {\color{red}}
+  Given a variable
+  $X$, $\delta(X)$ yields the list of
+  closure-equations where $X$ appears at least once.
 
 The simplified problem is about solving three kinds of
 closure-equations: name-name, name-var, and var-var.
@@ -471,90 +523,8 @@ given two arbitrary terms, where a variable may be instantiated by any
 term besides names, can we re-shape the two terms to create a proper
 input to the two machines?
 
-
 %\begin{wrapfigure}{r}{0.5\textwidth}
-\begin{figure}[htbp]
-  \begin{minipage}[b]{\textwidth}
-  \caption{$\delta$-machine and the pull operation}\label{machine:delta}
-    \fbox{\begin{varwidth}{\textwidth}
-        $\dframe{\sigma}{p_\delta}{xs}{\sigma}{p_\delta}$ \\
-        $\pframe{\sigma}{xs}{p_\delta}{\sigma}{xs}$
-        \end{varwidth}} \\ \\
-  \end{minipage}
-
-\begin{minipage}[b]{0.4\textwidth}
-  \begin{tabular}{l}
-
-    \transrule{Empty-Xs}
-    {\dframe{\sigma}{\delta}{\epsilon}{\sigma}{\delta}}
-    {} \\ \\
-    
-    \transrule{Empty-D}
-    {\dframe{\sigma}{\epsilon}{xs}{\sigma}{\epsilon}}
-    {} \\ \\ 
-
-    \transrule{Pull}
-    {\dframe{\sigma_0}{\delta_0}{X, xs_0}{\sigma_1}{\delta_1}}
-    {
-          \pframe{\sigma_0}{xs_0}{\delta_0(X)}{\sigma_0'}{xs_1} \\
-          \dframe{\sigma_0'}{\delta_0 \setminus \delta_0(X)}{xs_1}{\sigma_1}{\delta_1}
-    } \\ \\
-
-    \transrule{Empty}
-    {\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
-    {} \\ \\
-
-    \transrule{Name-Name}
-    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
-    {%
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
-    \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2  \hfill \\
-    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} 
-    } \\ \\
-
-    \transrule{Name-Var}
-    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
-    \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0) \hfill \\
-              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} 
-    } \\ \\
-
-\end{tabular}
-
-\end{minipage}
-\end{figure}
-%\end{wrapfigure}
-
-Here we use the idea of Martelli-Montanari,
-in particular,
-finding the shared shape of two terms by computing
-the common parts and frontiers over a multi-equation.
-\citet{martelli_efficient_1982} define
-the common part of two terms to be a term obtained by superimposing,
-and the frontier as the substitution that
-captures the differences between each term and the common part.
-For example, given distinct names $a$, $b$, and $c$,
-distinct vars $X$ and $Y$,
-and two terms $(a\,X)$ and $(Y\,(b\,c))$,
-the common part is the term $(Y\,X)$,
-and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
-A multi-equation groups together many closures to be unified,
-where the variable-closures are on the left-hand side,
-and the non-variable-closures are on the right-hand side.
-
-The $\rho$-machine, defined in
-Figure~\ref{table:rmachine}, 
-reduces an arbitrary nominal unification problem to
-$p_\nu$, $p_\delta$, and a substitution where the co-domain is unrestricted.
-Unlike the Martelli-Montanari algorithm,
-the $\rho$-machine finds the maximum common part instead of the minimum.
-Thus, in the
-\transname{var-app} and \transname{var-abs} rules, we need to create
-new names and new variables
-to extend the shape of a variable with its counterpart.
-
-%\begin{wrapfigure}{r}{0.5\textwidth}
-    \begin{figure}
+    \begin{figure}[htbp]
   \caption{$\rho$-machine}\label{table:rmachine}
    \begin{minipage}[b]{\textwidth}
     \fbox{\begin{varwidth}{\textwidth}
@@ -606,7 +576,7 @@ to extend the shape of a variable with its counterpart.
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
      \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\
-    \sframe{p_0}{\delta_0}{sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
+    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\ 
 
     \transrule{Var-App}
@@ -620,11 +590,41 @@ to extend the shape of a variable with its counterpart.
     {%
     \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2)  \hfill \\
     \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
-    } 
+    }
+     
   \end{tabular}
   \end{minipage}
 \end{figure}
 %\end{wrapfigure}
+
+
+Here we use the idea of Martelli-Montanari,
+in particular,
+finding the shared shape of two terms by computing
+the common parts and frontiers over a multi-equation.
+\citet{martelli_efficient_1982} define
+the common part of two terms to be a term obtained by superimposing,
+and the frontier as the substitution that
+captures the differences between each term and the common part.
+For example, given distinct names $a$, $b$, and $c$,
+distinct vars $X$ and $Y$,
+and two terms $(a\,X)$ and $(Y\,(b\,c))$,
+the common part is the term $(Y\,X)$,
+and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
+A multi-equation groups together many closures to be unified,
+where the variable-closures are on the left-hand side,
+and the non-variable-closures are on the right-hand side.
+
+The $\rho$-machine, defined in
+Figure~\ref{table:rmachine}, 
+reduces an arbitrary nominal unification problem to
+$p_\nu$, $p_\delta$, and a substitution where the co-domain is unrestricted.
+Unlike the Martelli-Montanari algorithm,
+the $\rho$-machine finds the maximum common part instead of the minimum.
+Thus, in the
+\transname{var-app} and \transname{var-abs} rules, we need to create
+new names and new variables
+to extend the shape of a variable with its counterpart.
 
 \section{A note on time complexity}
     \label{efficiency}
@@ -668,8 +668,6 @@ G(n))$.
 \section*{Acknowledgment}
 We thank Christian Urban for the discussion on this paper
 and the anonymous reviewers for their comments and suggestions.
-
-    \clearpage
 
 \bibliography{main}
 
