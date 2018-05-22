@@ -203,8 +203,8 @@ but then composing two swappings would take linear time, and that
 operation is also rather frequent.  Here we present an algorithm that
 does not use swappings but instead represents names with de Bruijn
 numbers. De Bruijn numbers enable the use of persistent hash tables, in
-particular, a Hash Array Mapped Trie
-(HAMT)~\citep{bagwell_ideal_2001}. HAMTs provide efficient lookup and
+particular, \citeauthor{bagwell_ideal_2001}'s Hash Array Mapped Trie
+(HAMT). HAMTs provide efficient lookup and
 they use sharing to avoid the linear-time costs that would normally be
 associated with duplicating a hash table.
 
@@ -311,7 +311,7 @@ modulo $\alpha$-equivalence, one frequently needs the mapping
 unification variable.
 
 We represent de Bruijn numbers by \emph{static closures},
-hereafter referred to as \emph{closures}.  Closures preserve the
+referred to as \emph{closures}.  Closures preserve the
 mappings in both directions: names to numbers and numbers to names.
 
 \begin{definition}
@@ -477,16 +477,14 @@ a unification variable,
   For the simplified problems, we restrict $t$ to a name.
 
   A \emph{closure equation} is a pair of two closures that are
-  $\alpha$-equivalent.  $\Delta$ stands for a set of closure equations.
+  $\alpha$-equivalent. $\Delta$ stands for a set of closure equations.
   We write $\Delta$ as $\{\pr{\clos{t_1}{\Phi_1}}{\clos{t_1'}{\Phi_1'}},
   ..., \pr{\clos{t_i}{\Phi_1}}{\clos{t_i'}{\Phi_1'}}\}$ and we write
   $\{\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}\}\cup\Delta$ for extending
-  $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$.  We write
-  $\delta$ as a special form of $\Delta$: for each equation in
+  $\Delta$ with $\pr{\clos{t}{\Phi}}{\clos{t'}{\Phi'}}$. 
+  $\delta$ is a special form of $\Delta$: for each equation in
   $\delta$, the terms on both sides are variables.
-  {\color{red}}
-  Given a variable
-  $X$, $\delta(X)$ yields the list of
+  Given a variable $X$, $\delta(X)$ yields the list of
   closure equations where $X$ appears at least once.
 
   The simplified problem is about solving three kinds of problems:
