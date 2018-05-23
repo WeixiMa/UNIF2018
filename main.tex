@@ -16,7 +16,7 @@
 \usepackage{natbib}
 
 \hypersetup{
-    colorlinks=false,
+    colorlinks=true,
     linkcolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
@@ -166,7 +166,7 @@ $\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
 theories can be reduced to one another~\citep{cheney_relating_2005,
   levy_nominal_2012}, implementing higher-order pattern unification is
 more complicated because it has to deal with $\beta$-reduction and
-capture-avoiding substitution. On the other hand, an implementation of
+capture-avoiding substitution. More favorably, an implementation of
 nominal unification,
 in which unification does not involve explicit $\beta$-reduction,
 is more straightforward and easier to formalize.
@@ -180,8 +180,8 @@ is more straightforward and easier to formalize.
 % bindings in abstract syntax~\citep{pitts_metalanguage_2000,
 %   gabbay_new_2002}.
 Concerning time complexity, \citet{qian_unification_1996} has proven that
-higher-order pattern unification is decidable in linear time.  On the
-other hand, it has been an open problem whether there exists a nominal
+higher-order pattern unification is decidable in linear time.
+Still, it has been an open problem whether there exists a nominal
 unification algorithm that can do better than
 $O(n^2)$. \citet{levy_nominal_2012} give a quadratic-time reduction
 from nominal unification to higher-order pattern unification.
@@ -332,15 +332,6 @@ the first appearance of the name in the scope. In this case, the
 position of $x$ in the scope $(y\,x)$ is $1$, which is its de Bruijn
 number. Similarly, the de Bruijn number of $y$ is $0$.
 
-A scope, as a list, supports three operations: \texttt{ext},
-which extends the scope by adding a name to the front of the scope;
-\texttt{idx$\rightarrow$name}, which returns the name of a given index
-starting from the leftmost name in the scope; and
-\texttt{name$\rightarrow$idx}, which returns the location of the first
-appearance of a given name counting from the front of the scope.  As we
-are building the scope in reversed order, if repeated names appear, the
-first appearance in a scope shadows the others.
-
 \begin{wrapfigure}{r}{0.5\textwidth}
   \caption{Unification terms and problems\label{table:new-terms}}
     \begin{tabular}{r l l l}  
@@ -361,8 +352,17 @@ first appearance in a scope shadows the others.
     \end{tabular}
 \end{wrapfigure}
 
-Now in Figure~\ref{table:fb}, we can talk about free and bound
-variables ``constructively,'' with de Bruijn numbers serving as
+We define three operations on scopes: \texttt{ext}
+extends the scope by adding a name to the leftmost of the scope;
+\texttt{idx$\rightarrow$name} yields the name of a given index
+starting from the leftmost name in the scope; and
+\texttt{name$\rightarrow$idx} yields the location of the first
+appearance of a given name counting from the leftmost.
+When repeated names appear, the
+first appearance in a scope shadows the others.
+
+Figure~\ref{table:fb} defines the free and bound relations
+``constructively,'' with de Bruijn numbers serving as
 evidence that variables are well-scoped.  When a name, $a$, does not
 appear in the scope, $\Phi$, we say, ``$a$ is free with respect to
 $\Phi$,'' written as $\Phi \vdash \texttt{Fr}\, a$; when $a$'s first
@@ -375,11 +375,14 @@ Figure~\ref{table:same-name} defines the rules to decide whether two
 names are $\alpha$-equivalent w.r.t their scopes, written as
 $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 
-% temporary
-\pagebreak
-
 \section{Unification}
 \label{unify}
+In Figure~\ref{table:new-terms}, we introduce unification variables,
+which we abbreviate as \emph{var}.  First, let's consider a simplified unification
+problem: a variable can only be instantiated by a name, that is,
+finding the unifier of two terms that share the same structure but
+differ in names and variables.  A unifier consists of two parts:
+$\sigma$ and $\delta$.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{minipage}[b]{0.4\textwidth}
@@ -395,13 +398,13 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     \transrule{N-N}
     {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
     {
-        \nuframe{\sigma_0}{p}{\sigma_1} \\
-    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill
+    \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill \\
+        \nuframe{\sigma_0}{p}{\sigma_1} \hfill 
     } \\ \\
 
 
     \transrule{N-V}
-    {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
+    {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}},\,p}{\sigma_1}}
     {
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill \\
         \nuframe{\{X_2/a_2\}\cup\sigma_0}{p}{\sigma_1} 
@@ -440,7 +443,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     } \\ \\
 
     \transrule{Empty}
-    {\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
+    {\pframe{\sigma}{xs}{\epsilon}{\sigma}{xs}}
     {} \\ \\
 
     \transrulesp
@@ -455,7 +458,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     {\pframe{\sigma_0}{xs_0}{\eq{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
     \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \hspace{10mm} \transname{[N-V]} \\
     \sigma_0(X_1) = a_1 \quad X_2\notin dom(\sigma_0) \hfill \\
-              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1}  \hfill
+              \pframe{\{X_2/a_2\}\cup\sigma_0}{(X_2, xs_0)}{p}{\sigma_1}{xs_1}  \hfill
     } \\ \\
 
 \end{tabular}
@@ -463,13 +466,6 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
 \end{minipage}
 %\end{figure}
 \end{wrapfigure}
-
-In Figure~\ref{table:new-terms}, we introduce unification variables,
-which we abbreviate as \emph{var}.  First, let's consider a simplified unification
-problem: a variable can only be instantiated by a name, that is,
-finding the unifier of two terms that share the same structure but
-differ in names and variables.  A unifier consists of two parts:
-$\sigma$ and $\delta$.
 
 A \emph{substitution}, $\sigma$, is a partial finite function from
 unification variables,
@@ -534,10 +530,10 @@ input to the two machines?
   \caption{Multi-equations}\label{table:multi}
    \begin{minipage}[b]{\textwidth}
       \begin{tabular}{r l l l}  
-      $U$ & $::=$ & $\epsilon$& list of multi-equations \\
-      & $|$&  $e,U$ &  \\ \\
       $e$ & $::=$ & $\pr{\clos{t}{\Phi}}{\clos{t}{\Phi}}$& multi-equation \\
       & $|$&  $\clos{t}{\Phi},e$ &  \\ \\
+      $U$ & $::=$ & $\epsilon$& list of multi-equations \\
+      & $|$&  $e,U$ &  \\ \\
     \end{tabular}
 
       \caption{$\rho$-machine}\label{table:rmachine}
@@ -563,51 +559,55 @@ input to the two machines?
     \rframe{p_0'}{\delta_0'}{\sigma_0'}{U}{p_1}{\delta_1}{\sigma_1} 
     } \\ \\
 
-    \transrule{N-N}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    \transrule{N-N}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
     {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
     } \\ \\
 
-    \transrule{N-V}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
+    \transrule{N-V}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
     {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
     } \\ \\ 
 
-    \transrule{V-V}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
+    \transrule{V-V}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
     {%
     \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
     } \\ \\
 
-    \transrule{C-C}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \transrule{C-C}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
-              \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
-    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
+              \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\
 
-    \transrule{A-A}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    \transrule{A-A}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
-     \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\
-    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
+     \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\    \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\ 
 
-    \transrule{V-C}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
-    \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
-    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}  \hfill
+    \transrule{V-C}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    {%
+    X_l = (\texttt{new-var}) \quad
+    X_r = (\texttt{new-var}) \hfill \\
+    \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \hfill \\    \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}  \hfill
     } \\ \\
 
-    \transrule{V-A}
-    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+     \transrule{V-A}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
-    \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2)  \hfill \\
-    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
+    \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad
+    \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \quad
+    \Phi_1 \vdash \texttt{Fr}\,\,a_1 \quad
+    a_2 = (\texttt{new-name}) \quad
+    X_t = (\texttt{new-var}) \\    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
+    } \\ \\
+
+      \transrule{V-A$'$}    {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
+    {%
+    \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad
+    \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \quad
+    \Phi_1 \vdash \texttt{Bd}\,\,a_1\,\,i \quad
+    \Phi_2 \vdash \texttt{Bd}\,\,a_2\,\,i \quad
+    X_t = (\texttt{new-var}) \\    \sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
     }
-     
   \end{tabular}
   \end{minipage}
 \end{figure}
@@ -641,13 +641,22 @@ A multi-equation with more than one closures on one side is handled by
 simultaneously applying the rule to all closures.
 Unlike the Martelli-Montanari algorithm,
 the $\rho$-machine finds the maximum common part instead of the minimum.
-Thus, in the \transname{V-C} and \transname{V-A} rules, we need to create
-new names and new variables
-to extend the shape of variables with combinations and abstractions.
+Thus, in the \transname{V-C}, \transname{V-A} and \transname{V-A$'$} rules,
+we need two operators, \texttt{new-name} and \texttt{new-var},
+to create new names and new variables
+for the shapes that fit with combinations and abstractions.
 The ordering of multi-equation is the same with Martelli-Montanari:
 for each multi-equation, we count the appearances of its left-hand side vars
 in other multi-equations of U and select the multi-equation associated
 with the smallest counter each time.
+
+\begin{conjecture}\label{lemma:rmachine}
+  The $\rho$-machine terminates on all finite sets of multi-equations;
+  if the $\rho$-machine fails, there is no unifier;
+  if the $\rho$-machine generates $p_\nu$, $p_\delta$, and $\sigma$,
+  and if the $\nu$-machine and the $\delta$-machine generate a result for
+  $p_\nu$, $p_\delta$, and $\sigma$, this result is the mgu.
+  \end{conjecture}
 
 \section{A note on time complexity}
     \label{efficiency}
