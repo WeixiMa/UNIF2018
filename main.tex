@@ -674,12 +674,12 @@ although the worst case scenario could be $O(log(n))$.  Thus,
 \texttt{ext}, \texttt{idx$\rightarrow$name}, and
 \texttt{name$\rightarrow$idx} are all logarithmic time.  In addition,
 using persistent structures avoids copying the entire data-structure
-when branching, in particular, during the \transname{app-app} rule of
+when branching, in particular, during the \transname{C-C} rule of
 the $\rho$-machine.
 Also, we implement $\delta$ with a hashtable that maps from a variable to
 the list that contains its closure equations,
-i.e., the equation $\aeq{X}{\Phi_1}{Y}{\Phi_2}$
-exists in both $X$'s entry and $Y$'s entry in the hashtable.
+i.e., the equation $\aeq{X_1}{\Phi_1}{X_2}{\Phi_2}$
+exists in both $X_1$'s entry and $Y_2$'s entry in the hashtable.
 
 Given the above optimizations, the $\nu$-machine and the
 $\delta$-machine are both worst case $O(n \times log(n))$,
@@ -691,7 +691,7 @@ $\rho$-machine is similar except that two new factors are involved:
 the update operation of HAMT and the generation of names and
 variables.  We consider the former one to have $O(log(n))$ complexity,
 and we implement name and variable creation with state
-monads~\citep{moggi_notions_1991} in
+monads~\citep{moggi_notions_1991} to have
 constant time.  Thus reducing an arbitrary unification problem to the
 input of the $\nu$ and $\delta$ machines becomes $O(n \times log(n) \times
 G(n))$.
