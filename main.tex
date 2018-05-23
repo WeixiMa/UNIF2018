@@ -16,7 +16,7 @@
 \usepackage{natbib}
 
 \hypersetup{
-    colorlinks=true,
+    colorlinks=false,
     linkcolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
@@ -147,15 +147,13 @@
 
 \section{Introduction and background}
 
-Equational theories over terms, such as $\alpha$, $\beta$, and $\eta$
+Equational theories over terms, such as the $\alpha$, $\beta$, and $\eta$
 in the $\lambda$-calculus~\citep{church_calculi_1941}, are
 a critical component of
 programming languages and formal systems.  As users of logic
 programming languages and theorem provers, we desire such rules to be
 available out of the box. Two theories provide
-this convenience: higher-order pattern unification of
-\citet{miller_logic_1989} and nominal unification of
-\citet{urban_nominal_2004}. Higher-order pattern unification, which
+this convenience: \citeauthor{miller_logic_1989}'s higher-order pattern unification~\citep{miller_logic_1989} and \citeauthor{urban_nominal_2004}'s nominal unification~\citep{urban_nominal_2004}. Higher-order pattern unification, which
 handles a fragment of the $\beta\eta$-rules, is the foundation of
 Isabelle~\citep{paulson_natural_1986},
 $\lambda$Prolog~\citep{nadathur_overview_1988}, and
@@ -163,14 +161,14 @@ Twelf~\citep{pfenning_system_1999}.  Nominal unification, which
 focuses on the $\alpha$-rule, has inspired extensions of logic
 programming languages such as $\alpha$Prolog~\citep{cheney_prolog:_2004}
 and $\alpha$Kanren~\citep{byrd_kanren_2007}, as well as theorem
-provers such as nominal Isabelle~\citep{urban_nominal_2005} and
+provers such as Nominal Isabelle~\citep{urban_nominal_2005} and
 $\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
 theories can be reduced to one another~\citep{cheney_relating_2005,
   levy_nominal_2012}, implementing higher-order pattern unification is
-more complicated because it has to deal with $beta$-reduction and
+more complicated because it has to deal with $\beta$-reduction and
 capture-avoiding substitution. On the other hand, an implementation of
 nominal unification,
-in which unification does not involve explicit $beta$-reduction,
+in which unification does not involve explicit $\beta$-reduction,
 is more straightforward and easier to formalize.
 
 % Beyond unification,
@@ -185,7 +183,7 @@ Concerning time complexity, \citet{qian_unification_1996} has proven that
 higher-order pattern unification is decidable in linear time.  On the
 other hand, it has been an open problem whether there exists a nominal
 unification algorithm that can do better than
-$O(n^2)$. \citet{levy_nominal_2012} give a quadratic time reduction
+$O(n^2)$. \citet{levy_nominal_2012} give a quadratic-time reduction
 from nominal unification to higher-order pattern unification.
 Meanwhile, algorithmic advances by \citet{paterson_linear_1978} and
 \citet{martelli_efficient_1982} for unification have inspired many
@@ -204,13 +202,13 @@ two names, we need to linearly traverse a list whose length
 is the number of binders.  One might try to replace these
 lists with a more efficient lookup structure, such as a hash table,
 but then composing two swappings would take linear time, and that
-operation is also rather frequent.  Here we present an algorithm that
+operation is also rather frequent.  Here, we present an algorithm that
 does not use swappings but instead represents names with de Bruijn
 numbers. De Bruijn numbers enable the use of persistent hash tables, in
 particular, \citeauthor{bagwell_ideal_2001}'s Hash Array Mapped Trie
 (HAMT). HAMTs provide efficient lookup and
 they use sharing to avoid the linear-time costs that would normally be
-associated with duplicating a hash table.
+associated with duplicating a hash table~\citep{bagwell_ideal_2001}.
 
 We organize this paper as follows.  In section~\ref{closures}, we provide
 an alternative representation of de Bruijn numbers that is suitable
@@ -218,8 +216,7 @@ for unification.  In section~\ref{unify}, we describe the abstract
 machines for name management and unification.  In
 section~\ref{efficiency}, we discuss the time complexity of this
 algorithm. The proofs of our claims are in progress and are available
-at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github}
-\footnote{https://github.com/mvcccccc/UNIF2018},
+at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github},\footnote{https://github.com/mvcccccc/UNIF2018}
 formalized in Agda.
   
 \section{De Bruijn numbers should coexist with names}
@@ -230,8 +227,8 @@ formalized in Agda.
    \caption{Terms\label{table:terms}}
   \begin{tabular}{r l l l}
     $t,l,r$ & $::=$ & $a$ & name \\
-    & $|$ & $\lambda a.t$ & abstractions \\
-    & $|$ & $\app{l}{r}$ & combinations \\
+    & $|$ & $\lambda a.t$ & abstraction \\
+    & $|$ & $\app{l}{r}$ & combination \\
     \end{tabular}
     \end{minipage}
 
@@ -276,19 +273,19 @@ formalized in Agda.
 
 \end{wrapfigure}
 
+
 De Bruijn numbers are a technique for representing syntax with binding
 structure~\citep{de_bruijn_lambda_1972}.  A \emph{de Bruijn number} is
-a natural number that indicates the distance from a name occurrence to
-its corresponding binder.  When all names in an expression are
+a natural number that indicates the distance from a name's occurrence
+to its corresponding binder.  When all names in an expression are
 replaced with their corresponding de Bruijn numbers, a direct
 structural equality check is sufficient to decide
-$\alpha$-equivalence.  A few programming
-languages~\citep{norell_towards_2007} use de Bruijn numbers in their
-internal representations for machine manipulation during operations
-such as type checking.  The idea of using names for free variables and
-numbers for bound variables, known as the locally nameless
-approach~\citep{chargueraud_locally_2012}, is employed for formalizing
-meta-theories~\citep{aydemir_nominal_2006,
+$\alpha$-equivalence. Many programming languages use de Bruijn numbers
+in their internal representations for machine manipulation during
+operations such as type checking.  The idea of using names for free
+variables and numbers for bound variables, known as the locally
+nameless approach~\citep{chargueraud_locally_2012}, is employed for
+formalizing programming language metatheory~\citep{aydemir_nominal_2006,
   aydemir_engineering_2008}.  Also, de Bruijn numbers, combined with
 explicit substitution, have been introduced in higher-order
 unification~\citep{dowek_higher_2000} to improve the efficiency of
@@ -300,7 +297,7 @@ humans to read and understand.  What's worse, as pointed out by
 ~\citet{berghofer_head--head_2007}, translating
 pencil-and-paper style proofs to versions using de Bruijn numbers is
 surprisingly involved: such a translation may alter the structure of
-proofs. Thus, reproducing proofs with explicit names from de
+proofs. Thus, recovering proofs with explicit names from proofs that use de
 Bruijn numbers is difficult or even impossible.  Thus, for the sake of
 both readers and writers of proofs, it is worth providing an interface
 with names.
@@ -308,7 +305,7 @@ with names.
 If our concern is simply deciding $\alpha$-equivalence between
 expressions, an easy way to use de Bruijn numbers while preserving
 names is to traverse the expressions, annotate each name with its de
-Bruijn number, then read-back the expressions without numbers.  This
+Bruijn number, then read back the expressions without numbers.  This
 approach, however, does not work for unification, because it only
 contains the mapping \emph{from names to numbers}.  In unification
 modulo $\alpha$-equivalence, one frequently needs the mapping
@@ -475,8 +472,8 @@ differ in names and variables.  A unifier consists of two parts:
 $\sigma$ and $\delta$.
 
 A \emph{substitution}, $\sigma$, is a partial finite function from
-a unification variable,
-  $X_i$, to a terms, $t_i$.  For readability, we write $\sigma$ as a
+unification variables,
+  $X_i$, to terms, $t_i$.  For readability, we write $\sigma$ as a
   set, $\{\bd{X_1}{t_1}, ..., \bd{X_j}{t_j}\}$ and we write
   $\{\bd{X}{t}\} \cup \sigma$ for extending $\sigma$ with $\bd{X}{t}$.
   For the simplified problems, we restrict $t$ to a name.
@@ -518,9 +515,9 @@ fails and the unification problem has no unifier.
 
 
 \begin{lemma}\label{lemma:numachine}
- For all finite input, the $\nu$-machine and the $\delta$-machine
- terminate; for all input, the $\nu$-machine and the $\delta$-machine
- succeed with the mgu if and only if there exists one.
+ For all finite inputs, the $\nu$-machine and the $\delta$-machine
+ terminate; for all inputs, the $\nu$-machine and the $\delta$-machine
+ succeed with the most general unifier if and only if one exists.
 \end{lemma}
 \begin{proof}
     By structural induction on the transitions of the machines.
