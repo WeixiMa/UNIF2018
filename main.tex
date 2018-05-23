@@ -94,7 +94,11 @@
 \newcommand*{\transname}[1]{\textsc{#1}}
 
 \newcommand*{\transrule}[3]{
-  \infer[\transname{#1}]{#2}{#3}
+  \infer[\transname{[#1]}]{#2}{#3}
+}
+
+\newcommand*{\transrulesp}[2]{
+  \infer[]{#1}{#2}
 }
 
 
@@ -164,7 +168,7 @@ $\alpha$LeanTAP~\citep{near_leantap:_2008}.  Although these two
 theories can be reduced to one another~\citep{cheney_relating_2005,
   levy_nominal_2012}, implementing higher-order pattern unification is
 more complicated because it has to deal with $beta$-reduction and
-capture-avoiding substitution. On the other hand, a implementation of
+capture-avoiding substitution. On the other hand, an implementation of
 nominal unification,
 in which unification does not involve explicit $beta$-reduction,
 is more straightforward and easier to formalize.
@@ -177,7 +181,7 @@ is more straightforward and easier to formalize.
 % theories~\citep{ayala-rincon_nominal_2016}, and reasoning about
 % bindings in abstract syntax~\citep{pitts_metalanguage_2000,
 %   gabbay_new_2002}.
-Concerning time complexity, \citet{qian_unification_1996} proves that
+Concerning time complexity, \citet{qian_unification_1996} has proven that
 higher-order pattern unification is decidable in linear time.  On the
 other hand, it has been an open problem whether there exists a nominal
 unification algorithm that can do better than
@@ -214,7 +218,8 @@ for unification.  In section~\ref{unify}, we describe the abstract
 machines for name management and unification.  In
 section~\ref{efficiency}, we discuss the time complexity of this
 algorithm. The proofs of our claims are in progress and are available
-at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github},
+at \href{https://github.com/mvcccccc/UNIF2018}{the authors' Github}
+\footnote{https://github.com/mvcccccc/UNIF2018},
 formalized in Agda.
   
 \section{De Bruijn numbers should coexist with names}
@@ -226,7 +231,7 @@ formalized in Agda.
   \begin{tabular}{r l l l}
     $t,l,r$ & $::=$ & $a$ & name \\
     & $|$ & $\lambda a.t$ & abstractions \\
-    & $|$ & $\app{l}{r}$ & applications \\
+    & $|$ & $\app{l}{r}$ & combinations \\
     \end{tabular}
     \end{minipage}
 
@@ -342,12 +347,12 @@ first appearance in a scope shadows the others.
 \begin{wrapfigure}{r}{0.5\textwidth}
   \caption{Unification terms and problems\label{table:new-terms}}
     \begin{tabular}{r l l l}  
-    $X,Y$   &       &     & variables \\
-      $xs,ys$ & $::=$ & $\epsilon$& list of variables \\
+    $X$   &       &     & vars \\
+      $xs,ys$ & $::=$ & $\epsilon$& list of vars \\
       & $|$&  $X,xs$ &  \\
     $t,l,r$ & $::=$ & $a$ & names \\
     & $|$ & $\lambda a.t$ & abstractions \\
-    & $|$ & $\app{l}{r}$ & applications \\
+    & $|$ & $\app{l}{r}$ & combinations \\
       & $|$ & $X$ & \\
       $e_\nu$  & $::=$ & $(a,\Phi) = (a,\Phi)$ & $\nu$-equation \\
            & $|$ &  $(X,\Phi) = (a,\Phi)$ \\
@@ -390,7 +395,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     \transrule{Empty}
     {\nuframe{\sigma_0}{\epsilon}{\sigma_0}}{} \\ \\
 
-    \transrule{Name-Name}
+    \transrule{N-N}
     {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
     {
         \nuframe{\sigma_0}{p}{\sigma_1} \\
@@ -398,7 +403,7 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     } \\ \\
 
 
-    \transrule{Name-Var}
+    \transrule{N-V}
     {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
     {
     \clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill \\
@@ -441,19 +446,19 @@ $\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}$.
     {\pframe{\sigma}{xs}{\emptyset}{\sigma}{xs}}
     {} \\ \\
 
-    \transrule{N-N}
-    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
+    \transrulesp
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}
     {%
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
-    \sigma_0(Y_1) = a_1 \quad \sigma_0(Y_2) = a_2  \hfill \\
-    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} 
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hspace{20mm} \transname{[N-N]} \\
+    \sigma_0(X_1) = a_1 \quad \sigma_0(X_2) = a_2  \hfill \\
+    \pframe{\sigma_0}{xs_0}{p}{\sigma_1}{xs_1} \hfill 
     } \\ \\
 
-    \transrule{N-V}
-    {\pframe{\sigma_0}{xs_0}{\eq{\clos{Y_1}{\Phi_1}}{\clos{Y_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
-    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \\
-    \sigma_0(Y_1) = a_1 \quad Y_2\notin dom(\sigma_0) \hfill \\
-              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1} 
+    \transrulesp
+    {\pframe{\sigma_0}{xs_0}{\eq{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}, p}{\sigma_1}{xs_1}}{%
+    \aeq{a_1}{\Phi_1}{a_2}{\Phi_2} \hfill \hspace{10mm} \transname{[N-V]} \\
+    \sigma_0(X_1) = a_1 \quad X_2\notin dom(\sigma_0) \hfill \\
+              \pframe{\{Y_2/a_2\}\cup\sigma_0}{(Y_2, xs_0)}{p}{\sigma_1}{xs_1}  \hfill
     } \\ \\
 
 \end{tabular}
@@ -488,15 +493,16 @@ a unification variable,
   closure equations where $X$ appears at least once.
 
   The simplified problem is about solving three kinds of problems:
-  unifying a closure equation whose terms on both sides are names,
-  abbreviate to \emph{name-name},
-  and similarly \emph{name-var}, and \emph{var-var}.
+  unifying a closure equation that has a name term on one side
+  and a var term on the other side,
+  abbreviated to \transname{N-V},
+  and similarly \transname{N-N} and \transname{V-V}.
 % {\color{red}[ talk about the equations and problems
 %     defined in Figure~\ref{table:new-terms} ]}
 As defined in Figure~\ref{table:new-terms},
-we refer to a name-name or name-var equation as
+we refer to a \transname{N-N} or \transname{N-V} equation as
 an \emph{$e_\nu$} and refer to a
-var-var equation as an \emph{$e_\delta$}.
+\transname{V-V} equation as an \emph{$e_\delta$}.
 Given two lists of these closure equations,
 $p_\nu$ and $p_\delta$,
 we first run the
@@ -528,11 +534,21 @@ input to the two machines?
 
 %\begin{wrapfigure}{r}{0.5\textwidth}
     \begin{figure}[htbp]
-  \caption{$\rho$-machine}\label{table:rmachine}
+  \caption{Multi-equations}\label{table:multi}
+   \begin{minipage}[b]{\textwidth}
+      \begin{tabular}{r l l l}  
+      $U$ & $::=$ & $\epsilon$& list of multi-equations \\
+      & $|$&  $e,U$ &  \\ \\
+      $e$ & $::=$ & $\pr{\clos{t}{\Phi}}{\clos{t}{\Phi}}$& multi-equation \\
+      & $|$&  $\clos{t}{\Phi},e$ &  \\ \\
+    \end{tabular}
+
+      \caption{$\rho$-machine}\label{table:rmachine}
+     \end{minipage}
    \begin{minipage}[b]{\textwidth}
     \fbox{\begin{varwidth}{\textwidth}
-        $\rframe{p_\nu}{p_\delta}{\sigma}{multieqn^*}{p_\nu}{p_\delta}{\sigma}$ \\
-        $\sframe{p_\nu}{p_\delta}{\sigma}{multieqn}{p_\nu}{p_\delta}{\sigma}$ 
+        $\rframe{p_\nu}{p_\delta}{\sigma}{U}{p_\nu}{p_\delta}{\sigma}$ \\
+        $\sframe{p_\nu}{p_\delta}{\sigma}{e}{p_\nu}{p_\delta}{\sigma}$ 
         \end{varwidth}}
   \end{minipage} \\ \\
 
@@ -540,55 +556,55 @@ input to the two machines?
   \begin{tabular}{l}
 
     \transrule{Empty}
-    {\rframe{p_0}{\delta_0}{\sigma_0}{\emptyset}{p_0}{\delta_0}{\sigma_0}}
+    {\rframe{p_0}{\delta_0}{\sigma_0}{\epsilon}{p_0}{\delta_0}{\sigma_0}}
     {} \\ \\
 
     \transrule{Step}
-    {\rframe{p_0}{\delta_0}{\sigma_0}{(U, U^*)}{p_1}{\delta_1}{\sigma_1}}
+    {\rframe{p_0}{\delta_0}{\sigma_0}{(e, U)}{p_1}{\delta_1}{\sigma_1}}
     {%
-    \sframe{p_0}{\delta_0}{\sigma_0}{U}{p_0'}{\delta_0'}{\sigma_0'} \\
-    \rframe{p_0'}{\delta_0'}{\sigma_0'}{U^*}{p_1}{\delta_1}{\sigma_1} 
+    \sframe{p_0}{\delta_0}{\sigma_0}{e}{p_0'}{\delta_0'}{\sigma_0'} \\
+    \rframe{p_0'}{\delta_0'}{\sigma_0'}{U}{p_1}{\delta_1}{\sigma_1} 
     } \\ \\
 
-    \transrule{Name-Name}
+    \transrule{N-N}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
     {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}} \cup p_0
     } \\ \\
 
-    \transrule{Name-Var}
+    \transrule{N-V}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_1}{\delta_0}{\sigma_0}}
     {%
     p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
     } \\ \\ 
 
-    \transrule{Var-Var}
+    \transrule{V-V}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}}}{p_0}{\delta_1}{\sigma_0}}
     {%
     \delta_1 = \pr{\clos{X_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup \delta_0
     } \\ \\
 
-    \transrule{App-App}
+    \transrule{C-C}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
               \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{l_1}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\
 
-    \transrule{Abs-Abs}
+    \transrule{A-A}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
      \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\
     \sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1}
     } \\ \\ 
 
-    \transrule{Var-App}
+    \transrule{V-C}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\app{l_2}{r_2}}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}{%
     \sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \\
     \sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}  \hfill
     } \\ \\
 
-    \transrule{Var-Abs}
+    \transrule{V-A}
     {\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
     {%
     \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2)  \hfill \\
@@ -604,8 +620,7 @@ input to the two machines?
 Here we use the idea of \citet{martelli_efficient_1982}:
 finding the shared shape of two terms by computing
 the common parts and frontiers over a multi-equation.
-\citeauthor{martelli_efficient_1982} define
-the \emph{common part} of two terms to be
+They define the \emph{common part} of two terms to be
 a term obtained by superimposing,
 and the \emph{frontier} to be the substitution that
 captures the differences between each term and the common part.
@@ -614,7 +629,7 @@ distinct vars $X$ and $Y$,
 and two terms $(a\,X)$ and $(Y\,(b\,c))$,
 the common part is the term $(Y\,X)$,
 and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
-A multi-equation groups together many closures to be unified,
+A multi-equation, defined in Figure~\ref{table:multi}, groups together many closures to be unified,
 where the variable closures are on the left-hand side,
 and the non-variable closures are on the right-hand side.
 
@@ -622,12 +637,20 @@ The $\rho$-machine, defined in
 Figure~\ref{table:rmachine}, 
 reduces an arbitrary nominal unification problem to
 $p_\nu$, $p_\delta$, and a substitution where the codomain is unrestricted.
+Each $\Rightarrow_s$ transition computes the common part and the frontier
+of a multi-equation. For readability, the sketch only shows the rules
+for multi-equations with one left-hand side and one right-hand side.
+A multi-equation with more than one closures on one side is handled by
+simultaneously applying the rule to all closures.
 Unlike the Martelli-Montanari algorithm,
 the $\rho$-machine finds the maximum common part instead of the minimum.
-Thus, in the
-\transname{var-app} and \transname{var-abs} rules, we need to create
+Thus, in the \transname{V-C} and \transname{V-A} rules, we need to create
 new names and new variables
-to extend the shape of a variable with its counterpart.
+to extend the shape of variables with combinations and abstractions.
+The ordering of multi-equation is the same with Martelli-Montanari:
+for each multi-equation, we count the appearances of its left-hand side vars
+in other multi-equations of U and select the multi-equation associated
+with the smallest counter each time.
 
 \section{A note on time complexity}
     \label{efficiency}
@@ -661,13 +684,14 @@ $n$ is the number of variable occurrences in the original terms.  The
 $\rho$-machine is similar except that two new factors are involved:
 the update operation of HAMT and the generation of names and
 variables.  We consider the former one to have $O(log(n))$ complexity,
-and we implement name and variable creation with state monads in
+and we implement name and variable creation with state
+monads~\citep{moggi_notions_1991} in
 constant time.  Thus reducing an arbitrary unification problem to the
 input of the $\nu$ and $\delta$ machines becomes $O(n \times log(n) \times
 G(n))$.
 
 \section*{Acknowledgment}
-We thank Christian Urban for the discussion on this paper
+We thank Christian Urban for the discussion and inspiration
 and the anonymous reviewers for their comments and suggestions.
 
 \bibliography{main}
