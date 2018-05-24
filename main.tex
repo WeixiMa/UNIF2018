@@ -133,16 +133,12 @@ urlcolor=cyan,
 We present a nominal unification algorithm that runs in $O(n \times
 log(n) \times G(n))$ time, where $G$ is the functional inverse of
 Ackermann's function. Nominal unification generates a set of
-variable assignments, if there exists one, that makes terms
+variable assignments if there exists one, that makes terms
 involving binding operations $\alpha$-equivalent. We preserve names
 while using special representations of de Bruijn numbers
 to enable efficient name management.
-% {\color{red}[The following sentence is not clear enough. --Jeremy]}
 We use Martelli-Montanari style multi-equation reduction
 to generate these name management problems from arbitrary unification terms.
-% {\color{red} The following phrase needs to be reworded.``the''
-% indicates exactly one. But they had many ideas.Which one are you
-% referring to? Be specific.}with the idea of Martelli-Montanari.
 \end{abstract}
 
 \section{Introduction and background}
@@ -153,12 +149,16 @@ a critical component of
 programming languages and formal systems. As users of logic
 programming languages and theorem provers, we desire such rules to be
 available out of the box. Two theories provide
-this convenience: \citeauthor{miller_logic_1989}'s higher-order pattern unification~\citep{miller_logic_1989} and \citeauthor{urban_nominal_2004}'s nominal unification~\citep{urban_nominal_2004}. Higher-order pattern unification, which
-handles a fragment of the $\beta\eta$-rules, is the foundation of
+this convenience: \citeauthor{miller_logic_1989}'s higher-order pattern
+unification~\citep{miller_logic_1989} and \citeauthor{urban_nominal_2004}'s
+nominal unification~\citep{urban_nominal_2004}.
+Higher-order pattern unification, the foundation of
 Isabelle~\citep{paulson_natural_1986},
 $\lambda$Prolog~\citep{nadathur_overview_1988}, and
-Twelf~\citep{pfenning_system_1999}. Nominal unification, which
-focuses on the $\alpha$-rule, has inspired extensions of logic
+Twelf~\citep{pfenning_system_1999},
+handles a fragment of the $\beta\eta$-rules.
+Nominal unification, the unification modulo the $\alpha$-rule,
+has inspired extensions of logic
 programming languages such as $\alpha$Prolog~\citep{cheney_prolog:_2004}
 and $\alpha$Kanren~\citep{byrd_kanren_2007}, as well as theorem
 provers such as Nominal Isabelle~\citep{urban_nominal_2005} and
@@ -381,7 +381,7 @@ $\aeq{a}{\Phi}{a}{\Phi}$.
 \section{Unification}
 \label{unify}
 In Figure~\ref{table:new-terms}, we introduce unification variables,
-which we abbreviate as \emph{var}. Now, let's consider a simplified
+abbreviated as \emph{var}. Now, let's consider a simplified
 unification problem: a variable can only be instantiated by a name, that is,
 finding the unifier of two terms that share the same structure but
 differ in names and variables. A unifier consists of two parts:
