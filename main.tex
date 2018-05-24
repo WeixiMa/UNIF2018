@@ -199,15 +199,16 @@ The inefficiency of these nominal unification algorithms comes from
 the swapping actions. To decide the $\alpha$-equivalence of
 two names, we need to linearly traverse a list whose length 
 is the number of binders. One might try to replace these
-lists with a more efficient lookup structure, such as a hash table,
+lists with some structures of better lookup efficiency,
+such as hashtables,
 but then composing two swappings would take linear time, and that
 operation is also rather frequent. Here, we present an algorithm that
 does not use swappings but instead represents names with de Bruijn
-numbers. De Bruijn numbers enable the use of persistent hash tables, in
+numbers. De Bruijn numbers enable the use of persistent hashtables, in
 particular, \citeauthor{bagwell_ideal_2001}'s Hash Array Mapped Trie
 (HAMT). HAMTs provide efficient lookup and
 they use sharing to avoid the linear-time costs that would normally be
-associated with duplicating a hash table~\citep{bagwell_ideal_2001}.
+associated with duplicating a hashtable~\citep{bagwell_ideal_2001}.
 
 We organize this paper as follows. In section~\ref{closures}, we provide
 an alternative representation of de Bruijn numbers that is suitable
@@ -401,8 +402,8 @@ $\sigma$ and $\delta$.
 \transrule{N-N}
 {\nuframe{\sigma_0}{\eq{\clos{a_1}{\Phi_1}}{\clos{a_2}{\Phi_2}},\,p}{\sigma_1}}
 {
-\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \hfill \\
-\nuframe{\sigma_0}{p}{\sigma_1} \hfill 
+\clos{a_1}{\Phi_1} \approx \clos{a_2}{\Phi_2} \\
+ \hspace{0.5mm} \nuframe{\sigma_0}{p}{\sigma_1} \hfill
 } \\ \\
 
 
@@ -590,7 +591,7 @@ p_1 = \pr{\clos{a_1}{\Phi_1}}{\clos{X_2}{\Phi_2}} \cup p_0
 {%
 X_l = (\texttt{new-var}) \quad
 X_r = (\texttt{new-var}) \hfill \\
-\sframe{p_0}{\delta_0}{\{X_1/(X_l, X_r)\}\cup\sigma_0'}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \hfill \\\sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}\hfill
+\sframe{p_0}{\delta_0}{\{\bd{X_1}{(X_l,X_r)}\}\cup\sigma_0}{\pr{\clos{X_l}{\Phi_1}}{\clos{l_2}{\Phi_2}}}{p_0'}{\delta_0'}{\sigma_0'} \hfill \\\sframe{p_0'}{\delta_0'}{\sigma_0'}{\pr{\clos{X_r}{\Phi_1}}{\clos{r_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}\hfill
 } \\ \\
 
  \transrule{V-A}{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
@@ -599,7 +600,7 @@ X_r = (\texttt{new-var}) \hfill \\
 \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \quad
 \Phi_1 \vdash \texttt{Fr}\,\,a_1 \quad
 a_2 = (\texttt{new-name}) \quad
-X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
+X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\{\bd{X_1}{\lambda\,a_1.X_t}\}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
 } \\ \\
 
 \transrule{V-A$'$}{\sframe{p_0}{\delta_0}{\sigma_0}{\pr{\clos{X_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{p_1}{\delta_1}{\sigma_1}}
@@ -608,7 +609,7 @@ X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup
 \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \quad
 \Phi_1 \vdash \texttt{Bd}\,\,a_1\,\,i \quad
 \Phi_2 \vdash \texttt{Bd}\,\,a_2\,\,i \quad
-X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\bd{X_1}{\lambda\,a_1.X_t}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
+X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\{\bd{X_1}{\lambda\,a_1.X_t}\}\cup\sigma_0'}{\pr{\clos{X_t}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{p_1}{\delta_1}{\sigma_1} \hfill
 }
 \end{tabular}
 \end{minipage}
@@ -637,8 +638,8 @@ reduces an arbitrary nominal unification problem to
 $p_\nu$, $p_\delta$, and a substitution where the codomain is unrestricted.
 Each $\Rightarrow_s$ transition computes the common part and the frontier
 of a multi-equation. For readability, the sketch only shows the rules
-for multi-equations with one left-hand side and one right-hand side.
-A multi-equation with more than one closure on one side is handled by
+for multi-equations with two closures.
+A multi-equation with more than two closures is handled by
 simultaneously applying the rule to all closures.
 Unlike the Martelli-Montanari algorithm,
 the $\rho$-machine finds the maximum common part instead of the minimum.
