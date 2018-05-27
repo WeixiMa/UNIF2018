@@ -1,4 +1,7 @@
-\documentclass[a4paper,UKenglish]{lipics-v2016}
+%\documentclass[a4paper,UKenglish]{lipics-v2016}
+\documentclass{easychair}
+\usepackage{doc}
+
 
 % testing
 
@@ -14,6 +17,7 @@
 \usepackage{varwidth}
 \usepackage{color}
 \usepackage{natbib}
+\setlength{\bibsep}{0.0pt}
 
 \hypersetup{
 colorlinks=true,
@@ -21,6 +25,16 @@ linkcolor=blue,
 filecolor=magenta,
 urlcolor=cyan,
 }
+
+\newcommand{\easychair}{\textsf{easychair}}
+\newcommand{\miktex}{MiK{\TeX}}
+\newcommand{\texniccenter}{{\TeX}nicCenter}
+\newcommand{\makefile}{\texttt{Makefile}}
+\newcommand{\latexeditor}{LEd}
+
+\newtheorem{defi}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{lemm}{Lemma}[section]
 
 \newcommand{\clos}[2] {
 \langle #1; #2 \rangle
@@ -107,23 +121,54 @@ urlcolor=cyan,
 
 \title{Efficiency of a good but not linear nominal unification algorithm}
 
-\keywords{$\alpha$-conversion; Binding operations; Efficiency; Unification}
+% \keywords{$\alpha$-conversion; Binding operations; Efficiency; Unification}
 
-\author[1]{Weixi Ma}
-\author[2]{Jeremy G. Siek}
-\author[3]{David Thrane Christiansen}
-\author[4]{Daniel P. Friedman}
-\affil[1]{Indiana University,
-\texttt{mvc@iu.edu}}
-\affil[2]{Indiana University,
-\texttt{jsiek@indiana.edu}}
-\affil[3]{Galois, Inc.,
-\texttt{dtc@galois.com}}
-\affil[4]{Indiana University,
-\texttt{dfried@indiana.edu}}
+% \author[1]{Weixi Ma}
+% \author[2]{Jeremy G. Siek}
+% \author[3]{David Thrane Christiansen}
+% \author[4]{Daniel P. Friedman}
+% \affil[1]{Indiana University,
+% \texttt{mvc@iu.edu}}
+% \affil[2]{Indiana University,
+% \texttt{jsiek@indiana.edu}}
+% \affil[3]{Galois, Inc.,
+% \texttt{dtc@galois.com}}
+% \affil[4]{Indiana University,
+% \texttt{dfried@indiana.edu}}
+
+\author{
+Weixi Ma\inst{1}
+\and
+    Jeremy G. Siek\inst{2}
+\and
+David Thrane Christiansen\inst{3}
+\and
+Daniel P. Friedman\inst{4}
+}
+
+\institute{
+  Indiana University,
+  Bloomington, Indiana, U.S.A.\\
+  \email{mvc@iu.edu}
+\and
+  Indiana University,
+  Bloomington, Indiana, U.S.A.\\
+  \email{jsiek@indiana.edu}
+\and
+  Galois, Inc.,
+  Portland, Oregon, U.S.A.\\
+  \email{dtc@galois.com}
+\and
+  Indiana University,
+  Bloomington, Indiana, U.S.A.\\
+  \email{dfried@indiana.edu}
+ }
 
 
-\Copyright{Weixi Ma, Jeremy Siek, David Thrane Christiansen and Daniel P. Friedman}
+% \Copyright{Weixi Ma, Jeremy Siek, David Thrane Christiansen and Daniel P. Friedman}
+
+\authorrunning{Ma, Siek, Christiansen, and Friedman}
+\titlerunning{Efficiency of a good but not linear nominal unification algorithm}
 
 \begin{document}
 
@@ -316,15 +361,17 @@ We represent de Bruijn numbers by \emph{static closures}.
 Such closures preserve the
 mappings in both directions: names to numbers and numbers to names.
 
-\begin{definition}
+\begin{defi}
 A \emph{closure} is an ordered pair $\clos{t}{\Phi}$ of a term $t$,
 defined in Figure~\ref{table:terms}, and a scope $\Phi$, where the
 scope is an ordered list of names for the binders in the enclosing
 context. The name of the innermost binder is written first in $\Phi$.
-\end{definition}
+\end{defi}
 
-When the term of a closure is a name, the closure itself represents a
-de Bruijn number. Consider the term
+If the term of a closure is a name and the name appears in the scope
+of the closure,
+the closure itself represents a de Bruijn number.
+Consider the term
 $\lambda\,a.\lambda\,b.a$. The de Bruijn number of the name $a$ is $1$
 and the closure-representation of this number is $\clos{a}{(b\,a)}$.
 We can retrieve the number-representation by finding the position of
@@ -336,6 +383,7 @@ if the closure had been $\clos{b}{(b\,a)}$
 \begin{wrapfigure}{r}{0.5\textwidth}
 \caption{Unification terms and problems\label{table:new-terms}}
 \begin{tabular}{r l l l}
+  \\
 $X$ & & & vars \\
 $a,b$ & & & names \\
 $xs$ & $::=$ & $\epsilon$& list of vars \\
@@ -355,13 +403,12 @@ $p_\delta$& $::=$ & $\epsilon$ & $\delta$-problems \\
 \end{wrapfigure}
 
 We define three operations on scopes: \texttt{ext}
-extends the scope by adding a name to the front of the scope;
-\texttt{idx$\rightarrow$name} yields the name of a given index
-starting from the first name in the scope; and
+extends the scope by \texttt{cons}ing a name to the front of the scope;
+\texttt{idx$\rightarrow$name} yields the name of a given index;
 \texttt{name$\rightarrow$idx} yields the location of the first
-appearance of a given name counting from the front.
+appearance of a given name.
 When repeated names appear, the
-first appearance in a scope shadows the others.
+first one in a scope shadows the others.
 
 Figure~\ref{table:fb} defines the free and bound relations
 ``constructively,'' with de Bruijn numbers serving as
@@ -382,7 +429,7 @@ $\aeq{a}{\Phi}{a}{\Phi}$.
 \section{Unification}
 \label{unify}
 In Figure~\ref{table:new-terms}, we introduce unification variables,
-abbreviated as \emph{var}. Now, let's consider a simplified
+abbreviated as \emph{var}s. Now, let's consider a simplified
 unification problem: a variable can only be instantiated by a name, that is,
 finding the unifier of two terms that share the same structure but
 differ in names and variables. A unifier consists of two parts:
@@ -513,11 +560,11 @@ If no transitions apply, the machine
 fails and the unification problem has no unifier.
 
 
-\begin{lemma}\label{lemma:numachine}
+\begin{lemm}\label{lemma:numachine}
  For all finite inputs, the $\nu$-machine and the $\delta$-machine terminate;
  for all finite inputs, the $\nu$-machine and the $\delta$-machine
  succeed with the most general unifier if and only if one exists.
-\end{lemma}
+\end{lemm}
 \begin{proof}
 By structural induction on the transitions of the machines.
 \end{proof}
@@ -653,7 +700,7 @@ variables
 in other multi-equations of U and select the multi-equation associated
 with the smallest counter each time.
 
-\begin{conjecture}\label{lemma:rmachine}
+\begin{conj}\label{lemma:rmachine}
   Given a unification problem, we run the $\rho$-machine,
   the $\nu$-machine, and the $\delta$-machine in sequence.
   The algorithm terminates;
@@ -661,7 +708,7 @@ with the smallest counter each time.
   the problem has no solution;
   if the algorithm terminates, then the result of the $\delta$-machine
   is the mgu.
-\end{conjecture}
+\end{conj}
 
 \section{A note on time complexity}
 \label{efficiency}
