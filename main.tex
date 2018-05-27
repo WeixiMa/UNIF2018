@@ -379,7 +379,6 @@ the first appearance of the name in the scope. In this case, the
 position of $a$ in the scope $(b\,a)$ is $1$, its de Bruijn
 number. The de Bruijn number of $b$ would have been $0$
 if the closure had been $\clos{b}{(b\,a)}$
-
 \begin{wrapfigure}{r}{0.5\textwidth}
 \caption{Unification terms and problems\label{table:new-terms}}
 \begin{tabular}{r l l l}
@@ -401,7 +400,6 @@ $p_\delta$& $::=$ & $\epsilon$ & $\delta$-problems \\
  & $|$ & $e_\delta, p_\delta$
 \end{tabular}
 \end{wrapfigure}
-
 We define three operations on scopes: \texttt{ext}
 extends the scope by \texttt{cons}ing a name to the front of the scope;
 \texttt{idx$\rightarrow$name} yields the name of a given index;
@@ -467,8 +465,8 @@ $\sigma$ and $\delta$.
 
 %\begin{wrapfigure}{r}{0.5\textwidth}
 %\begin{figure}[htbp]
-\begin{minipage}[b]{\textwidth}
 \caption{$\delta$-machine and the pull operation}\label{machine:delta}
+\begin{minipage}[b]{\textwidth}
 \fbox{\begin{varwidth}{\textwidth}
 $\dframe{\sigma}{p_\delta}{xs}{\sigma}{p_\delta}$ \\
 $\pframe{\sigma}{xs}{p_\delta}{\sigma}{xs}$
@@ -569,6 +567,7 @@ fails and the unification problem has no unifier.
 By structural induction on the transitions of the machines.
 \end{proof}
 
+\clearpage
 
 Now the question is how to generalize the previous algorithm, that is,
 given two arbitrary terms, where a variable may be instantiated by any
@@ -576,6 +575,71 @@ term besides names, can we re-shape the two terms to create a proper
 input to the two machines?
 
 %\begin{wrapfigure}{r}{0.5\textwidth}
+Here we use the idea of \citet{martelli_efficient_1982}:
+finding the shared shape of two terms by computing
+the common parts and frontiers over a multi-equation.
+They define the \emph{common part} of two terms to be
+a term obtained by superimposing,
+and the \emph{frontier} to be the substitution that
+captures the differences between each term and the common part.
+For example, given distinct names $a$, $b$, and $c$,
+distinct vars $X$ and $Y$,
+and two terms $(a\,X)$ and $(Y\,(b\,c))$,
+the common part is the term $(Y\,X)$,
+and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
+A multi-equation, defined in Figure~\ref{table:multi}, groups many closures to be unified,
+where the variable closures are on the left-hand side,
+and the non-variable closures are on the right-hand side.
+
+The $\rho$-machine, defined in
+Figure~\ref{table:rmachine}, 
+reduces an arbitrary nominal unification problem to
+$p_\nu$, $p_\delta$, and a substitution where the codomain is unrestricted.
+Each $\Rightarrow_s$ transition computes the common part and the frontier
+of a multi-equation. For readability, the sketch only shows the rules
+for multi-equations with two closures.
+A multi-equation with more than two closures is handled by
+simultaneously applying the rule to all closures.
+Unlike the Martelli-Montanari algorithm,
+the $\rho$-machine finds the maximum common part instead of the minimum.
+Thus, in the \transname{V-C}, \transname{V-A}, and \transname{V-A$'$} rules,
+we need two operators, \texttt{new-name} and \texttt{new-var},
+to create new names and new variables
+for the shapes that fit with combinations and abstractions.
+The ordering of multi-equation is the same with Martelli-Montanari:
+for each multi-equation, we count the appearances of its left-hand side
+variables
+in other multi-equations of U and select the multi-equation associated
+with the smallest counter each time.
+\begin{conj}\label{lemma:rmachine}
+  Given a unification problem, we run the $\rho$-machine,
+  the $\nu$-machine, and the $\delta$-machine in sequence.
+  The algorithm terminates;
+  if the algorithm fails, i.e. no transitions apply,
+  the problem has no solution;
+  if the algorithm terminates, then the result of the $\delta$-machine
+  is the mgu.
+\end{conj}
+\section{A note on time complexity}
+\label{efficiency}
+To improve time efficiency,
+we represent a scope with a counter and two persistent
+hashtables. One
+hashtable maps from names to numbers, the other maps from numbers to
+names, and the counter is used to track the de Bruijn number. When we
+extend a scope with a name, we extend the two hashtables with the
+corresponding maps and add one to the counter. A persistent
+hashtable, in practice, has constant time for update and lookup,
+although the worst case scenario could be $O(log(n))$. Thus,
+\texttt{ext}, \texttt{idx$\rightarrow$name}, and
+\texttt{name$\rightarrow$idx} are all logarithmic time. In addition,
+using persistent structures avoids copying the entire data-structure
+when branching, in particular, during the \transname{C-C} rule of
+the $\rho$-machine.
+Also, we implement $\delta$ with a hashtable that maps from a variable to
+the list that contains its closure equations,
+i.e., the equation $\aeq{X_1}{\Phi_1}{X_2}{\Phi_2}$
+exists in both $X_1$'s entry and $Y_2$'s entry in the hashtable.
 \begin{figure}[htbp]
 \caption{Multi-equations}\label{table:multi}
  \begin{minipage}[b]{\textwidth}
@@ -594,7 +658,6 @@ $\rframe{p_\nu}{p_\delta}{\sigma}{U}{p_\nu}{p_\delta}{\sigma}$ \\
 $\sframe{p_\nu}{p_\delta}{\sigma}{e}{p_\nu}{p_\delta}{\sigma}$ 
 \end{varwidth}}
 \end{minipage} \\ \\
-
 \begin{minipage}[b]{\textwidth}
 \begin{tabular}{l}
 
@@ -662,77 +725,6 @@ X_t = (\texttt{new-var}) \\\sframe{p_0}{\delta_0}{\{\bd{X_1}{\lambda\,a_1.X_t}\}
 \end{minipage}
 \end{figure}
 %\end{wrapfigure}
-
-Here we use the idea of \citet{martelli_efficient_1982}:
-finding the shared shape of two terms by computing
-the common parts and frontiers over a multi-equation.
-They define the \emph{common part} of two terms to be
-a term obtained by superimposing,
-and the \emph{frontier} to be the substitution that
-captures the differences between each term and the common part.
-For example, given distinct names $a$, $b$, and $c$,
-distinct vars $X$ and $Y$,
-and two terms $(a\,X)$ and $(Y\,(b\,c))$,
-the common part is the term $(Y\,X)$,
-and the frontier is the substitution $\{\bd{Y}{a},\,\bd{X}{(b\,c)}\}$.
-A multi-equation, defined in Figure~\ref{table:multi}, groups together many closures to be unified,
-where the variable closures are on the left-hand side,
-and the non-variable closures are on the right-hand side.
-
-The $\rho$-machine, defined in
-Figure~\ref{table:rmachine}, 
-reduces an arbitrary nominal unification problem to
-$p_\nu$, $p_\delta$, and a substitution where the codomain is unrestricted.
-Each $\Rightarrow_s$ transition computes the common part and the frontier
-of a multi-equation. For readability, the sketch only shows the rules
-for multi-equations with two closures.
-A multi-equation with more than two closures is handled by
-simultaneously applying the rule to all closures.
-Unlike the Martelli-Montanari algorithm,
-the $\rho$-machine finds the maximum common part instead of the minimum.
-Thus, in the \transname{V-C}, \transname{V-A}, and \transname{V-A$'$} rules,
-we need two operators, \texttt{new-name} and \texttt{new-var},
-to create new names and new variables
-for the shapes that fit with combinations and abstractions.
-The ordering of multi-equation is the same with Martelli-Montanari:
-for each multi-equation, we count the appearances of its left-hand side
-variables
-in other multi-equations of U and select the multi-equation associated
-with the smallest counter each time.
-
-\begin{conj}\label{lemma:rmachine}
-  Given a unification problem, we run the $\rho$-machine,
-  the $\nu$-machine, and the $\delta$-machine in sequence.
-  The algorithm terminates;
-  if the algorithm fails, i.e. no transitions apply,
-  the problem has no solution;
-  if the algorithm terminates, then the result of the $\delta$-machine
-  is the mgu.
-\end{conj}
-
-\section{A note on time complexity}
-\label{efficiency}
-
-In the previous sections, we represent scopes by lists for simplicity,
-but lists are inefficient for variable lookup. To have better time
-complexity, we represent a scope with a counter and two persistent
-hashtables. One
-hashtable maps from names to numbers, the other maps from numbers to
-names, and the counter is used to track the de Bruijn number. When we
-extend a scope with a name, we extend the two hashtables with the
-corresponding maps and add one to the counter. A persistent
-hashtable, in practice, has constant time for update and lookup,
-although the worst case scenario could be $O(log(n))$. Thus,
-\texttt{ext}, \texttt{idx$\rightarrow$name}, and
-\texttt{name$\rightarrow$idx} are all logarithmic time. In addition,
-using persistent structures avoids copying the entire data-structure
-when branching, in particular, during the \transname{C-C} rule of
-the $\rho$-machine.
-Also, we implement $\delta$ with a hashtable that maps from a variable to
-the list that contains its closure equations,
-i.e., the equation $\aeq{X_1}{\Phi_1}{X_2}{\Phi_2}$
-exists in both $X_1$'s entry and $Y_2$'s entry in the hashtable.
-
 Now the $\nu$-machine and the
 $\delta$-machine are both worst case $O(n \times log(n))$,
 where $n$ is the sum of name and variable occurrences.
