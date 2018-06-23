@@ -1,0 +1,387 @@
+\documentclass[pdf]{beamer}
+\mode<presentation>{}
+
+\usepackage{textpos}
+\usepackage{natbib}
+\usepackage{proof}
+ \usepackage[utf8]{inputenc}
+ \usepackage{caption}
+ %\usepackage[absolute,overlay]{textpos}
+ \setbeamertemplate{footline}[frame number]
+ \date{\today} 
+ \subject{Thesis}  
+ \usepackage{graphbox}
+ \usepackage{tikz}
+ \usepackage{color}
+\usetikzlibrary{trees}
+
+\newcommand{\bd}[2] {
+ #1/ #2
+}
+\newcommand{\clos}[2] {
+\langle #1; #2 \rangle
+}
+\newcommand*{\transname}[1]{\textsc{#1}}
+
+\newcommand*{\transrule}[3]{
+\infer[\transname{[#1]}]{#2}{#3}
+}
+\newcommand{\aeq}[4] {
+\clos{#1}{#2} \approx \clos{#3}{#4}
+}
+\newcommand{\pr}[2] {
+ (#1\, #2)
+}
+\newcommand{\app}[2] {
+(#1\, #2)
+}
+\newcommand{\sframe}[5] {
+#1; #2 \vdash #3 \Rightarrow #4; #5
+}
+\newcommand{\transition}[4] {
+  $#1 \vdash #2 \stackrel{\alpha}{=} #3 \Rightarrow #4$
+}
+\newcommand{\swap}[2] {
+  #1\leftrightarrow#2
+}
+\newcommand{\alphaeq}[2] {
+  #1\stackrel{\alpha}{=}#2
+}
+\newcommand{\eqha}[2] {
+  #1\stackrel{?}{=}#2
+}
+
+\title{Efficiency of a good but not linear nominal unification algorithm}
+\author{Weixi Ma, Jeremy G. Siek, David Thrane Christiansen,\\ Daniel P. Friedman}
+
+ \setbeamertemplate{footline}{%
+        \includegraphics[align=c, height=0.8cm]{IU_Logo.jpg}%
+        \hfill%
+        \usebeamercolor[fg]{page number in head/foot}%
+        \usebeamerfont{page number in head/foot}%
+        \insertframenumber\,/\,\inserttotalframenumber\kern1em%
+ }
+
+\begin{document}
+
+% \addtobeamertemplate{frametitle}{}{%
+% \begin{textblock*}{100mm}(.95\textwidth,-0.5cm)
+% \includegraphics[height=1cm,width=1cm]{IU_Logo.jpg}
+% \end{textblock*}}
+
+
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\begin{frame}{Nominal Unification~\citep{urban_nominal_2004}}
+  
+  {\centering
+    $\lambda\,a.\lambda\,b.(X\, Y) \stackrel{?}{=} \lambda\,a.\lambda\,a.(a\,Z)$
+    \par}
+  \vspace{1cm}
+  {\centering
+    Unifier:\\
+    $\{\bd{X}{b},\,\bd{Y}{(\swap{a}{b})\cdot Z}\}$ and $\{b\,\#\,Z\}$
+    \par}
+\end{frame}
+
+\begin{frame}{Nominal Unification~\citep{urban_nominal_2004}}
+
+  {\centering
+  The root of evil:
+  \par}
+  {\centering
+    $\pi\cdot(\pi'\cdot X) \equiv (\pi@\pi')\cdot X$
+  \par}
+\end{frame}
+
+\begin{frame}{It's straightforward to check $\alpha$-equivalence}{using de Bruijn numbers~\citep{de_bruijn_lambda_1972}}
+ 
+ {\centering
+   $\alphaeq{\lambda\,a.\lambda\,b.a}{\lambda\,c.\lambda\,d.c}$
+ \par}
+\vspace{1cm}
+  {\centering
+  In de Bruijn numbers:\par}
+ {\centering
+   $\alphaeq{\lambda.\,\lambda\,.1}{\lambda\,.\lambda\,.1}$
+ \par}
+\end{frame}
+
+\begin{frame}{De Bruijn numbers should coexist with names}
+
+  {\centering
+    A \emph{scope} is a list of names.
+  \par}
+  {\centering
+    A \emph{static closure} consists of a term and its enclosing scope. \\
+  \par}
+  \vspace{1cm}
+  
+  {\centering $\lambda\,a.\lambda\,b.a$
+  \par}
+
+{\centering
+  $\Downarrow$
+\par}
+{\centering
+$\clos{a}{(b\,a)}$
+\par}
+\end{frame}
+
+\begin{frame}{Free and Bound}
+
+  {\centering
+  \begin{tabular}{l}
+\transrule{Free}
+{\Phi \vdash \texttt{Fr}\,\,a}
+{a \notin \Phi} \\ \\
+
+\transrule{Bound}
+{\Phi \vdash \texttt{Bd}\,\,a\,\,i}
+{
+(\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\
+(\texttt{idx$\rightarrow$name}\, \Phi\,i) = a
+}
+ \end{tabular}
+ \par}
+\end{frame}
+
+\begin{frame}{$\alpha$-equivalence between name-closures}
+
+  {\centering
+  \begin{tabular}{l}
+    \transrule{Same-Free}
+{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
+a_1 = a_2 \hfill \\
+\Phi_1 \vdash \texttt{Fr}\,\, a_1 \quad
+\Phi_2 \vdash \texttt{Fr}\,\, a_2 
+} \\ \\
+
+\transrule{Same-Bound}
+{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
+{%
+i_1 = i_2 \hfill \\
+\Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 \quad
+\Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 
+}
+ \end{tabular}
+ \par}
+\end{frame}
+
+\begin{frame}{Unifying name-closures}
+
+  {\centering
+    $\eqha{\lambda\,a.\lambda\,b.a}{\lambda\,c.\lambda\,d.c}$
+
+    \vspace{1cm}
+    \transition
+    {\sigma}
+    {\clos{a}{(b\,a)}}
+    {\clos{c}{(d\,c)}}
+    {\sigma}
+    \par}
+\end{frame}
+
+\begin{frame}{Unifying name-closure versus var-closure}
+
+  {\centering
+    $\eqha{\lambda\,a.\lambda\,b.X}{\lambda\,c.\lambda\,d.c}$
+
+    \vspace{1cm}
+    \transition
+    {\sigma}
+    {\clos{X}{(b\,a)}}
+    {\clos{c}{(d\,c)}}
+    {\{\bd{X}{a}\}\cup\sigma}
+    \par}
+\end{frame}
+
+\begin{frame}{Unifying name-closure versus var-closure}{another example}
+
+  {\centering
+    $\eqha{\lambda\,a.\lambda\,a.X}{\lambda\,c.\lambda\,d.c}$
+
+    \vspace{1cm}
+    \transition
+    {\sigma}
+    {\clos{X}{(a\,a)}}
+    {\clos{c}{(d\,c)}}
+    \bot
+    \par}
+\end{frame}
+
+\begin{frame}{Unifying var-closures}
+
+ {\centering
+     $\eqha{\lambda\,a.\lambda\,b.X}{\lambda\,c.\lambda\,d.Y}$
+
+    \vspace{1cm}
+   \transition
+    {\sigma}
+    {\clos{X}{(b\,a)}}
+    {\clos{Y}{(d\,c)}}
+    {?}
+    \par}
+   
+  \vspace{1cm}
+  {\centering
+   $\sigma$ is not enough.
+ \par}
+\end{frame}
+
+\begin{frame}{Unifying var-closures}
+
+ {\centering
+    $\eqha{\lambda\,a.\lambda\,b.X}{\lambda\,c.\lambda\,d.Y}$
+
+    \vspace{1cm}
+   \transition
+    {\sigma;\,\delta}
+    {\clos{X}{(b\,a)}}
+    {\clos{Y}{(d\,c)}}
+    {\sigma;\,\delta'}
+
+    \vspace{1cm}
+    $\delta' = \{\clos{X}{(b\,a)} \stackrel{\alpha}{=} \clos{Y}{(d\,c)}\}\cup\delta$
+    \par}
+\end{frame}
+
+\begin{frame}{To sum up:}
+  
+  \begin{itemize}
+  \item De Bruijn numbers get along with names in closures.
+    
+  \item $\sigma$ is a substitution.
+    
+  \item $\delta$ contains unsolved pairs of var-closures.
+    
+  \item We have solved a subcase: in a term, variables have
+    only be instantiated by names.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{To generalize the algorithm:}
+
+  {\centering
+    Need: a shared shape for two arbitrary terms
+  \par}
+  
+  \vspace{1cm}
+  {\centering
+    $\lambda\,a.X \stackrel{?}{=} \lambda\,b.\lambda\,c.b$
+  \par}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+\begin{tikzpicture}
+  \node{$\lambda$}
+child {node {$a$}}
+child {node {$X$}};
+  \end{tikzpicture}
+  \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}
+\node{$\lambda$}
+child {node {$b$}}
+child {node {$\lambda$}
+  child {node {$c$}}
+  child {node {b}
+  }
+};
+    \end{tikzpicture}
+    \end{minipage}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{To generalize the algorithm:}
+
+  {\centering
+    Need: a shared shape for two arbitrary terms
+  \par}
+  \vspace{1cm}
+  {\centering
+    $\lambda\,a.X \stackrel{?}{=} \lambda\,b.\lambda\,c.b$
+  \par}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+\begin{tikzpicture}
+  \node{$\lambda$}
+child {node {$a$}}
+child {node {$\lambda$}
+  child {node {$c'$}}
+  child {node {$Y$}
+  }
+};
+  \end{tikzpicture}
+  \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}
+\node{$\lambda$}
+child {node {$b$}}
+child {node {$\lambda$}
+  child {node {$c$}}
+  child {node {$b$}
+  }
+};
+    \end{tikzpicture}
+    \end{minipage}
+  \end{figure}
+  
+  {\centering
+  Also, $\sigma = \{\bd{X}{\lambda\,c'.Y}\}\cup\sigma$
+  \par}
+\end{frame}
+
+\begin{frame}{In particular:}
+\begin{tabular}{l}
+  \transrule{A-A}{\sframe{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{\delta_1}{\sigma_1}}
+{%
+ \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\\sframe{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{\delta_1}{\sigma_1}
+} \\ \\ 
+
+\transrule{C-C}{\sframe{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{{\color{green}\Phi_1}}}{\clos{\app{l_2}{r_2}}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}}
+{%
+\sframe{\delta_0}{\sigma_0}{\pr{\clos{l_1}{{\color{green}\Phi_1}}}{\clos{l_2}{{\color{green}\Phi_2}}}}{\delta_0'}{\sigma_0'} \\\sframe{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{{\color{green}\Phi_1}}}{\clos{r_2}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}
+} \\ \\
+
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Why it is linear?}
+  
+  \begin{itemize}
+  \item Every term is annotated with a scope, there is no need to
+    compose two scopes ($\pi@\pi'$ is gone).
+  
+  \item A scope, previously represented by a list,
+    can be replaced with two hashtables.
+    
+  \item Persistent hashtables~\citep{bagwell_ideal_2001} provide
+    efficient lookup and access.
+  \end{itemize}
+\end{frame}
+
+ 
+\begin{frame}{Bibliography}
+\bibliographystyle{plainnat}
+\bibliography{main}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \Huge Thank you!
+   \end{center}
+\end{frame}
+  
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
