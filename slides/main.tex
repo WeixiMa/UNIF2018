@@ -89,11 +89,14 @@
 \begin{frame}{Nominal Unification~\citep{urban_nominal_2004}}
 
   {\centering
-  The root of evil:
-  \par}
-  {\centering
-    $\pi\cdot(\pi'\cdot X) \equiv (\pi@\pi')\cdot X$
-  \par}
+    \begin{itemize}
+    \item The fastest existing nominal unification algorithms are $O(n^2)$.
+    \item One $n$ is the size of the term.
+    \item The other $n$ is the number of binders, \\e.g., $\eqha{X}{(\swap{a_0}{a_0'},\,...,\swap{a_n}{a_n'})a}$.
+    \item Lists cannot be replaced with structures of better lookup efficiency,
+      because of $\pi\cdot(\pi'\cdot X) \equiv (\pi@\pi')\cdot X$.
+    \end{itemize}
+   \par}
 \end{frame}
 
 \begin{frame}{It's straightforward to check $\alpha$-equivalence}{using de Bruijn numbers~\citep{de_bruijn_lambda_1972}}
