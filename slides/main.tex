@@ -19,7 +19,7 @@
  #1/ #2
 }
 \newcommand{\clos}[2] {
-\langle #1; #2 \rangle
+\langle #2; #1 \rangle
 }
 \newcommand*{\transname}[1]{\textsc{#1}}
 
@@ -33,7 +33,7 @@
  (#1\, #2)
 }
 \newcommand{\app}[2] {
-(#1\, #2)
+#1\, #2
 }
 \newcommand{\sframe}[5] {
 #1; #2 \vdash #3 \Rightarrow #4; #5
@@ -77,7 +77,7 @@
 \begin{frame}{Nominal Unification~\citep{urban_nominal_2004}}
   
   {\centering
-    $\lambda\,a.\lambda\,b.(X\, Y) \stackrel{?}{=} \lambda\,a.\lambda\,a.(a\,Z)$
+    $\lambda\,a.\lambda\,b.\app{X}{Y} \stackrel{?}{=} \lambda\,a.\lambda\,a.\app{a}{Z}$
     \par}
   \vspace{1cm}
   {\centering
@@ -115,18 +115,15 @@
     A \emph{scope} is a list of names.
   \par}
   {\centering
-    A \emph{static closure} consists of a term and its enclosing scope. \\
+    A \emph{static closure} consists of {\color{green}a term} and its enclosing scope. \\
   \par}
   \vspace{1cm}
   
-  {\centering $\lambda\,a.\lambda\,b.a$
+  {\centering term: $\lambda\,a.\lambda\,b.{\color{green}a}$
   \par}
 
 {\centering
-  $\Downarrow$
-\par}
-{\centering
-$\clos{a}{(b\,a)}$
+ closure: $\clos{{\color{green}a}}{(b\,a)}$
 \par}
 \end{frame}
 
@@ -138,12 +135,9 @@ $\clos{a}{(b\,a)}$
 {\Phi \vdash \texttt{Fr}\,\,a}
 {a \notin \Phi} \\ \\
 
-\transrule{Bound}
-{\Phi \vdash \texttt{Bd}\,\,a\,\,i}
-{
-(\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\
-(\texttt{idx$\rightarrow$name}\, \Phi\,i) = a
-}
+    \infer[\transname{[Bound]}]{\Phi \vdash \texttt{Bd}\,\,a\,\,i}{\begin{array}{@{}c@{}c@{}} (\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\(\texttt{idx$\rightarrow$name}\, \Phi\,i) = a
+ \end{array}}
+
  \end{tabular}
  \par}
 \end{frame}
@@ -152,20 +146,11 @@ $\clos{a}{(b\,a)}$
 
   {\centering
   \begin{tabular}{l}
-    \transrule{Same-Free}
-{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{%
-a_1 = a_2 \hfill \\
-\Phi_1 \vdash \texttt{Fr}\,\, a_1 \quad
-\Phi_2 \vdash \texttt{Fr}\,\, a_2 
-} \\ \\
+    \infer[\transname{[Same-Free]}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{\begin{array}{@{}c@{}c@{}c@{}} a_1 = a_2\\\Phi_1 \vdash \texttt{Fr}\,\, a_1\\\Phi_2 \vdash \texttt{Fr}\,\, a_2
+ \end{array}} \\ \\
 
-\transrule{Same-Bound}
-{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}
-{%
-i_1 = i_2 \hfill \\
-\Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1 \quad
-\Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 
-}
+    \infer[\transname{[Same-Bound]}]{\aeq{a_1}{\Phi_1}{a_2}{\Phi_2}}{\begin{array}{@{}c@{}c@{}c@{}} i_1 = i_2\\\Phi_1 \vdash \texttt{Bd}\,\, a_1\,\, i_1\\\Phi_2 \vdash \texttt{Bd}\,\, a_2\,\, i_2 
+ \end{array}}
  \end{tabular}
  \par}
 \end{frame}
@@ -257,8 +242,10 @@ i_1 = i_2 \hfill \\
     
   \item $\delta$ contains unsolved pairs of var-closures.
     
-  \item We have solved a subcase: in a term, variables have
-    only be instantiated by names.
+  \item We have solved the simple case where unification variables only associate
+    with names.
+
+  \item Next, let's look at $\eqha{X}{\lambda\,a.Y}$ and $\eqha{X}{\app{Y}{Z}}$.
   \end{itemize}
 \end{frame}
 
@@ -279,7 +266,8 @@ i_1 = i_2 \hfill \\
 \begin{tikzpicture}
   \node{$\lambda$}
 child {node {$a$}}
-child {node {$X$}};
+child {node {$X$}
+  child {node {} edge from parent[draw=none]}};
   \end{tikzpicture}
   \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
@@ -339,37 +327,71 @@ child {node {$\lambda$}
   \par}
 \end{frame}
 
-\begin{frame}{In particular:}
+\begin{frame}{Something about $\Phi$}
 \begin{tabular}{l}
-  \transrule{A-A}{\sframe{\delta_0}{\sigma_0}{\pr{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{\delta_1}{\sigma_1}}
+  \transrule{Abs}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{\delta_1}{\sigma_1}}
 {%
- \Phi_1' = (\texttt{ext}\, \Phi_1\, a_1) \quad \Phi_2' = (\texttt{ext}\, \Phi_2\, a_2) \hfill \\\sframe{\delta_0}{\sigma_0}{\pr{\clos{t_1}{\Phi_1'}}{\clos{t_2}{\Phi_2'}}}{\delta_1}{\sigma_1}
+  \sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{t_1}{a_1,\Phi_1}}{\clos{t_2}{a_2,\Phi_2}}}{\delta_1}{\sigma_1}
 } \\ \\ 
 
-\transrule{C-C}{\sframe{\delta_0}{\sigma_0}{\pr{\clos{\app{l_1}{r_1}}{{\color{green}\Phi_1}}}{\clos{\app{l_2}{r_2}}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}}
+\transrule{App}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\app{l_1}{r_1}}{{\color{green}\Phi_1}}}{\clos{\app{l_2}{r_2}}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}}
 {%
-\sframe{\delta_0}{\sigma_0}{\pr{\clos{l_1}{{\color{green}\Phi_1}}}{\clos{l_2}{{\color{green}\Phi_2}}}}{\delta_0'}{\sigma_0'} \\\sframe{\delta_0'}{\sigma_0'}{\pr{\clos{r_1}{{\color{green}\Phi_1}}}{\clos{r_2}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}
+\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{l_1}{{\color{green}\Phi_1}}}{\clos{l_2}{{\color{green}\Phi_2}}}}{\delta_0'}{\sigma_0'} \\\sframe{\delta_0'}{\sigma_0'}{\alphaeq{\clos{r_1}{{\color{green}\Phi_1}}}{\clos{r_2}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}
 } \\ \\
 
 \end{tabular}
 \end{frame}
 
-\begin{frame}{Why it is linear?}
+\begin{frame}{Why is it linear?}
   
   \begin{itemize}
-  \item Every term is annotated with a scope, there is no need to
-    compose two scopes ($\pi@\pi'$ is gone).
+  \item Every term is annotated with a scope, no swappings are needed
+    ($\pi@\pi'$ is gone).
   
   \item A scope, previously represented by a list,
     can be replaced with two hashtables.
     
   \item Persistent hashtables~\citep{bagwell_ideal_2001} provide
-    efficient lookup and access.
+    efficient lookup and access, and more importantly, sharing.
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Replacing lists with hashtables}
+
+  {\centering
+    $\lambda\,a.\lambda\,b.\lambda\,a. ...$
+  \par}
+  \begin{figure}[H]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    indices with list: \\
+    \begin{tabular}{l}
+      $(a\,b\,a)$ \\
+      \\ \\
+      \end{tabular}
+  \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    levels with two hashtables:
+    \begin{tabular}{l l l}
+      $a \mapsto 0$ & & $0 \mapsto a$ \\
+      $b \mapsto 1$ & & $1 \mapsto b$ \\
+      $a \mapsto 2$ & & $2 \mapsto a$ \\
+    \end{tabular}
+    \end{minipage}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{Conclusion}
+  
+  {\centering
+    \Huge Nominal unification is linear!
+    \par}
+\end{frame}
  
-\begin{frame}{Bibliography}
+\begin{frame}{Primary references}
 \bibliographystyle{plainnat}
 \bibliography{main}
 \end{frame}
