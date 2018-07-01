@@ -91,12 +91,27 @@
   {\centering
     \begin{itemize}
     \item The fastest existing nominal unification algorithms are $O(n^2)$.
-    \item One $n$ is the size of the term.
-    \item The other $n$ is the number of binders, \\e.g., $\eqha{X}{(\swap{a_0}{a_0'},\,...,\swap{a_n}{a_n'})a}$.
+    \item The quadratic comes from swappings \\
+      e.g., $\eqha{X}{(\swap{a_0}{a_0'},\,...,\swap{a_n}{a_n'})a}$.
     \item Lists cannot be replaced with structures of better lookup efficiency,
       because of $\pi\cdot(\pi'\cdot X) \equiv (\pi@\pi')\cdot X$.
     \end{itemize}
    \par}
+\end{frame}
+
+\begin{frame}{To lookup or to append?}
+
+  {\centering
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      & LinkedList & Hashtable & ?\\
+      \hline
+      lookup & $O(n)$ & $O(1)$ & $O(1)$\\
+      \hline
+      append & $O(1)$ & $O(n)$ & $O(1)$\\
+      \hline
+    \end{tabular}
+  \par}
 \end{frame}
 
 \begin{frame}{It's straightforward to check $\alpha$-equivalence}{using de Bruijn numbers~\citep{de_bruijn_lambda_1972}}
@@ -108,7 +123,20 @@
   {\centering
   In de Bruijn numbers:\par}
  {\centering
-   $\alphaeq{\lambda.\,\lambda\,.1}{\lambda\,.\lambda\,.1}$
+   $\alphaeq{\lambda\,\lambda\,1}{\lambda\,\lambda\,1}$
+ \par}
+\end{frame}
+
+\begin{frame}{But in unification it's different}{name shadowing is lost}
+ 
+ {\centering
+   $\alphaeq{\lambda\,a.\lambda\,a.X}{\lambda\,c.\lambda\,d.c}$
+ \par}
+\vspace{1cm}
+  {\centering
+  In de Bruijn numbers:\par}
+ {\centering
+   $\alphaeq{\lambda\,\lambda\,X}{\lambda\,\lambda\,1}$
  \par}
 \end{frame}
 
@@ -118,19 +146,19 @@
     A \emph{scope} is a list of names.
   \par}
   {\centering
-    A \emph{static closure} consists of {\color{green}a term} and its enclosing scope. \\
+    A \emph{static closure} consists of {\color{blue}a term} and its enclosing scope. \\
   \par}
   \vspace{1cm}
   
-  {\centering term: $\lambda\,a.\lambda\,b.{\color{green}a}$
+  {\centering term: $\lambda\,a.\lambda\,b.{\color{blue}a}$
   \par}
 
 {\centering
- closure: $\clos{{\color{green}a}}{(b\,a)}$
+ closure: $\clos{{\color{blue}a}}{(b\,a)}$
 \par}
 \end{frame}
 
-\begin{frame}{Free and Bound}
+\begin{frame}{To decide $\alpha$-equivalence, we need Free and Bound}
 
   {\centering
   \begin{tabular}{l}
@@ -145,7 +173,7 @@
  \par}
 \end{frame}
 
-\begin{frame}{$\alpha$-equivalence between name-closures}
+\begin{frame}{The core of name management}
 
   {\centering
   \begin{tabular}{l}
@@ -330,39 +358,10 @@ child {node {$\lambda$}
   \par}
 \end{frame}
 
-\begin{frame}{Something about $\Phi$}
-\begin{tabular}{l}
-  \transrule{Abs}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{\delta_1}{\sigma_1}}
-{%
-  \sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{t_1}{a_1,\Phi_1}}{\clos{t_2}{a_2,\Phi_2}}}{\delta_1}{\sigma_1}
-} \\ \\ 
-
-\transrule{App}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\app{l_1}{r_1}}{{\color{green}\Phi_1}}}{\clos{\app{l_2}{r_2}}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}}
-{%
-\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{l_1}{{\color{green}\Phi_1}}}{\clos{l_2}{{\color{green}\Phi_2}}}}{\delta_0'}{\sigma_0'} \\\sframe{\delta_0'}{\sigma_0'}{\alphaeq{\clos{r_1}{{\color{green}\Phi_1}}}{\clos{r_2}{{\color{green}\Phi_2}}}}{\delta_1}{\sigma_1}
-} \\ \\
-
-\end{tabular}
-\end{frame}
-
-\begin{frame}{Why is it linear?}
-  
-  \begin{itemize}
-  \item Every term is annotated with a scope, no swappings are needed
-    ($\pi@\pi'$ is gone).
-  
-  \item A scope, previously represented by a list,
-    can be replaced with two hashtables.
-    
-  \item Persistent hashtables~\citep{bagwell_ideal_2001} provide
-    efficient lookup and access, and more importantly, sharing.
-  \end{itemize}
-\end{frame}
-
 \begin{frame}{Replacing lists with hashtables}
 
   {\centering
-    $\lambda\,a.\lambda\,b.\lambda\,a. ...$
+    $\lambda\,a.\lambda\,b.\lambda\,b.\,\lambda\,c ...$
   \par}
   \begin{figure}[H]
   \centering
@@ -370,8 +369,8 @@ child {node {$\lambda$}
     \centering
     indices with list: \\
     \begin{tabular}{l}
-      $(a\,b\,a)$ \\
-      \\ \\
+      $(c\,b\,b\,a)$ \\
+      \\ \\ \\
       \end{tabular}
   \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
@@ -380,17 +379,53 @@ child {node {$\lambda$}
     \begin{tabular}{l l l}
       $a \mapsto 0$ & & $0 \mapsto a$ \\
       $b \mapsto 1$ & & $1 \mapsto b$ \\
-      $a \mapsto 2$ & & $2 \mapsto a$ \\
+      $b \mapsto 2$ & & $2 \mapsto b$ \\
+      $c \mapsto 3$ & & $3 \mapsto c$ \\
     \end{tabular}
     \end{minipage}
   \end{figure}
 
 \end{frame}
 
+\begin{frame}{Where $\Phi$ changes}
+\begin{tabular}{l}
+  \transrule{Abs}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\lambda\,a_1.t_1}{\Phi_1}}{\clos{\lambda\,a_2.t_2}{\Phi_2}}}{\delta_1}{\sigma_1}}
+{%
+  \sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{t_1}{a_1,\Phi_1}}{\clos{t_2}{a_2,\Phi_2}}}{\delta_1}{\sigma_1}
+} \\ \\ 
+
+\transrule{App}{\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{\app{l_1}{r_1}}{{\color{blue}\Phi_1}}}{\clos{\app{l_2}{r_2}}{{\color{blue}\Phi_2}}}}{\delta_1}{\sigma_1}}
+{%
+\sframe{\delta_0}{\sigma_0}{\alphaeq{\clos{l_1}{{\color{blue}\Phi_1}}}{\clos{l_2}{{\color{blue}\Phi_2}}}}{\delta_0'}{\sigma_0'} \\\sframe{\delta_0'}{\sigma_0'}{\alphaeq{\clos{r_1}{{\color{blue}\Phi_1}}}{\clos{r_2}{{\color{blue}\Phi_2}}}}{\delta_1}{\sigma_1}
+} \\ \\
+
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Lookup only}
+
+  {\centering
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      & LinkedList & Ordinary Hashtable & Persistent Hashtable \\
+      \hline
+      lookup & $O(n)$ & $O(1)$ & $O(log\,k)$\\
+      \hline
+      append & $O(1)$ & $O(n)$ & whatever\\
+      \hline
+    \end{tabular}
+  \par}
+\end{frame}
+
 \begin{frame}{Conclusion}
   
   {\centering
-    \Huge Nominal unification is virtually linear!
+    \begin{itemize}
+  \item A $O(n \times G(n) \times log\,k)$ nominal unification algorithm.
+  \item Getting rid of swappings,
+    and thus composing swappings.
+  \item Scope with terms, to compute de Bruijn numbers.
+    \end{itemize}
     \par}
 \end{frame}
  
