@@ -93,7 +93,7 @@
     \item The fastest existing nominal unification algorithms are $O(n^2)$.
     \item The quadratic comes from swappings \\
       e.g., $\eqha{X}{(\swap{a_0}{a_0'},\,...,\swap{a_n}{a_n'})a}$.
-    \item Lists cannot be replaced with structures of better lookup efficiency,
+    \item Lists cannot be replaced by structures with better lookup efficiency,
       because of $\pi\cdot(\pi'\cdot X) \equiv (\pi@\pi')\cdot X$.
     \end{itemize}
    \par}
@@ -282,8 +282,7 @@
     
   \item $\delta$ contains unsolved pairs of var-closures.
     
-  \item We have solved the simple case where unification variables only associate
-    with names.
+  \item We have solved the simple case where unification variables have only been instantiated with names.
 
   \item Next, let's look at $\eqha{X}{\lambda\,a.Y}$ and $\eqha{X}{\app{Y}{Z}}$.
   \end{itemize}
@@ -418,7 +417,7 @@ child {node {$\lambda$}
       \hline
       & LinkedList & Ordinary Hashtable & Persistent Hashtable \\
       \hline
-      lookup & $O(n)$ & $O(1)$ & $O(log\,k)$\\
+      lookup & $O(n)$ & $O(1)$ & $O(log(k))$\\
       \hline
       append & $O(1)$ & $O(n)$ & whatever\\
       \hline
@@ -430,9 +429,9 @@ child {node {$\lambda$}
   
   {\centering
     \begin{itemize}
-  \item A $O(n \times G(n) \times log\,k)$ nominal unification algorithm.
-  \item Removing composing swappings.
-  \item Scope with terms, to compute de Bruijn numbers.
+  \item Replacing swappings by scopes
+  \item Replacing the need of composing by the need of sharing
+  \item A $O(n \times log(k) \times G(n))$ nominal unification algorithm
     \end{itemize}
     \par}
 \end{frame}
