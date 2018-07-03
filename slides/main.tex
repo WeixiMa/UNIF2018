@@ -114,14 +114,14 @@
   \par}
 \end{frame}
 
-\begin{frame}{It's straightforward to check $\alpha$-equivalence}{using de Bruijn numbers~\citep{de_bruijn_lambda_1972}}
+\begin{frame}{It's straightforward to check $\alpha$-equivalence}{using de Bruijn indices~\citep{de_bruijn_lambda_1972}}
  
  {\centering
    $\alphaeq{\lambda\,a.\lambda\,b.a}{\lambda\,c.\lambda\,d.c}$
  \par}
 \vspace{1cm}
   {\centering
-  In de Bruijn numbers:\par}
+  In de Bruijn indices:\par}
  {\centering
    $\alphaeq{\lambda\,\lambda\,1}{\lambda\,\lambda\,1}$
  \par}
@@ -134,13 +134,13 @@
  \par}
 \vspace{1cm}
   {\centering
-  In de Bruijn numbers:\par}
+  In de Bruijn indices:\par}
  {\centering
    $\alphaeq{\lambda\,\lambda\,X}{\lambda\,\lambda\,1}$
  \par}
 \end{frame}
 
-\begin{frame}{De Bruijn numbers should coexist with names}
+\begin{frame}{De Bruijn indices should coexist with names}
 
   {\centering
     A \emph{scope} is a list of names.
@@ -166,7 +166,7 @@
 {\Phi \vdash \texttt{Fr}\,\,a}
 {a \notin \Phi} \\ \\
 
-    \infer[\transname{[Bound]}]{\Phi \vdash \texttt{Bd}\,\,a\,\,i}{\begin{array}{@{}c@{}c@{}} (\texttt{name$\rightarrow$idx}\, \Phi\,a) = i \\(\texttt{idx$\rightarrow$name}\, \Phi\,i) = a
+    \infer[\transname{[Bound]}]{\Phi \vdash \texttt{Bd}\,\,a\,\,i}{\begin{array}{@{}c@{}c@{}} (\texttt{name$\rightarrow$index}\, \Phi\,a) = i \\(\texttt{index$\rightarrow$name}\, \Phi\,i) = a
  \end{array}}
 
  \end{tabular}
@@ -197,20 +197,26 @@
     {\clos{a}{(b\,a)}}
     {\clos{c}{(d\,c)}}
     {\sigma}
+
+    \vspace{1cm}
+    By \transname{Same-Bound}
     \par}
 \end{frame}
 
 \begin{frame}{Unifying name-closure versus var-closure}
 
   {\centering
-    $\eqha{\lambda\,a.\lambda\,b.X}{\lambda\,c.\lambda\,d.c}$
+    $\eqha{\lambda\,a.\lambda\,b.X}{\lambda\,c.\lambda\,d.e}$
 
     \vspace{1cm}
     \transition
     {\sigma}
     {\clos{X}{(b\,a)}}
-    {\clos{c}{(d\,c)}}
-    {\{\bd{X}{a}\}\cup\sigma}
+    {\clos{e}{(d\,c)}}
+    {\{\bd{X}{e}\}\cup\sigma}
+
+    \vspace{1cm}
+    By \transname{Same-Free}
     \par}
 \end{frame}
 
@@ -225,6 +231,9 @@
     {\clos{X}{(a\,a)}}
     {\clos{c}{(d\,c)}}
     \bot
+
+    \vspace{1cm}
+    No rules apply
     \par}
 \end{frame}
 
@@ -254,10 +263,10 @@
 
     \vspace{1cm}
    \transition
-    {\sigma;\,\delta}
+    {\delta;\,\sigma}
     {\clos{X}{(b\,a)}}
     {\clos{Y}{(d\,c)}}
-    {\sigma;\,\delta'}
+    {\delta';\,\sigma}
 
     \vspace{1cm}
     $\delta' = \{\clos{X}{(b\,a)} \stackrel{\alpha}{=} \clos{Y}{(d\,c)}\}\cup\delta$
@@ -267,7 +276,7 @@
 \begin{frame}{To sum up:}
   
   \begin{itemize}
-  \item De Bruijn numbers get along with names in closures.
+  \item De Bruijn indices coexist with names in closures.
     
   \item $\sigma$ is a substitution.
     
@@ -422,8 +431,7 @@ child {node {$\lambda$}
   {\centering
     \begin{itemize}
   \item A $O(n \times G(n) \times log\,k)$ nominal unification algorithm.
-  \item Getting rid of swappings,
-    and thus composing swappings.
+  \item Removing composing swappings.
   \item Scope with terms, to compute de Bruijn numbers.
     \end{itemize}
     \par}
