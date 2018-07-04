@@ -417,7 +417,7 @@ child {node {$\lambda$}
       \hline
       & LinkedList & Ordinary Hashtable & Persistent Hashtable \\
       \hline
-      lookup & $O(n)$ & $O(1)$ & $O(log(k))$\\
+      lookup & $O(n)$ & $O(1)$ & $O(log(n))$\\
       \hline
       append & $O(1)$ & $O(n)$ & whatever\\
       \hline
@@ -431,7 +431,7 @@ child {node {$\lambda$}
     \begin{itemize}
   \item Replacing swappings by scopes
   \item Replacing the need of composing by the need of sharing
-  \item A $O(n \times G(n) \times log(k))$ nominal unification algorithm
+  \item An $O(n \cdot G(n) \cdot log(n))$ nominal unification algorithm
     \end{itemize}
     \par}
 \end{frame}
